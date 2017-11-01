@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/assignment_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <TextView
+        android:id="@+id/text_assignment_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/assignment_name_header"
+        style="@style/primaryBoldBodyText" />
+
+    <TextView
+        android:id="@+id/text_assignment_points"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/assignment_points_header"
+        style="@style/primaryBoldBodyText" />
+
+    <TextView
+        android:id="@+id/text_assignment_grade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/assignment_grade_header"
+        style="@style/primaryBoldBodyText" />
+
+    <TextView
+        android:id="@+id/text_assignment_assigned"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/assignment_assigned_header"
+        style="@style/primaryBoldBodyText" />
+
+    <TextView
+        android:id="@+id/text_assignment_due"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/assignment_due_header"
+        style="@style/primaryBoldBodyText" />
+
+    <TextView
+        android:id="@+id/text_assignment_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/assignment_category_header"
+        style="@style/primaryBoldBodyText" />
+
+</TableRow>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/nav_group_focus" android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home_black_24px"
+            android:title="@string/nav_home"
+            android:checked="true" />
+        <item
+            android:id="@+id/nav_schedule"
+            android:icon="@drawable/ic_schedule_black_24px"
+            android:title="@string/nav_schedule" />
+        <item
+            android:id="@+id/nav_calendar"
+            android:icon="@drawable/ic_date_range_black_24px"
+            android:title="@string/nav_calendar" />
+        <item
+            android:id="@+id/nav_demographic"
+            android:icon="@drawable/ic_person_black_24px"
+            android:title="@string/nav_demographic" />
+        <item
+            android:id="@+id/nav_address"
+            android:icon="@drawable/ic_location_city_black_24px"
+            android:title="@string/nav_address" />
+        <item
+            android:id="@+id/nav_referrals"
+            android:icon="@drawable/ic_assignment_black_24px"
+            android:title="@string/nav_referrals" />
+        <item
+            android:id="@+id/nav_absences"
+            android:icon="@drawable/ic_airline_seat_individual_suite_black_24px"
+            android:title="@string/nav_absences" />
+        <item
+            android:id="@+id/nav_final_grades"
+            android:icon="@drawable/ic_assessment_black_24px"
+            android:title="@string/nav_final_grades" />
+    </group>
+
+    <group android:id="@+id/nav_group_meta" android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_settings"
+            android:title="@string/nav_settings" />
+        <item
+            android:id="@+id/nav_about"
+            android:title="@string/nav_about" />
+    </group>
+
+
+</menu>

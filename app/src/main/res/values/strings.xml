@@ -1,0 +1,165 @@
+<resources>
+
+    <string name="app_name">Focus</string>
+
+    <!-- Toolbar -->
+    <string name="toolbar_menu_refresh">Refresh</string>
+    <string name="portal_label">Portal</string>
+    <string name="schedule_label">Schedule</string>
+    <string name="calendar_label">Calendar</string>
+    <string name="demographic_label">Demographic</string>
+    <string name="address_label">Address</string>
+    <string name="referrals_label">Referrals</string>
+    <string name="absences_label">Absences</string>
+    <string name="final_grades_label">Final Grades &amp; GPA</string>
+    <string name="settings_label">Settings</string>
+    <string name="about_label">About</string>
+
+    <!-- Nav drawer -->
+    <string name="navigation_drawer_open">Open navigation</string>
+    <string name="navigation_drawer_close">Close navigation</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_schedule">Schedule</string>
+    <string name="nav_calendar">Calendar</string>
+    <string name="nav_demographic">Demographic</string>
+    <string name="nav_address">Address</string>
+    <string name="nav_referrals">Referrals</string>
+    <string name="nav_absences">Absences</string>
+    <string name="nav_final_grades">Final Grades and GPA</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_about">About</string>
+
+    <!-- Login activity -->
+    <string name="login_user_hint">Username</string>
+    <string name="login_pass_hint">Password</string>
+    <string name="login_remember_user">Remember me</string>
+    <string name="login_button">Login</string>
+
+    <!-- Portal page -->
+    <string name="portal_courses_tab">COURSES</string>
+    <string name="portal_events_tab">EVENTS</string>
+    <string name="portal_assignments_tab">ASSIGNMENTS</string>
+    <string name="portal_empty_fragment">Whoops, looks like there isn\'t anything here!</string>
+
+    <!-- Course page -->
+    <string name="assignment_name_header">Assignment</string>
+    <string name="assignment_points_header">Points</string>
+    <string name="assignment_grade_header">Grade</string>
+    <string name="assignment_assigned_header">Assigned</string>
+    <string name="assignment_due_header">Due</string>
+    <string name="assignment_category_header">Category</string>
+
+    <!-- Schedule page -->
+    <string name="course_name_header">Course</string>
+    <string name="course_period_header">Period</string>
+    <string name="course_teacher_header">Teacher</string>
+    <string name="course_days_header">Meeting Days</string>
+    <string name="course_room_header">Room</string>
+    <string name="course_term_header">Term</string>
+
+    <!-- Calendar -->
+    <string name="calendar_hint">Tap a day on the calendar to see events and assignments</string>
+    <string name="calendar_assignment_header">Assignments</string>
+    <string name="calendar_event_header">Events</string>
+    <string name="calendar_event_dialog_button">OK</string>
+    <string name="calendar_event_date">Date</string>
+    <string name="calendar_event_title">Title</string>
+    <string name="calendar_event_teacher">Teacher</string>
+    <string name="calendar_event_course_name">Course</string>
+    <string name="calendar_event_section">Section</string>
+    <string name="calendar_event_school">School</string>
+    <string name="calendar_event_notes">Notes</string>
+
+    <!-- Demographic -->
+    <string name="demographic_name_hint">Name</string>
+    <string name="demographic_dob_hint">Birthday</string>
+    <string name="demographic_email_hint">Email</string>
+    <string name="demographic_gender_hint">Gender</string>
+    <string name="demographic_grade_hint">Grade</string>
+    <string name="demographic_bus_multiple_hint">Bus (Arrival/Dismissal)</string>
+    <string name="demographic_bus_single_hint">Bus</string>
+    <string name="demographic_bus_not_assigned">Unassigned</string>
+    <string name="demographic_student_id_hint">Student ID</string>
+    <string name="demographic_cumulative_file_hint">Has cumulative file</string>
+    <string name="demographic_photo_auth_hint">Photo usage authorized</string>
+    <string name="demographic_medical_hint">Medical record status</string>
+    <string name="demographic_locker_hint">Locker</string>
+
+    <!-- Address -->
+    <string name="address_address_hint">Address</string>
+    <string name="address_phone_hint">Phone</string>
+    <string name="address_contact_address_hint">Address</string>
+    <string name="address_contact_email_hint">Email</string>
+    <string name="address_contact_private_email_hint">Private email</string>
+    <string name="address_contact_home_phone_hint">Home phone</string>
+    <string name="address_contact_cell_phone_hint">Cell phone</string>
+    <string name="address_contact_relationship_hint">Relationship</string>
+    <string name="address_contact_name_hint">Name</string>
+    <string name="address_contact_title">Contact</string>
+
+    <!-- Referrals -->
+    <string name="referrals_other_violation_header">Notes</string>
+    <string name="referrals_violation_header">Violation</string>
+    <string name="referrals_entry_date_header">Entry Date</string>
+    <string name="referrals_name_header">Reporter</string>
+
+    <!-- Absences -->
+    <string name="absences_days_possible">Total Full Days Possible</string>
+    <string name="absences_days_attended">Total Full Days Attended</string>
+    <string name="absences_days_absent">Total Full Days Absent</string>
+    <string name="absences_absent_header">&lt;b>Absent: &lt;/b> %1$d periods (during %2$d days)</string>
+    <string name="absences_absent">&#160;Absent: %1$d periods - &lt;b>%2$d days&lt;/b></string>
+    <string name="absences_excused">&#160;Excused Absence: %1$d periods - &lt;b>%2$d days&lt;/b></string>
+    <string name="absences_other_marks">&lt;b>Other Marks: &lt;/b>%1$d periods (during %2$d days)</string>
+    <string name="absences_late">&#160;Late: %1$d periods</string>
+    <string name="absences_tardy">&#160;Tardy: %1$d periods</string>
+    <string name="absences_misc">&#160;Misc. Activity: %1$d periods</string>
+    <string name="absences_offsite">&#160;Off Site/Field Trip: %1$d periods</string>
+    <string name="absences_date_header">Date</string>
+    <string name="absences_daily_header">Overall Daily Status</string>
+    <string name="absences_table_header">Days with Absences</string>
+
+    <!-- Network error messages -->
+    <string name="network_error_timeout">Network error</string>
+    <string name="network_error_auth">Invalid username or password</string>
+    <string name="network_error_server">Server error. Please try again later</string>
+
+    <!-- Network failure view -->
+    <string name="network_failure_message">Please check your network connection</string>
+    <string name="network_failure_button">Retry</string>
+
+    <!-- Extras -->
+    <string name="EXTRA_PORTAL">org.kidcontact.focussis.PORTAL</string>
+    <string name="EXTRA_USERNAME">org.kidcontact.focussis.USERNAME</string>
+    <string name="EXTRA_PASSWORD">org.kidcontact.focussis.PASSWORD</string>
+    <string name="EXTRA_COURSE_ID">org.kidcontact.focussis.COURSE_ID</string>
+
+    <!-- Preferences -->
+    <string name="login_prefs">loginPrefs</string>
+    <string name="login_prefs_save_login">saveLogin</string>
+    <string name="login_prefs_username">username</string>
+    <string name="login_prefs_password">password</string>
+
+    <!-- JSON keys for API fields -->
+    <string name="key_login_username">username</string>
+    <string name="key_login_password">password</string>
+
+    <!-- About page -->
+    <string name="about_page_description">Focus SIS allows students to easily check their grades and view various other academic information. This app was created as part of a year-long academic project by a junior at the Academy for Science and Design, and is in no way associated with Focus School Software LLC.</string>
+    <string name="about_email">mail@kidcontact.org</string>
+    <string name="about_website">http://kidcontact.org</string>
+    <string name="about_github">Find the code on GitHub</string>
+    <string name="about_github_link">http://github.com/kidcontact/focus-api</string>
+    <string name="copyright">Copyright © %1$d</string>
+    <string name="license">Licensed under GNU GPL v3.0</string>
+    <string name="about_license_link">https://github.com/kidcontact/focus-api/blob/master/LICENSE</string>
+
+    <!-- Dialogs -->
+    <string name="auth_progress_dialog">Authenticating...</string>
+    <string name="timeout_progress_dialog_title">Session timed out</string>
+    <string name="timeout_progress_dialog_message">Reauthenticating...</string>
+    <string name="auth_retry_dialog_message_general">Network error (%d)</string>
+    <string name="auth_retry_dialog_message_timeout">Network timed out</string>
+    <string name="auth_retry_dialog_button">Retry</string>
+
+</resources>

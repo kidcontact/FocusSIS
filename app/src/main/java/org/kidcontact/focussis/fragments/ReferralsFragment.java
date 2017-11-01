@@ -1,0 +1,134 @@
+package org.kidcontact.focussis.fragments;
+
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
+import android.text.Html;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
+
+import org.json.JSONObject;
+import org.kidcontact.focussis.R;
+import org.kidcontact.focussis.data.Referral;
+import org.kidcontact.focussis.data.Referrals;
+import org.kidcontact.focussis.network.ApiBuilder;
+import org.kidcontact.focussis.util.DateUtil;
+
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Created by slensky on 5/23/17.
+ */
+
+public class ReferralsFragment extends NetworkTabAwareFragment {
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        url = ApiBuilder.getReferralsUrl();
+        title = getString(R.string.referrals_label);
+        refresh();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_referrals, container, false);
+        return view;
+    }
+
+    @Override
+    public boolean hasTabs() {
+        return false;
+    }
+
+    @Override
+    public List<String> getTabNames() {
+        return null;
+    }
+
+    @Override
+    protected void onSuccess(JSONObject response) {
+        Referrals referrals = new Referrals(response);
+        List<Referral> refList = referrals.getReferrals();
+        Collections.reverse(refList);
+        View view = getView();
+        if (view != null) {
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+
+            TableLayout table = (TableLayout) view.findViewById(R.id.table_referrals);
+            table.removeAllViews();
+            TableRow headerRow = (TableRow) inflater.inflate(R.layout.view_referral_header, table, false);
+            table.addView(headerRow);
+
+            for (final Referral r : refList) {
+                TableRow referralRow = (TableRow) inflater.inflate(R.layout.view_referral, table, false);
+                TextView reporter = (TextView) referralRow.findViewById(R.id.text_reporter_name);
+                reporter.setText(r.getTeacher().split(" ")[1] + ", " + r.getTeacher().split(" ")[0]);
+                TextView entryDate = (TextView) referralRow.findViewById(R.id.text_entry_date);
+                entryDate.setText(r.getEntryDate().monthOfYear().get() + "/" + r.getEntryDate().dayOfMonth().getAsText() + '/' +r.getEntryDate().year().getAsShortText().substring(2));
+                TextView violation = (TextView) referralRow.findViewById(R.id.text_violation);
+                if (r.getViolation() != null) {
+                    violation.setText(r.getViolation());
+                }
+                else {
+                    violation.setText(r.getOtherViolation());
+                }
+
+                referralRow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showReferralDialog(r);
+                    }
+                });
+
+                table.addView(referralRow);
+            }
+
+        }
+
+        requestFinished = true;
+    }
+
+    public void showReferralDialog(Referral r) {
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+        //alertDialog.setTitle();
+        String html = "<b>Reporter </b>" + r.getTeacher() + "<br>" +
+                "<b>Name: </b>" + r.getName() + "<br>" +
+                "<b>Grade: </b>" + r.getGrade() + "<br>" +
+                "<b>Entry date: </b>" + DateUtil.dateTimeToLongString(r.getEntryDate()) + "<br>" +
+                "<b>Last updated: </b>" + DateUtil.dateTimeToLongString(r.getLastUpdated()) + "<br>" +
+                "<b>School: </b>" + r.getSchool();
+
+        if (r.getViolation() != null) {
+            html += "<br><b>Violation: </b>" + r.getViolation();
+        }
+        if (r.getOtherViolation() != null) {
+            html += "<br><b>Other violation: </b>" + r.getOtherViolation();
+        }
+        if (r.isProcessed()) {
+            html += "<br><b>Processed: </b>Yes";
+        }
+        else {
+            html += "<br><b>Processed: </b>No";
+        }
+
+        alertDialog.setMessage(Html.fromHtml(html));
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+    }
+
+}

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Headings -->
+    <style name="headingText">
+        <item name="android:textSize">@dimen/headingText</item>
+    </style>
+
+    <style name="primaryHeadingText" parent="headingText">
+        <item name="android:textColor">@color/textPrimary</item>
+    </style>
+
+    <!-- Subheadings -->
+    <style name="subheadingText">
+        <item name="android:textSize">@dimen/subheadingText</item>
+    </style>
+
+    <style name="primarySubheadingText" parent="subheadingText">
+        <item name="android:textColor">@color/textPrimary</item>
+    </style>
+
+    <style name="primaryBoldSubheadingText" parent="primarySubheadingText">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="secondarySubheadingText" parent="subheadingText">
+        <item name="android:textColor">@color/textTertiary</item>
+    </style>
+
+    <style name="tertiarySubheadingText" parent="subheadingText">
+        <item name="android:textColor">@color/textTertiary</item>
+    </style>
+
+    <!-- Body text -->
+    <style name="bodyText">
+        <item name="android:textSize">@dimen/bodyText</item>
+    </style>
+
+    <style name="primaryBodyText" parent="bodyText">
+        <item name="android:textColor">@color/textPrimary</item>
+    </style>
+
+    <style name="secondaryBodyText" parent="bodyText">
+        <item name="android:textColor">@color/textTertiary</item>
+    </style>
+
+    <style name="tertiaryBodyText" parent="bodyText">
+        <item name="android:textColor">@color/textTertiary</item>
+    </style>
+
+    <style name="primaryBoldBodyText" parent="primaryBodyText">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+</resources>

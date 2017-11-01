@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="IconWithTextView">
+        <attr name="icon" format="reference" />
+        <attr name="text" format="string" />
+        <attr name="hint" format="string" />
+    </declare-styleable>
+    
+    <declare-styleable name="AbsenceLabelView">
+        <attr name="status">
+            <enum name="absent" value="0" />
+            <enum name="excused" value="1" />
+            <enum name="late" value="2" />
+            <enum name="tardy" value="3" />
+            <enum name="misc" value="4" />
+            <enum name="offsite" value="5" />
+        </attr>
+    </declare-styleable>
+
+</resources>

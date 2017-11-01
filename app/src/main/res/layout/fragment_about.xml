@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="50dp"
+                android:layout_marginLeft="50dp"
+                android:gravity="center"
+                app:srcCompat="@drawable/logo" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
+                android:paddingBottom="40dp"
+                android:text="@string/about_page_description"
+                style="@style/primarySubheadingText" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:showDividers="beginning|middle|end"
+                android:divider="@drawable/divider">
+
+                <RelativeLayout
+                    android:id="@+id/email_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:id="@+id/email_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginRight="16dp"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_email_black_24px" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/email_icon"
+                        android:layout_centerVertical="true"
+                        android:text="@string/about_email"
+                        style="@style/primarySubheadingText"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/github_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:id="@+id/github_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginRight="16dp"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_github_circle_black_24px" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/github_icon"
+                        android:layout_centerVertical="true"
+                        android:text="@string/about_github"
+                        style="@style/primarySubheadingText"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/version_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:id="@+id/version_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginRight="16dp"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_information_outline_black_24px" />
+
+                    <TextView
+                        android:id="@+id/text_version"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/version_icon"
+                        android:layout_centerVertical="true"
+                        style="@style/primarySubheadingText"/>
+
+                </RelativeLayout>
+
+
+
+                <!--<TextView
+                    android:id="@+id/text_license"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:clickable="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:text="@string/license"
+                    style="@style/primarySubheadingText"/>
+
+                <TextView
+                    android:id="@+id/text_copyright"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:clickable="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    style="@style/primarySubheadingText"/>-->
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
