@@ -47,11 +47,11 @@ import org.kidcontact.focussis.fragments.ReferralsFragment;
 import org.kidcontact.focussis.fragments.ScheduleFragment;
 import org.kidcontact.focussis.R;
 import org.kidcontact.focussis.network.ApiBuilder;
+import org.kidcontact.focussis.network.FocusApi;
+import org.kidcontact.focussis.network.FocusApiSingleton;
 import org.kidcontact.focussis.network.RequestSingleton;
 import org.kidcontact.focussis.views.adapters.ViewPagerAdapter;
 
-import java.net.CookieStore;
-import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,9 +69,11 @@ public class MainActivity extends AppCompatActivity
     private boolean threadExit = false;
     private boolean inOnLoad = false;
 
+    private FocusApi api;
     // stored for keeping the session alive after it expires
     String username;
     String password;
+
 
     // used by session thread to avoid spamming reauthenticate() calls
     private boolean authenticating;
@@ -95,6 +97,7 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setHomeButtonEnabled(true);
         mDrawerToggle.syncState();
 
+        api = FocusApiSingleton.getApi();
         Log.d(TAG, "Unpacking intent and adding user's name + email to nav bar");
         Intent intent = getIntent();
         username = intent.getStringExtra(getString(R.string.EXTRA_USERNAME));
@@ -209,7 +212,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
         else {
-            Log.d(TAG, "Configuring static non-tan page");
+            Log.d(TAG, "Configuring static non-tab page");
             tabLayout.setVisibility(View.GONE);
             loadingLayout.setVisibility(View.GONE);
             fragmentContainer.setVisibility(View.VISIBLE);
@@ -471,23 +474,24 @@ public class MainActivity extends AppCompatActivity
     }
 
     private boolean isSessionExpired() {
-        CookieStore cookies = RequestSingleton.getCookieManager().getCookieStore();
-        HttpCookie sessionTimeout = null;
-        for (HttpCookie c : cookies.getCookies()) {
-            if (c.getName().equals("session_timeout")) {
-                sessionTimeout = c;
-            }
-        }
-
-        if (sessionTimeout == null ||
-                Long.parseLong(sessionTimeout.getValue()) <= System.currentTimeMillis() / 1000) {
-            if (sessionTimeout == null) { Log.e(TAG, "Session timeout cookie not found"); }
-            Log.d(TAG, "Session has expired");
-            return true;
-        }
-        else {
-            return false;
-        }
+        return api.getSessionTimeout() <= System.currentTimeMillis();
+//        CookieStore cookies = RequestSingleton.getCookieManager().getCookieStore();
+//        HttpCookie sessionTimeout = null;
+//        for (HttpCookie c : cookies.getCookies()) {
+//            if (c.getName().equals("session_timeout")) {
+//                sessionTimeout = c;
+//            }
+//        }
+//
+//        if (sessionTimeout == null ||
+//                Long.parseLong(sessionTimeout.getValue()) <= System.currentTimeMillis() / 1000) {
+//            if (sessionTimeout == null) { Log.e(TAG, "Session timeout cookie not found"); }
+//            Log.d(TAG, "Session has expired");
+//            return true;
+//        }
+//        else {
+//            return false;
+//        }
     }
 
     public void reauthenticate() {
@@ -496,37 +500,64 @@ public class MainActivity extends AppCompatActivity
                 getString(R.string.timeout_progress_dialog_title),
                 getString(R.string.timeout_progress_dialog_message),
                 true);
-        final RequestQueue queue = RequestSingleton.getInstance(this).getRequestQueue();
-        JSONObject data = null;
-        try {
-            data = new JSONObject().put(getString(R.string.key_login_username), username).put(getString(R.string.key_login_password), password);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "JSONException while constructing login data");
-        }
-        JsonObjectRequest loginRequest = new JsonObjectRequest
-                (Request.Method.POST, ApiBuilder.getSessionUrl(), data, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d(TAG, "Login successful");
-                        progressDialog.dismiss();
-                        authenticating = false;
-                        refresh();
 
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        progressDialog.dismiss();
-                        if (error.networkResponse != null) {
-                            showAuthenticateRetryDialog(error.networkResponse.statusCode);
-                        }
-                        else {
-                            showAuthenticateRetryDialog(-1);
-                        }
-                    }
-                });
-        queue.add(loginRequest);
+        api.login(new Response.Listener<Boolean>() {
+            @Override
+            public void onResponse(Boolean response) {
+                if (response) {
+                    Log.d(TAG, "Login successful");
+                    progressDialog.dismiss();
+                    authenticating = false;
+                    refresh();
+                } else {
+                    progressDialog.dismiss();
+                    showAuthenticateRetryDialog(-1);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                if (error.networkResponse != null) {
+                    showAuthenticateRetryDialog(error.networkResponse.statusCode);
+                }
+                else {
+                    showAuthenticateRetryDialog(-1);
+                }
+            }
+        });
+
+//        final RequestQueue queue = RequestSingleton.getInstance(this).getRequestQueue();
+//        JSONObject data = null;
+//        try {
+//            data = new JSONObject().put(getString(R.string.key_login_username), username).put(getString(R.string.key_login_password), password);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Log.e(TAG, "JSONException while constructing login data");
+//        }
+//        JsonObjectRequest loginRequest = new JsonObjectRequest
+//                (Request.Method.POST, ApiBuilder.getSessionUrl(), data, new Response.Listener<JSONObject>() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        Log.d(TAG, "Login successful");
+//                        progressDialog.dismiss();
+//                        authenticating = false;
+//                        refresh();
+//
+//                    }
+//                }, new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        progressDialog.dismiss();
+//                        if (error.networkResponse != null) {
+//                            showAuthenticateRetryDialog(error.networkResponse.statusCode);
+//                        }
+//                        else {
+//                            showAuthenticateRetryDialog(-1);
+//                        }
+//                    }
+//                });
+//        queue.add(loginRequest);
     }
 
     private void showAuthenticateRetryDialog(int status) {

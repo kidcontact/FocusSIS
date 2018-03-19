@@ -27,7 +27,7 @@ public class Course extends MarkingPeriodPage {
     private final String letterGrade;
     private final String name;
     private final int percentGrade;
-    private final int period;
+    private final String period;
     private final String teacher;
 
     public Course(JSONObject courseJSON) {
@@ -39,7 +39,7 @@ public class Course extends MarkingPeriodPage {
         String letterGrade;
         String name;
         int percentGrade;
-        int period;
+        String period;
         String teacher;
 
         try {
@@ -152,9 +152,9 @@ public class Course extends MarkingPeriodPage {
         }
 
         try {
-            period = courseJSON.getInt("period");
+            period = courseJSON.getString("period");
         } catch (JSONException e) {
-            period = -1;
+            period = "";
             Log.e(TAG, "Course period not found in JSON");
         }
 
@@ -200,7 +200,7 @@ public class Course extends MarkingPeriodPage {
         return percentGrade;
     }
 
-    public int getPeriod() {
+    public String getPeriod() {
         return period;
     }
 

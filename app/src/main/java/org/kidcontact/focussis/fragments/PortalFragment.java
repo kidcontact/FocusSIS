@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 
 import org.json.JSONObject;
@@ -17,6 +19,7 @@ import org.kidcontact.focussis.R;
 import org.kidcontact.focussis.data.Course;
 import org.kidcontact.focussis.data.Portal;
 import org.kidcontact.focussis.network.ApiBuilder;
+import org.kidcontact.focussis.network.FocusApiSingleton;
 import org.kidcontact.focussis.util.GsonSingleton;
 
 import java.util.ArrayList;
@@ -40,7 +43,7 @@ public class PortalFragment extends NetworkTabAwareFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        url = ApiBuilder.getPortalUrl();
+        api = FocusApiSingleton.getApi();
         title = getString(R.string.portal_label);
         refresh();
     }
@@ -91,7 +94,19 @@ public class PortalFragment extends NetworkTabAwareFragment {
                 return;
             }
         }
-        super.refresh();
+        requestFinished = false;
+        networkFailed = false;
+        api.getPortal(new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                onSuccess(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                onError(error);
+            }
+        });
     }
 
     @Override

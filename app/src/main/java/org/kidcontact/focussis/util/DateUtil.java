@@ -1,8 +1,12 @@
 package org.kidcontact.focussis.util;
 
+import com.joestelmach.natty.Parser;
+
 import org.joda.time.DateTime;
 import org.kidcontact.focussis.data.Course;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -10,6 +14,9 @@ import java.util.List;
  */
 
 public class DateUtil {
+
+    public static final DateFormat ISO_DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+    public static Parser nattyDateParser = new Parser();
 
     public static String dateTimeToShortString(DateTime dt) {
         return dt.dayOfWeek().getAsShortText() + ". " + dt.monthOfYear().getAsText() + " " + dt.dayOfMonth().getAsText();

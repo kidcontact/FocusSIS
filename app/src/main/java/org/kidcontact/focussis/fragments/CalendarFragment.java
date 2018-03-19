@@ -42,6 +42,7 @@ import org.kidcontact.focussis.data.CalendarEvent;
 import org.kidcontact.focussis.data.CalendarEventDetails;
 import org.kidcontact.focussis.data.ScheduleCourse;
 import org.kidcontact.focussis.network.ApiBuilder;
+import org.kidcontact.focussis.network.FocusApiSingleton;
 import org.kidcontact.focussis.network.RequestSingleton;
 import org.kidcontact.focussis.util.DateUtil;
 import org.kidcontact.focussis.util.TermUtil;
@@ -124,7 +125,7 @@ public class CalendarFragment extends NetworkTabAwareFragment {
                 loading.setVisibility(View.VISIBLE);
                 year = materialCalendarView.getCurrentDate().getYear();
                 month = materialCalendarView.getCurrentDate().getMonth();
-                url = ApiBuilder.getCalendarUrl(year, month + 1);
+                //url = ApiBuilder.getCalendarUrl(year, month + 1);
                 refresh();
                 //materialCalendarView.addDecorator(new CalendarDayEnableAllDecorator(materialCalendarView.getCurrentDate().getMonth()));
                 //materialCalendarView.addDecorator(new CalendarDayDisableAllDecorator(materialCalendarView.getCurrentDate().getMonth()));
@@ -133,7 +134,8 @@ public class CalendarFragment extends NetworkTabAwareFragment {
 
         year = calendarView.getCurrentDate().getYear();
         month = calendarView.getCurrentDate().getMonth();
-        url = ApiBuilder.getCalendarUrl(year, month + 1);
+        //url = ApiBuilder.getCalendarUrl(year, month + 1);
+        api = FocusApiSingleton.getApi();
         title = getString(R.string.calendar_label);
         refresh();
 
@@ -402,6 +404,24 @@ public class CalendarFragment extends NetworkTabAwareFragment {
             decoratorThread.start();
         }
 
+    }
+
+    @Override
+    public void refresh() {
+        requestFinished = false;
+        networkFailed = false;
+        // TODO: implement api call
+//        api.getPortal(new Response.Listener<JSONObject>() {
+//            @Override
+//            public void onResponse(JSONObject response) {
+//                onSuccess(response);
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                onError(error);
+//            }
+//        });
     }
 
     private Dialog createEventDetailDialog(CalendarEvent e) {

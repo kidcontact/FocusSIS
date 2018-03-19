@@ -28,6 +28,8 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
@@ -36,6 +38,7 @@ import org.kidcontact.focussis.data.AbsenceDay;
 import org.kidcontact.focussis.data.AbsencePeriod;
 import org.kidcontact.focussis.data.Absences;
 import org.kidcontact.focussis.network.ApiBuilder;
+import org.kidcontact.focussis.network.FocusApiSingleton;
 import org.kidcontact.focussis.util.DateUtil;
 import org.kidcontact.focussis.views.AbsenceLabelView;
 
@@ -51,7 +54,7 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        url = ApiBuilder.getAbsencesUrl();
+        api = FocusApiSingleton.getApi();
         title = getString(R.string.absences_label);
         refresh();
     }
@@ -160,6 +163,24 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
         requestFinished = true;
     }
 
+    @Override
+    public void refresh() {
+        requestFinished = false;
+        networkFailed = false;
+        // TODO: implement api absences
+//        api.getPortal(new Response.Listener<JSONObject>() {
+//            @Override
+//            public void onResponse(JSONObject response) {
+//                onSuccess(response);
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                onError(error);
+//            }
+//        });
+    }
+
     private void showAbsenceDialog(AbsenceDay d) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = LayoutInflater.from(getContext());
@@ -196,12 +217,12 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
         builder.create().show();
     }
 
-    @Override
-    public void configureRequest(JsonObjectRequest request) {
-        super.configureRequest(request);
-        // for some reason, the absences page on focus takes forever to load. Give some extra time before timing out
-        request.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-    }
+//    @Override
+//    public void configureRequest(JsonObjectRequest request) {
+//        super.configureRequest(request);
+//        // for some reason, the absences page on focus takes forever to load. Give some extra time before timing out
+//        request.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+//    }
 
     private int dpToPixels(int dp) {
         final float scale = getResources().getDisplayMetrics().density;

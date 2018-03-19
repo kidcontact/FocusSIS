@@ -10,11 +10,15 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
 import org.json.JSONObject;
 import org.kidcontact.focussis.R;
 import org.kidcontact.focussis.data.Address;
 import org.kidcontact.focussis.data.AddressContact;
 import org.kidcontact.focussis.network.ApiBuilder;
+import org.kidcontact.focussis.network.FocusApiSingleton;
 import org.kidcontact.focussis.views.IconWithTextView;
 
 import java.util.List;
@@ -28,7 +32,7 @@ public class AddressFragment extends NetworkTabAwareFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        url = ApiBuilder.getAddressUrl();
+        api = FocusApiSingleton.getApi();
         title = getString(R.string.address_label);
         refresh();
     }
@@ -118,6 +122,24 @@ public class AddressFragment extends NetworkTabAwareFragment {
             }
         }
         requestFinished = true;
+    }
+
+    @Override
+    public void refresh() {
+        requestFinished = false;
+        networkFailed = false;
+        // TODO: implement address api call
+//        api.getPortal(new Response.Listener<JSONObject>() {
+//            @Override
+//            public void onResponse(JSONObject response) {
+//                onSuccess(response);
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                onError(error);
+//            }
+//        });
     }
 
     private String formatPhone(String phone) {

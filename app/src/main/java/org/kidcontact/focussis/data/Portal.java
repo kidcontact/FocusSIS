@@ -51,7 +51,7 @@ public class Portal extends MarkingPeriodPage {
                 String id = courseJSON.getString("id");
                 String name = courseJSON.getString("name");
                 String teacher = courseJSON.getString("teacher");
-                int period = courseJSON.getInt("period");
+                String period = courseJSON.getString("period");
                 String letterGrade = null;
                 int percentGrade = -1;
                 if (courseJSON.has("letter_grade") && courseJSON.has("percent_grade")) {
@@ -65,6 +65,7 @@ public class Portal extends MarkingPeriodPage {
 
         } catch (JSONException e) {
             courses = null;
+            e.printStackTrace();
             Log.e(TAG, "Error parsing portal courses");
         }
 
@@ -107,6 +108,10 @@ public class Portal extends MarkingPeriodPage {
 
     public boolean hasEvents() {
         return events != null;
+    }
+
+    public String getAlert() {
+        return alert;
     }
 
 }

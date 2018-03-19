@@ -25,6 +25,7 @@ import org.kidcontact.focussis.views.DividerItemDecoration;
 import org.kidcontact.focussis.R;
 import org.kidcontact.focussis.views.adapters.PortalCourseAdapter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -55,8 +56,14 @@ public class PortalCoursesFragment extends Fragment {
         layoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.addItemDecoration(new DividerItemDecoration(view.getContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setLayoutManager(layoutManager);
-        List<PortalCourse> sortedCourses = portal.getCourses();
+        List<PortalCourse> sortedCourses = new ArrayList<>(portal.getCourses());
         Collections.sort(sortedCourses);
+        // courses with negative period numbers have assignments but are not real courses.
+        for (int i = sortedCourses.size() - 1; i >= 0; i--) {
+            if (sortedCourses.get(i).getPeriod().startsWith("-")) {
+                sortedCourses.remove(i);
+            }
+        }
         adapter = new PortalCourseAdapter(sortedCourses);
         recyclerView.setAdapter(adapter);
 

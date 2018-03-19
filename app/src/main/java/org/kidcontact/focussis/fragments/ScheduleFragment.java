@@ -20,6 +20,7 @@ import org.kidcontact.focussis.R;
 import org.kidcontact.focussis.data.Schedule;
 import org.kidcontact.focussis.data.ScheduleCourse;
 import org.kidcontact.focussis.network.ApiBuilder;
+import org.kidcontact.focussis.network.FocusApiSingleton;
 import org.kidcontact.focussis.network.RequestSingleton;
 import org.kidcontact.focussis.util.TermUtil;
 import org.w3c.dom.Text;
@@ -38,7 +39,7 @@ public class ScheduleFragment extends NetworkTabAwareFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        url = ApiBuilder.getScheduleUrl();
+        api = FocusApiSingleton.getApi();
         title = getString(R.string.schedule_label);
         refresh();
     }
@@ -94,6 +95,24 @@ public class ScheduleFragment extends NetworkTabAwareFragment {
         }
 
         requestFinished = true;
+    }
+
+    @Override
+    public void refresh() {
+        requestFinished = false;
+        networkFailed = false;
+        // TODO: implement api call
+//        api.getPortal(new Response.Listener<JSONObject>() {
+//            @Override
+//            public void onResponse(JSONObject response) {
+//                onSuccess(response);
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                onError(error);
+//            }
+//        });
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.widget.Space;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.kidcontact.focussis.activities.MainActivity;
 import org.kidcontact.focussis.data.Course;
@@ -30,6 +32,7 @@ import org.kidcontact.focussis.data.CourseAssignment;
 import org.kidcontact.focussis.data.CourseCategory;
 import org.kidcontact.focussis.network.ApiBuilder;
 import org.kidcontact.focussis.R;
+import org.kidcontact.focussis.network.FocusApiSingleton;
 import org.kidcontact.focussis.network.RequestSingleton;
 import org.kidcontact.focussis.util.DateUtil;
 
@@ -40,11 +43,12 @@ import java.util.List;
  */
 
 public class CourseFragment extends NetworkFragment {
+    private static final String TAG = "CourseFragment";
 
     private LinearLayout progressLayout;
     private ConstraintLayout courseLayout;
-    private String url;
     private Course course;
+    private String id;
 
     public CourseFragment() {
 
@@ -53,7 +57,9 @@ public class CourseFragment extends NetworkFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        url = ApiBuilder.getCourseUrl(getArguments().getString(getString(R.string.EXTRA_COURSE_ID)));
+        api = FocusApiSingleton.getApi();//ApiBuilder.getCourseUrl();
+        id = getArguments().getString(getString(R.string.EXTRA_COURSE_ID));
+
         if (course == null) {
             refresh();
         }
@@ -63,7 +69,6 @@ public class CourseFragment extends NetworkFragment {
         course = new Course(response);
         redraw(getView());
         requestFinished = true;
-
     }
 
     @Override
@@ -74,7 +79,7 @@ public class CourseFragment extends NetworkFragment {
         progressLayout = (LinearLayout) view.findViewById(R.id.layout_loading);
         progressLayout.setVisibility(View.GONE);
 
-        if (error.networkResponse.statusCode == 403) {
+        if (error.networkResponse != null && error.networkResponse.statusCode == 403) {
             courseLayout.setVisibility(View.GONE);
             ((MainActivity) getActivity()).reauthenticate();
         }
@@ -87,6 +92,8 @@ public class CourseFragment extends NetworkFragment {
     private void redraw(View view) {
         if (view != null) {
             progressLayout.setVisibility(View.GONE);
+            View networkFailureLayout = view.findViewById(R.id.layout_network_failure);
+            networkFailureLayout.setVisibility(View.GONE);
             courseLayout.setVisibility(View.VISIBLE);
 
             TextView courseName = (TextView) view.findViewById(R.id.text_course_name);
@@ -94,10 +101,21 @@ public class CourseFragment extends NetworkFragment {
             TableLayout courseCategories = (TableLayout) view.findViewById(R.id.tablelayout_course_categories);
             courseCategories.removeAllViews();
 
-            courseName.setText("P" + Integer.toString(course.getPeriod()) + " - " + course.getName());
+            if (course.getPeriod().equals("advisory")) {
+                courseName.setText("Advisory - " + course.getName());
+            }
+            else {
+                courseName.setText("P" + course.getPeriod() + " - " + course.getName());
+            }
             courseTeacher.setText(course.getTeacher());
             TextView overallGrade = (TextView) view.findViewById(R.id.text_course_grade);
-            overallGrade.setText(Html.fromHtml("<b>Overall grade:</b> " + Integer.toString(course.getPercentGrade()) + "% " + course.getLetterGrade()));
+            if (course.getLetterGrade() != null) {
+                overallGrade.setText(Html.fromHtml("<b>Overall grade:</b> " + Integer.toString(course.getPercentGrade()) + "% " + course.getLetterGrade()));
+            }
+            else {
+                overallGrade.setText(Html.fromHtml("<b>Overall grade:</b> " + "NG"));
+            }
+
 
             if (course.hasCategories()) {
                 TableRow cnames = new TableRow(getContext());
@@ -205,7 +223,12 @@ public class CourseFragment extends NetworkFragment {
                 Space gradeSpacer = new Space(getContext());
                 cweights.addView(gradeSpacer);
                 TextView weightedGrade = new TextView(getContext());
-                weightedGrade.setText(Integer.toString(course.getPercentGrade()) + "% " + course.getLetterGrade());
+                if (course.getLetterGrade() != null) {
+                    weightedGrade.setText(Integer.toString(course.getPercentGrade()) + "% " + course.getLetterGrade());
+                }
+                else {
+                    weightedGrade.setText("NG");
+                }
                 weightedGrade.setGravity(Gravity.RIGHT);
                 setTextViewParams(weightedGrade);
                 cgrades.addView(weightedGrade);
@@ -357,19 +380,18 @@ public class CourseFragment extends NetworkFragment {
         }
         requestFinished = false;
         networkFailed = false;
-        JsonObjectRequest request = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        onSuccess(response);
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        onError(error);
-                    }
-                });
-        RequestSingleton.getInstance(getContext()).addToRequestQueue(request);
+
+        api.getCourse(this.id, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                onSuccess(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                onError(error);
+            }
+        });
     }
 
 }

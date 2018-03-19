@@ -55,7 +55,13 @@ public class PortalCourseAdapter extends RecyclerView.Adapter<PortalCourseAdapte
     public void onBindViewHolder(ViewHolder holder, int position) {
         PortalCourse course = courses.get(position);
         holder.courseName.setText(course.getName());
-        holder.courseDetails.setText(course.getName() + " - " + "Period " + Integer.toString(course.getPeriod()));
+        if (course.getPeriod().equals("advisory") || course.getPeriod().startsWith("-")) {
+            holder.courseDetails.setText(course.getTeacher() + " - " + "Advisory");
+        }
+        else {
+            holder.courseDetails.setText(course.getTeacher() + " - " + "Period " + course.getPeriod());
+        }
+
         if (course.isGraded()) {
             holder.courseGrade.setText(Integer.toString(course.getPercentGrade()) + "% " + course.getLetterGrade());
         }

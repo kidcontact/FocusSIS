@@ -16,7 +16,7 @@ public class PortalCourse implements Comparable<PortalCourse> {
     private final String letterGrade;
     private final String name;
     private final int percentGrade;
-    private final int period;
+    private final String period;
     private final String teacher;
 
     public PortalCourse(List<PortalAssignment> assignments,
@@ -25,7 +25,7 @@ public class PortalCourse implements Comparable<PortalCourse> {
                         String letterGrade,
                         String name,
                         int percentGrade,
-                        int period,
+                        String period,
                         String teacher) {
         this.assignments = assignments;
         this.days = days;
@@ -61,7 +61,7 @@ public class PortalCourse implements Comparable<PortalCourse> {
         return percentGrade;
     }
 
-    public int getPeriod() {
+    public String getPeriod() {
         return period;
     }
 
@@ -79,6 +79,6 @@ public class PortalCourse implements Comparable<PortalCourse> {
 
     @Override
     public int compareTo(@NonNull PortalCourse o) {
-        return this.period - o.period;
+        return this.period.compareTo(o.period);
     }
 }

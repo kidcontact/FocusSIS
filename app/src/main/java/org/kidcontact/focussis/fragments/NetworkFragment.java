@@ -9,6 +9,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
+import org.kidcontact.focussis.network.FocusApi;
 import org.kidcontact.focussis.network.RequestSingleton;
 
 /**
@@ -20,7 +21,7 @@ public abstract class NetworkFragment extends Fragment {
     protected boolean networkFailed = false;
     protected VolleyError networkError;
     protected volatile boolean requestFinished = false;
-    protected String url;
+    protected FocusApi api;
 
     public NetworkFragment() {
         // required empty constructor
@@ -43,7 +44,7 @@ public abstract class NetworkFragment extends Fragment {
         return requestFinished;
     }
 
-    public void refresh() {
+    public abstract void refresh();/* {
         requestFinished = false;
         networkFailed = false;
         JsonObjectRequest request = new JsonObjectRequest
@@ -60,14 +61,14 @@ public abstract class NetworkFragment extends Fragment {
                 });
         configureRequest(request);
         RequestSingleton.getInstance(getContext()).addToRequestQueue(request);
-    }
+    }*/
 
     public void onFragmentLoad() {
 
     }
 
-    public void configureRequest(JsonObjectRequest request) {
-
-    }
+//    public void configureRequest(JsonObjectRequest request) {
+//
+//    }
 
 }

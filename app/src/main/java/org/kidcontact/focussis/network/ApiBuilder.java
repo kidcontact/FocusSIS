@@ -7,8 +7,9 @@ import org.kidcontact.focussis.data.CalendarEvent;
  */
 
 public class ApiBuilder {
-    private static final String base = "http://perry.kidcontact.org:5000/api/v3/";
-    //private static final String base = "http://10.0.0.243:5000/api/v3/";
+    //private static final String base = "http://perry.kidcontact.org:5000/api/v3/";
+    private static final String base = "http://10.10.43.179:5000/api/v3/";
+    //private static final String base = "http://192.168.15.136:5000/api/v3/";
 
     public static String getSessionUrl() {
             return base + "session";
