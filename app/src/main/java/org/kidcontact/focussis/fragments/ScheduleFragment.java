@@ -101,18 +101,17 @@ public class ScheduleFragment extends NetworkTabAwareFragment {
     public void refresh() {
         requestFinished = false;
         networkFailed = false;
-        // TODO: implement api call
-//        api.getPortal(new Response.Listener<JSONObject>() {
-//            @Override
-//            public void onResponse(JSONObject response) {
-//                onSuccess(response);
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                onError(error);
-//            }
-//        });
+        api.getSchedule(new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                onSuccess(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                onError(error);
+            }
+        });
     }
 
     @Override

@@ -14,6 +14,7 @@ import org.kidcontact.focussis.network.UrlBuilder.FocusUrl;
 import org.kidcontact.focussis.parser.CourseParser;
 import org.kidcontact.focussis.parser.PageParser;
 import org.kidcontact.focussis.parser.PortalParser;
+import org.kidcontact.focussis.parser.ScheduleParser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -98,10 +99,10 @@ public class FocusApi {
         }, errorListener);
 
         requestQueue.add(portalRequest);
-        return  portalRequest;
+        return portalRequest;
     }
 
-    public Request getCourse(String id, final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
+    public Request getCourse(final String id, final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
         StringRequest courseRequest = new StringRequest(
                 Request.Method.GET, UrlBuilder.get(FocusUrl.COURSE_PRE) + id, new Response.Listener<String>() {
             @Override
@@ -110,7 +111,7 @@ public class FocusApi {
                 try {
                     listener.onResponse(courseParser.parse(response));
                 } catch (JSONException e) {
-                    Log.e(TAG, "JSONException while parsing portal");
+                    Log.e(TAG, "JSONException while parsing course (ID " + id + ")");
                     e.printStackTrace();
                     listener.onResponse(null);
                 }
@@ -118,7 +119,27 @@ public class FocusApi {
         }, errorListener);
 
         requestQueue.add(courseRequest);
-        return  courseRequest;
+        return courseRequest;
+    }
+
+    public Request getSchedule(final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
+        StringRequest scheduleRequest = new StringRequest(
+                Request.Method.GET, UrlBuilder.get(FocusUrl.SCHEDULE), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                PageParser scheduleParser = new ScheduleParser();
+                try {
+                    listener.onResponse(scheduleParser.parse(response));
+                } catch (JSONException e) {
+                    Log.e(TAG, "JSONException while parsing schedule");
+                    e.printStackTrace();
+                    listener.onResponse(null);
+                }
+            }
+        }, errorListener);
+
+        requestQueue.add(scheduleRequest);
+        return scheduleRequest;
     }
 
     public long getSessionTimeout() {
