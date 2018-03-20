@@ -35,6 +35,7 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 
 import org.joda.time.DateTime;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.kidcontact.focussis.R;
 import org.kidcontact.focussis.data.Calendar;
@@ -52,6 +53,7 @@ import org.kidcontact.focussis.views.CalendarDayEnableAllDecorator;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -79,6 +81,9 @@ public class CalendarFragment extends NetworkTabAwareFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        java.util.Calendar today = java.util.Calendar.getInstance();
+        year = today.get(java.util.Calendar.YEAR);
+        month = today.get(java.util.Calendar.MONTH);
     }
 
     @Override
@@ -125,16 +130,12 @@ public class CalendarFragment extends NetworkTabAwareFragment {
                 loading.setVisibility(View.VISIBLE);
                 year = materialCalendarView.getCurrentDate().getYear();
                 month = materialCalendarView.getCurrentDate().getMonth();
-                //url = ApiBuilder.getCalendarUrl(year, month + 1);
                 refresh();
                 //materialCalendarView.addDecorator(new CalendarDayEnableAllDecorator(materialCalendarView.getCurrentDate().getMonth()));
                 //materialCalendarView.addDecorator(new CalendarDayDisableAllDecorator(materialCalendarView.getCurrentDate().getMonth()));
             }
         });
 
-        year = calendarView.getCurrentDate().getYear();
-        month = calendarView.getCurrentDate().getMonth();
-        //url = ApiBuilder.getCalendarUrl(year, month + 1);
         api = FocusApiSingleton.getApi();
         title = getString(R.string.calendar_label);
         refresh();
@@ -283,7 +284,7 @@ public class CalendarFragment extends NetworkTabAwareFragment {
                                                     changeColorBack.start();
                                                     final Dialog dialog = createEventDetailDialog(e);
                                                     dialog.show();
-                                                    JsonObjectRequest eventRequest = new JsonObjectRequest(Request.Method.GET, ApiBuilder.getCalendarEventUrl(e), null, new Response.Listener<JSONObject>() {
+                                                    api.getCalendarEvent(e.getId(), e.getType(), new Response.Listener<JSONObject>() {
                                                         @Override
                                                         public void onResponse(JSONObject response) {
                                                             onEventRequestSuccess(response, dialog);
@@ -294,7 +295,6 @@ public class CalendarFragment extends NetworkTabAwareFragment {
                                                             onEventRequestError(error, dialog);
                                                         }
                                                     });
-                                                    RequestSingleton.getInstance(getContext()).addToRequestQueue(eventRequest);
                                                 }
                                             });
                                             assignmentLayout.addView(tv);
@@ -356,7 +356,7 @@ public class CalendarFragment extends NetworkTabAwareFragment {
 
                                                     final Dialog dialog = createEventDetailDialog(e);
                                                     dialog.show();
-                                                    JsonObjectRequest eventRequest = new JsonObjectRequest(Request.Method.GET, ApiBuilder.getCalendarEventUrl(e), null, new Response.Listener<JSONObject>() {
+                                                    api.getCalendarEvent(e.getId(), e.getType(), new Response.Listener<JSONObject>() {
                                                         @Override
                                                         public void onResponse(JSONObject response) {
                                                             onEventRequestSuccess(response, dialog);
@@ -367,7 +367,6 @@ public class CalendarFragment extends NetworkTabAwareFragment {
                                                             onEventRequestError(error, dialog);
                                                         }
                                                     });
-                                                    RequestSingleton.getInstance(getContext()).addToRequestQueue(eventRequest);
 
                                                 }
                                             });
@@ -410,18 +409,17 @@ public class CalendarFragment extends NetworkTabAwareFragment {
     public void refresh() {
         requestFinished = false;
         networkFailed = false;
-        // TODO: implement api call
-//        api.getPortal(new Response.Listener<JSONObject>() {
-//            @Override
-//            public void onResponse(JSONObject response) {
-//                onSuccess(response);
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                onError(error);
-//            }
-//        });
+        api.getCalendar(year, month + 1, new Response.Listener<JSONObject>() {  // month is 0 indexed in java calendar
+            @Override
+            public void onResponse(JSONObject response) {
+                onSuccess(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                onError(error);
+            }
+        });
     }
 
     private Dialog createEventDetailDialog(CalendarEvent e) {
@@ -466,13 +464,22 @@ public class CalendarFragment extends NetworkTabAwareFragment {
             TextView teacher = (TextView) dialog.findViewById(R.id.text_event_teacher);
             String[] teacherNames = eventDetails.getCourseTeacher().split(" ");
             if (teacherNames.length == 1) {
-                teacherNames = new String[] {teacherNames[0], teacherNames[0]};
+                teacher.setText(Html.fromHtml("<b>" + getString(R.string.calendar_event_teacher) + ": </b>"
+                        + eventDetails.getCourseTeacher()));
             }
-            teacherNames[1] = teacherNames[teacherNames.length - 1];
-            teacher.setText(Html.fromHtml("<b>" + getString(R.string.calendar_event_teacher) + ": </b>"
-                    + teacherNames[1] + ", " + teacherNames[0]));
+            else {
+                teacherNames[1] = teacherNames[teacherNames.length - 1];
+                teacher.setText(Html.fromHtml("<b>" + getString(R.string.calendar_event_teacher) + ": </b>"
+                        + teacherNames[1] + ", " + teacherNames[0]));
+            }
             TextView section = (TextView) dialog.findViewById(R.id.text_event_section);
-            String sectionStr = "Period " + eventDetails.getCoursePeriod() + " - ";
+            String sectionStr = " - ";
+            if (eventDetails.hasPeriod()) {
+                sectionStr = "Period " + eventDetails.getCoursePeriod() + sectionStr;
+            }
+            else {
+                sectionStr = eventDetails.getCourseSection() + sectionStr;
+            }
             if (eventDetails.getCourseTerm() != ScheduleCourse.Term.YEAR) {
                 sectionStr += TermUtil.termToStringAbbr(eventDetails.getCourseTerm()) + " - ";
             }
@@ -498,6 +505,7 @@ public class CalendarFragment extends NetworkTabAwareFragment {
     }
 
     private void onEventRequestError(VolleyError error, Dialog dialog) {
+        // TODO
         Log.e(TAG, "Error getting calendar event details");
     }
 

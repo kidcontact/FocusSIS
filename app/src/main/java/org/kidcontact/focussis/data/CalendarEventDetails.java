@@ -23,6 +23,7 @@ public class CalendarEventDetails {
     private final String courseDays;
     private final String courseName;
     private final int coursePeriod;
+    private final String courseSection; // alternative to period, if the section is not numbered (e.g. advisory)
     private final String courseTeacher;
     private final ScheduleCourse.Term courseTerm;
 
@@ -36,6 +37,7 @@ public class CalendarEventDetails {
         String courseDays;
         String courseName;
         int coursePeriod;
+        String courseSection = null;
         String courseTeacher;
         ScheduleCourse.Term courseTerm;
 
@@ -85,7 +87,15 @@ public class CalendarEventDetails {
                 JSONObject courseJSON = eventJSON.getJSONObject("course");
                 courseDays = courseJSON.getString("days");
                 courseName = courseJSON.getString("name");
-                coursePeriod = courseJSON.getInt("period");
+                if (courseJSON.has("period")) {
+                    coursePeriod = courseJSON.getInt("period");
+                    courseSection = null;
+                }
+                else {
+                    courseSection = courseJSON.getString("section");
+                    coursePeriod = 0;
+                }
+
                 courseTeacher = courseJSON.getString("teacher");
                 if (courseJSON.has("term")) {
                     courseTerm = TermUtil.stringToTerm(courseJSON.getString("term"));
@@ -99,6 +109,7 @@ public class CalendarEventDetails {
                 courseDays = null;
                 courseName = null;
                 coursePeriod = 0;
+                courseSection = null;
                 courseTeacher = null;
                 courseTerm = null;
             }
@@ -121,6 +132,7 @@ public class CalendarEventDetails {
         this.courseDays = courseDays;
         this.courseName = courseName;
         this.coursePeriod = coursePeriod;
+        this.courseSection = courseSection;
         this.courseTeacher = courseTeacher;
         this.courseTerm = courseTerm;
     }
@@ -161,8 +173,16 @@ public class CalendarEventDetails {
         return courseName;
     }
 
+    public boolean hasPeriod() {
+        return courseSection == null;
+    }
+
     public int getCoursePeriod() {
         return coursePeriod;
+    }
+
+    public String getCourseSection() {
+        return courseSection;
     }
 
     public String getCourseTeacher() {

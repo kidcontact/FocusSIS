@@ -8,9 +8,14 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 
+import net.fortuna.ical4j.model.property.Url;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.kidcontact.focussis.data.CalendarEvent;
 import org.kidcontact.focussis.network.UrlBuilder.FocusUrl;
+import org.kidcontact.focussis.parser.CalendarEventParser;
+import org.kidcontact.focussis.parser.CalendarParser;
 import org.kidcontact.focussis.parser.CourseParser;
 import org.kidcontact.focussis.parser.PageParser;
 import org.kidcontact.focussis.parser.PortalParser;
@@ -78,7 +83,7 @@ public class FocusApi {
 
         };
 
-        requestQueue.add(loginRequest);
+        this.queueRequest(loginRequest);
         return loginRequest;
     }
 
@@ -98,13 +103,13 @@ public class FocusApi {
             }
         }, errorListener);
 
-        requestQueue.add(portalRequest);
+        this.queueRequest(portalRequest);
         return portalRequest;
     }
 
     public Request getCourse(final String id, final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
         StringRequest courseRequest = new StringRequest(
-                Request.Method.GET, UrlBuilder.get(FocusUrl.COURSE_PRE) + id, new Response.Listener<String>() {
+                Request.Method.GET, String.format(UrlBuilder.get(FocusUrl.COURSE), id), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 PageParser courseParser = new CourseParser();
@@ -118,7 +123,7 @@ public class FocusApi {
             }
         }, errorListener);
 
-        requestQueue.add(courseRequest);
+        this.queueRequest(courseRequest);
         return courseRequest;
     }
 
@@ -138,11 +143,61 @@ public class FocusApi {
             }
         }, errorListener);
 
-        requestQueue.add(scheduleRequest);
+        this.queueRequest(scheduleRequest);
         return scheduleRequest;
+    }
+
+    public Request getCalendar(int year, int month, final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
+        StringRequest calendarRequest = new StringRequest(
+                Request.Method.GET, String.format(UrlBuilder.get(FocusUrl.CALENDAR), month, year), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                PageParser calendarParser = new CalendarParser();
+                try {
+                    listener.onResponse(calendarParser.parse(response));
+                } catch (JSONException e) {
+                    Log.e(TAG, "JSONException while parsing calendar");
+                    e.printStackTrace();
+                    listener.onResponse(null);
+                }
+            }
+        }, errorListener);
+
+        this.queueRequest(calendarRequest);
+        return calendarRequest;
+    }
+
+    // alternative to assignment is event
+    public Request getCalendarEvent(final String id, CalendarEvent.EventType eventType, final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
+        String url = eventType.equals(CalendarEvent.EventType.ASSIGNMENT) ? UrlBuilder.get(FocusUrl.ASSIGNMENT) : UrlBuilder.get(FocusUrl.EVENT);
+        StringRequest eventRequest = new StringRequest(
+                Request.Method.GET, String.format(url, id), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                PageParser calendarEventParser = new CalendarEventParser();
+                try {
+                    JSONObject parsed = calendarEventParser.parse(response);
+                    parsed.put("id", id);
+                    listener.onResponse(parsed);
+                } catch (JSONException e) {
+                    Log.e(TAG, "JSONException while parsing calendar");
+                    e.printStackTrace();
+                    listener.onResponse(null);
+                }
+            }
+        }, errorListener);
+
+        this.queueRequest(eventRequest);
+        return eventRequest;
     }
 
     public long getSessionTimeout() {
         return sessionTimeout;
     }
+
+    private void queueRequest(Request request) {
+        Log.i(TAG, "Queuing " + request.getUrl());
+        requestQueue.add(request);
+    }
+
 }

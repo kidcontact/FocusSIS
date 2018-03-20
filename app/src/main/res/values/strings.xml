@@ -145,7 +145,7 @@
     <string name="key_login_password">password</string>
 
     <!-- About page -->
-    <string name="about_page_description">Focus SIS allows students to easily check their grades and view various other academic information. This app was created as part of a year-long academic project by a junior at the Academy for Science and Design, and is in no way associated with Focus School Software LLC.</string>
+    <string name="about_page_description">The Focus student information system (SIS) allows students to easily check their grades and view various other academic information. This app was developed by a student at a high school using the Focus SIS, and is in no way associated with Focus School Software LLC.</string>
     <string name="about_email">mail@kidcontact.org</string>
     <string name="about_website">http://kidcontact.org</string>
     <string name="about_github">Find the code on GitHub</string>

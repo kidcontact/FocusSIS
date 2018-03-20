@@ -1,7 +1,5 @@
 package org.kidcontact.focussis.network;
 
-import java.net.URL;
-
 /**
  * Created by slensky on 3/12/18.
  */
@@ -10,11 +8,11 @@ public class UrlBuilder {
     public enum FocusUrl {
         LOGIN,
         PORTAL,
-        COURSE_PRE,
+        COURSE,
         SCHEDULE,
-        CALENDAR_PRE,
-        EVENT_PRE,
-        ASSIGNMENT_PRE,
+        CALENDAR,
+        EVENT,
+        ASSIGNMENT,
         DEMOGRAPHIC,
         ABSENCES,
         REFERRALS,
@@ -30,16 +28,16 @@ public class UrlBuilder {
                 return UrlBuilder.tld + "focus/index.php";
             case PORTAL:
                 return UrlBuilder.tld + "focus/Modules.php?modname=misc/Portal.php";
-            case COURSE_PRE:
-                return UrlBuilder.tld + "focus/Modules.php?modname=Grades/StudentGBGrades.php?course_period_id=";
+            case COURSE:
+                return UrlBuilder.tld + "focus/Modules.php?modname=Grades/StudentGBGrades.php?course_period_id=%s";
             case SCHEDULE:
                 return UrlBuilder.tld + "focus/Modules.php?modname=Scheduling/Schedule.php";
-            case CALENDAR_PRE:
-                return UrlBuilder.tld + "focus/Modules.php?modname=School_Setup/Calendar.php&";
-            case EVENT_PRE:
-                return UrlBuilder.tld + "focus/Modules.php?modname=School_Setup/Calendar.php&modfunc=detail&event_id=";
-            case ASSIGNMENT_PRE:
-                return UrlBuilder.tld + "focus/Modules.php?modname=School_Setup/Calendar.php&modfunc=detail&assignment_id=";
+            case CALENDAR:
+                return UrlBuilder.tld + "focus/Modules.php?modname=School_Setup/Calendar.php&month=%d&year=%d";
+            case EVENT:
+                return UrlBuilder.tld + "focus/Modules.php?modname=School_Setup/Calendar.php&modfunc=detail&event_id=%s";
+            case ASSIGNMENT:
+                return UrlBuilder.tld + "focus/Modules.php?modname=School_Setup/Calendar.php&modfunc=detail&assignment_id=%s";
             case DEMOGRAPHIC:
                 return UrlBuilder.tld + "focus/Modules.php?modname=Students/Student.php";
             case ABSENCES:
