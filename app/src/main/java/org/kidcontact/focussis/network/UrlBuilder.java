@@ -7,6 +7,7 @@ package org.kidcontact.focussis.network;
 public class UrlBuilder {
     public enum FocusUrl {
         LOGIN,
+        LOGOUT,
         PORTAL,
         COURSE,
         SCHEDULE,
@@ -26,6 +27,8 @@ public class UrlBuilder {
         switch (url) {
             case LOGIN:
                 return UrlBuilder.tld + "focus/index.php";
+            case LOGOUT:
+                return UrlBuilder.tld + "focus/index.php?logout";
             case PORTAL:
                 return UrlBuilder.tld + "focus/Modules.php?modname=misc/Portal.php";
             case COURSE:

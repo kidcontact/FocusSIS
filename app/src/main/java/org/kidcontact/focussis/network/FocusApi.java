@@ -87,6 +87,20 @@ public class FocusApi {
         return loginRequest;
     }
 
+    public Request logout(final Response.Listener<Boolean> listener, final Response.ErrorListener errorListener) {
+        StringRequest logoutRequest = new StringRequest(
+                Request.Method.POST, UrlBuilder.get(FocusUrl.LOGOUT),new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                loggedIn = false;
+                listener.onResponse(true);
+            }
+        }, errorListener);
+
+        this.queueRequest(logoutRequest);
+        return logoutRequest;
+    }
+
     public Request getPortal(final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
         StringRequest portalRequest = new StringRequest(
                 Request.Method.GET, UrlBuilder.get(FocusUrl.PORTAL), new Response.Listener<String>() {

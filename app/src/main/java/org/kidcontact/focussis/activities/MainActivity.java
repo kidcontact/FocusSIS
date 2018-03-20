@@ -28,10 +28,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.kidcontact.focussis.fragments.AboutFragment;
 import org.kidcontact.focussis.fragments.AbsencesFragment;
 import org.kidcontact.focussis.fragments.AddressFragment;
@@ -46,7 +43,6 @@ import org.kidcontact.focussis.fragments.PortalFragment;
 import org.kidcontact.focussis.fragments.ReferralsFragment;
 import org.kidcontact.focussis.fragments.ScheduleFragment;
 import org.kidcontact.focussis.R;
-import org.kidcontact.focussis.network.ApiBuilder;
 import org.kidcontact.focussis.network.FocusApi;
 import org.kidcontact.focussis.network.FocusApiSingleton;
 import org.kidcontact.focussis.network.RequestSingleton;
@@ -372,11 +368,15 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
             refresh();
             return true;
         }
+        else if (id == R.id.action_logout) {
+            logout();
+            return true;
+        }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -478,23 +478,6 @@ public class MainActivity extends AppCompatActivity
 
     private boolean isSessionExpired() {
         return api.getSessionTimeout() <= System.currentTimeMillis();
-//        CookieStore cookies = RequestSingleton.getCookieManager().getCookieStore();
-//        HttpCookie sessionTimeout = null;
-//        for (HttpCookie c : cookies.getCookies()) {
-//            if (c.getName().equals("session_timeout")) {
-//                sessionTimeout = c;
-//            }
-//        }
-//
-//        if (sessionTimeout == null ||
-//                Long.parseLong(sessionTimeout.getValue()) <= System.currentTimeMillis() / 1000) {
-//            if (sessionTimeout == null) { Log.e(TAG, "Session timeout cookie not found"); }
-//            Log.d(TAG, "Session has expired");
-//            return true;
-//        }
-//        else {
-//            return false;
-//        }
     }
 
     public void reauthenticate() {
@@ -529,62 +512,95 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-
-//        final RequestQueue queue = RequestSingleton.getInstance(this).getRequestQueue();
-//        JSONObject data = null;
-//        try {
-//            data = new JSONObject().put(getString(R.string.key_login_username), username).put(getString(R.string.key_login_password), password);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//            Log.e(TAG, "JSONException while constructing login data");
-//        }
-//        JsonObjectRequest loginRequest = new JsonObjectRequest
-//                (Request.Method.POST, ApiBuilder.getSessionUrl(), data, new Response.Listener<JSONObject>() {
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//                        Log.d(TAG, "Login successful");
-//                        progressDialog.dismiss();
-//                        authenticating = false;
-//                        refresh();
-//
-//                    }
-//                }, new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        progressDialog.dismiss();
-//                        if (error.networkResponse != null) {
-//                            showAuthenticateRetryDialog(error.networkResponse.statusCode);
-//                        }
-//                        else {
-//                            showAuthenticateRetryDialog(-1);
-//                        }
-//                    }
-//                });
-//        queue.add(loginRequest);
     }
 
     private void showAuthenticateRetryDialog(int status) {
         Log.i(TAG, "Reauth failed, status " + Integer.toString(status));
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         if (status == 504) {
-            builder.setMessage(getString(R.string.auth_retry_dialog_message_timeout));
+            builder.setMessage(getString(R.string.retry_dialog_message_timeout));
         }
         else {
             if (status == -1) {
-                builder.setMessage(getString(R.string.auth_retry_dialog_message_timeout));
+                builder.setMessage(getString(R.string.retry_dialog_message_timeout));
             }
             else {
-                builder.setMessage(String.format(getString(R.string.auth_retry_dialog_message_general), status));
+                builder.setMessage(String.format(getString(R.string.retry_dialog_message_general), status));
             }
         }
         builder.setCancelable(false);
-        builder.setPositiveButton(getString(R.string.auth_retry_dialog_button), new DialogInterface.OnClickListener()
+        builder.setPositiveButton(getString(R.string.retry_dialog_button), new DialogInterface.OnClickListener()
         {
             @Override
             public void onClick(DialogInterface dialog, int which)
             {
                 dialog.dismiss();
                 reauthenticate();
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void logout() {
+        Log.i(TAG, "Logging out user");
+        final ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this,
+                null, getString(R.string.logout_progress_dialog_message), true);
+
+        api.logout(new Response.Listener<Boolean>() {
+            @Override
+            public void onResponse(Boolean response) {
+                Log.d(TAG, "Logout successful");
+                progressDialog.dismiss();
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                if (error.networkResponse != null) {
+                    showLogoutRetryDialog(error.networkResponse.statusCode);
+                }
+                else {
+                    showLogoutRetryDialog(-1);
+                }
+            }
+        });
+
+    }
+
+    private void showLogoutRetryDialog(int status) {
+        Log.i(TAG, "Logout failed, status " + Integer.toString(status));
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        if (status == 504) {
+            builder.setMessage(getString(R.string.retry_dialog_message_timeout));
+        }
+        else {
+            if (status == -1) {
+                builder.setMessage(getString(R.string.retry_dialog_message_timeout));
+            }
+            else {
+                builder.setMessage(String.format(getString(R.string.retry_dialog_message_general), status));
+            }
+        }
+        builder.setCancelable(false);
+        builder.setPositiveButton(getString(R.string.retry_dialog_button), new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                dialog.dismiss();
+                logout();
+            }
+        });
+        builder.setNegativeButton(getString(R.string.retry_dialog_cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                dialog.cancel();
             }
         });
 

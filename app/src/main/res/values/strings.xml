@@ -4,6 +4,7 @@
 
     <!-- Toolbar -->
     <string name="toolbar_menu_refresh">Refresh</string>
+    <string name="toolbar_menu_logout">Log out</string>
     <string name="portal_label">Portal</string>
     <string name="schedule_label">Schedule</string>
     <string name="calendar_label">Calendar</string>
@@ -155,11 +156,13 @@
     <string name="about_license_link">https://github.com/kidcontact/focus-api/blob/master/LICENSE</string>
 
     <!-- Dialogs -->
-    <string name="auth_progress_dialog">Authenticating...</string>
+    <string name="auth_progress_dialog">Authenticating…</string>
     <string name="timeout_progress_dialog_title">Session timed out</string>
-    <string name="timeout_progress_dialog_message">Reauthenticating...</string>
-    <string name="auth_retry_dialog_message_general">Network error (%d)</string>
-    <string name="auth_retry_dialog_message_timeout">Network timed out</string>
-    <string name="auth_retry_dialog_button">Retry</string>
+    <string name="timeout_progress_dialog_message">Reauthenticating…</string>
+    <string name="retry_dialog_message_general">Network error (%d)</string>
+    <string name="retry_dialog_message_timeout">Network timed out</string>
+    <string name="retry_dialog_button">Retry</string>
+    <string name="retry_dialog_cancel">Cancel</string>
+    <string name="logout_progress_dialog_message">Logging out…</string>
 
 </resources>
