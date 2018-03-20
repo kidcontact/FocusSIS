@@ -174,11 +174,18 @@ public class PortalParser extends PageParser {
             }
         }
 
-        Element alertText = alerts.selectFirst("a");
-        if (alertText != null) {
-            json.put("alert", alertText.text().replace("\n", "").trim());
+        Elements alertLinks = alerts.select(":root > a");
+        JSONArray alertsJson = new JSONArray();
+        for (Element a: alertLinks) {
+            JSONObject alertJson = new JSONObject();
+            alertJson.put("message", a.text().replace("\n", "").trim());
+            alertJson.put("url", a.attr("href"));
+            alertsJson.put(alertJson);
         }
 
+        if (alertsJson.length() > 0) {
+            json.put("alerts", alertsJson);
+        }
         if (courses.length() > 0) {
             json.put("courses", courses);
         }

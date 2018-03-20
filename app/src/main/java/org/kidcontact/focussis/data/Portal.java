@@ -20,13 +20,13 @@ public class Portal extends MarkingPeriodPage {
     private static final String TAG = Portal.class.getName();
     private final List<PortalCourse> courses;
     private final List<PortalEvent> events;
-    private final String alert;
+    private final PortalAlert[] alerts;
 
     public Portal(JSONObject portalJSON) {
         super(portalJSON);
         List<PortalCourse> courses;
         List<PortalEvent> events;
-        String alert;
+        PortalAlert[] alerts;
 
         try {
             JSONObject coursesJSON = portalJSON.getJSONObject("courses");
@@ -82,15 +82,20 @@ public class Portal extends MarkingPeriodPage {
         }
 
         try {
-            alert = portalJSON.getString("alert");
+            JSONArray alertsJson = portalJSON.getJSONArray("alerts");
+            alerts = new PortalAlert[alertsJson.length()];
+            for (int i = 0; i < alertsJson.length(); i++) {
+                JSONObject a = alertsJson.getJSONObject(i);
+                alerts[i] = new PortalAlert(a.getString("message"), a.getString("url"));
+            }
         } catch (JSONException e) {
-            alert = null;
-            Log.w(TAG, "Alert not found in portal JSON");
+            alerts = null;
+            Log.w(TAG, "No alerts found in portal JSON");
         }
 
         this.courses = courses;
         this.events = events;
-        this.alert = alert;
+        this.alerts = alerts;
 
     }
 
@@ -110,8 +115,8 @@ public class Portal extends MarkingPeriodPage {
         return events != null;
     }
 
-    public String getAlert() {
-        return alert;
+    public PortalAlert[] getAlerts() {
+        return alerts;
     }
 
 }
