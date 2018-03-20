@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -505,7 +506,8 @@ public class CalendarFragment extends NetworkTabAwareFragment {
     }
 
     private void onEventRequestError(VolleyError error, Dialog dialog) {
-        // TODO
+        dialog.cancel();
+        Toast.makeText(getContext(), getString(R.string.network_error_timeout), Toast.LENGTH_LONG).show();
         Log.e(TAG, "Error getting calendar event details");
     }
 
