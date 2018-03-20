@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity
     String username;
     String password;
 
+    private boolean isVisible;
 
     // used by session thread to avoid spamming reauthenticate() calls
     private boolean authenticating;
@@ -102,6 +103,8 @@ public class MainActivity extends AppCompatActivity
         Intent intent = getIntent();
         username = intent.getStringExtra(getString(R.string.EXTRA_USERNAME));
         password = intent.getStringExtra(getString(R.string.EXTRA_PASSWORD));
+
+        isVisible = true;
 
         View header = ((NavigationView) findViewById(R.id.nav_view)).getHeaderView(0);
         TextView name = (TextView) header.findViewById(R.id.nav_text_name);
@@ -140,7 +143,7 @@ public class MainActivity extends AppCompatActivity
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    if (isSessionExpired() && !authenticating) {
+                    if (isSessionExpired() && !authenticating && isVisible) {
                         authenticating = true;
                         Log.i(TAG, "Session timed out, reauthenticating from thread");
                         runOnUiThread(new Runnable() {
@@ -630,6 +633,30 @@ public class MainActivity extends AppCompatActivity
                 loadingLayout.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        this.isVisible = true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.isVisible = true;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        this.isVisible = false;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.isVisible = false;
     }
 
 }
