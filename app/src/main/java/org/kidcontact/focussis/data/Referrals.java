@@ -38,7 +38,7 @@ public class Referrals extends MarkingPeriodPage {
                     int grade = referralJSON.getInt("grade");
                     String id = referralJSON.getString("id");
                     String name = referralJSON.getString("name");
-                    int notificationSent = referralJSON.getInt("notification_sent");
+                    boolean notificationSent = referralJSON.getBoolean("notification_sent");
                     boolean processed = referralJSON.getBoolean("processed");
                     String school = referralJSON.getString("school");
                     int schoolYear = referralJSON.getInt("school_year");
@@ -59,7 +59,7 @@ public class Referrals extends MarkingPeriodPage {
 
             }
         } catch (JSONException e) {
-            Log.e(TAG, "referrals not foudn in JSON");
+            Log.e(TAG, "referrals not found in JSON");
         }
 
     }

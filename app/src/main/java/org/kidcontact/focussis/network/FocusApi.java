@@ -3,9 +3,11 @@ package org.kidcontact.focussis.network;
 import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
 import net.fortuna.ical4j.model.property.Url;
@@ -19,6 +21,7 @@ import org.kidcontact.focussis.parser.CalendarParser;
 import org.kidcontact.focussis.parser.CourseParser;
 import org.kidcontact.focussis.parser.PageParser;
 import org.kidcontact.focussis.parser.PortalParser;
+import org.kidcontact.focussis.parser.ReferralsParser;
 import org.kidcontact.focussis.parser.ScheduleParser;
 
 import java.util.HashMap;
@@ -203,6 +206,81 @@ public class FocusApi {
 
         this.queueRequest(eventRequest);
         return eventRequest;
+    }
+
+//    public Request getDemographic(final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
+////        StringRequest demographicRequest = new StringRequest(
+////                Request.Method.GET, UrlBuilder.get(FocusUrl.SCHEDULE), new Response.Listener<String>() {
+////            @Override
+////            public void onResponse(String response) {
+////                PageParser scheduleParser = new ScheduleParser();
+////                try {
+////                    listener.onResponse(scheduleParser.parse(response));
+////                } catch (JSONException e) {
+////                    Log.e(TAG, "JSONException while parsing schedule");
+////                    e.printStackTrace();
+////                    listener.onResponse(null);
+////                }
+////            }
+////        }, errorListener);
+//
+//        MultipartRequest demographicRequest = new MultipartRequest(
+//                Request.Method.POST, UrlBuilder.get(FocusUrl.STUDENT), new Response.Listener<NetworkResponse>() {
+//            @Override
+//            public void onResponse(NetworkResponse response) {
+//
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//
+//            }
+//        }) {
+//            @Override
+//            protected Map<String, String> getParams() {
+//                Map<String, String> params = new HashMap<>();
+//                params.put("api_token", "gh659gjhvdyudo973823tt9gvjf7i6ric75r76");
+//                params.put("name", mNameInput.getText().toString());
+//                params.put("location", mLocationInput.getText().toString());
+//                params.put("about", mAvatarInput.getText().toString());
+//                params.put("contact", mContactInput.getText().toString());
+//                return params;
+//            }
+//
+//            @Override
+//            protected Map<String, DataPart> getByteData() {
+//                Map<String, DataPart> params = new HashMap<>();
+//                // file name could found file base or direct access from real path
+//                // for now just get bitmap data from ImageView
+//                params.put("avatar", new DataPart("file_avatar.jpg", AppHelper.getFileDataFromDrawable(getBaseContext(), mAvatarImage.getDrawable()), "image/jpeg"));
+//                params.put("cover", new DataPart("file_cover.jpg", AppHelper.getFileDataFromDrawable(getBaseContext(), mCoverImage.getDrawable()), "image/jpeg"));
+//
+//                return params;
+//            }
+//        };
+//
+//        this.queueRequest(demographicRequest);
+//        return demographicRequest;
+//    }
+
+    public Request getReferrals(final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
+        StringRequest referralsRequest = new StringRequest(
+                Request.Method.GET, UrlBuilder.get(FocusUrl.REFERRALS), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                PageParser referralsParser = new ReferralsParser();
+                try {
+                    listener.onResponse(referralsParser.parse(response));
+                } catch (JSONException e) {
+                    Log.e(TAG, "JSONException while parsing schedule");
+                    e.printStackTrace();
+                    listener.onResponse(null);
+                }
+            }
+        }, errorListener);
+
+        this.queueRequest(referralsRequest);
+        return referralsRequest;
     }
 
     public long getSessionTimeout() {

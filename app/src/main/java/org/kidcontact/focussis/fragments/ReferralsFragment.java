@@ -13,6 +13,9 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
 import org.json.JSONObject;
 import org.kidcontact.focussis.R;
 import org.kidcontact.focussis.data.Referral;
@@ -103,24 +106,23 @@ public class ReferralsFragment extends NetworkTabAwareFragment {
     public void refresh() {
         requestFinished = false;
         networkFailed = false;
-        // TODO: implement api call
-//        api.getPortal(new Response.Listener<JSONObject>() {
-//            @Override
-//            public void onResponse(JSONObject response) {
-//                onSuccess(response);
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                onError(error);
-//            }
-//        });
+        api.getReferrals(new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                onSuccess(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                onError(error);
+            }
+        });
     }
 
     public void showReferralDialog(Referral r) {
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
         //alertDialog.setTitle();
-        String html = "<b>Reporter </b>" + r.getTeacher() + "<br>" +
+        String html = "<b>Reporter: </b>" + r.getTeacher() + "<br>" +
                 "<b>Name: </b>" + r.getName() + "<br>" +
                 "<b>Grade: </b>" + r.getGrade() + "<br>" +
                 "<b>Entry date: </b>" + DateUtil.dateTimeToLongString(r.getEntryDate()) + "<br>" +

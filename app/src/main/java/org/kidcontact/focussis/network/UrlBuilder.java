@@ -14,10 +14,9 @@ public class UrlBuilder {
         CALENDAR,
         EVENT,
         ASSIGNMENT,
-        DEMOGRAPHIC,
+        STUDENT,
         ABSENCES,
         REFERRALS,
-        ADDRESS,
         FINAL_GRADES,
         API,
     }
@@ -41,14 +40,12 @@ public class UrlBuilder {
                 return UrlBuilder.tld + "focus/Modules.php?modname=School_Setup/Calendar.php&modfunc=detail&event_id=%s";
             case ASSIGNMENT:
                 return UrlBuilder.tld + "focus/Modules.php?modname=School_Setup/Calendar.php&modfunc=detail&assignment_id=%s";
-            case DEMOGRAPHIC:
+            case STUDENT:
                 return UrlBuilder.tld + "focus/Modules.php?modname=Students/Student.php";
             case ABSENCES:
                 return UrlBuilder.tld + "focus/Modules.php?modname=Attendance/StudentSummary.php";
             case REFERRALS:
                 return UrlBuilder.tld + "focus/Modules.php?force_package=SIS&modname=Discipline/Referrals.php";
-            case ADDRESS:
-                return UrlBuilder.tld + "focus/Modules.php?modname=Students/Student.php&include=Address";
             case FINAL_GRADES:
                 return UrlBuilder.tld + "focus/Modules.php?force_package=SIS&modname=Grades/StudentRCGrades.php";
             case API:

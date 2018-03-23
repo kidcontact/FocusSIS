@@ -15,7 +15,7 @@ public class Referral {
     private final int grade;
     private final String id;
     private final String name;
-    private final int notificationSent;
+    private final boolean notificationSent;
     private final boolean processed;
     private final String school;
     private final int schoolYear;
@@ -23,7 +23,7 @@ public class Referral {
     private final String violation;
     private final String otherViolation;
 
-    public Referral(DateTime creationDate, DateTime entryDate, DateTime lastUpdated, boolean display, int grade, String id, String name, int notificationSent, boolean processed, String school, int schoolYear, String teacher, String violation, String otherViolation) {
+    public Referral(DateTime creationDate, DateTime entryDate, DateTime lastUpdated, boolean display, int grade, String id, String name, boolean notificationSent, boolean processed, String school, int schoolYear, String teacher, String violation, String otherViolation) {
         this.creationDate = creationDate;
         this.entryDate = entryDate;
         this.lastUpdated = lastUpdated;
@@ -68,7 +68,7 @@ public class Referral {
         return name;
     }
 
-    public int getNotificationSent() {
+    public boolean getNotificationSent() {
         return notificationSent;
     }
 

@@ -42,7 +42,7 @@
         <android.support.constraint.ConstraintLayout
             android:id="@+id/course_fragment_course_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:visibility="visible"
             tools:layout_editor_absoluteX="8dp"
             tools:layout_editor_absoluteY="8dp">
@@ -122,9 +122,9 @@
                 </HorizontalScrollView>
             </ScrollView>
 
-            <ScrollView
+            <HorizontalScrollView
                 android:id="@+id/scrollview_assignments"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
@@ -137,20 +137,14 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/scrollview_categories">
 
-                <HorizontalScrollView
-                    android:id="@+id/horizontalView"
+                <TableLayout
+                    android:id="@+id/table_assignments"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:scrollbars="horizontal">
+                    android:layout_height="match_parent"
+                    android:divider="?android:attr/dividerHorizontal"
+                    android:showDividers="middle" />
 
-                    <TableLayout
-                        android:id="@+id/table_assignments"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:divider="?android:attr/dividerHorizontal"
-                        android:showDividers="middle" />
-                </HorizontalScrollView>
-            </ScrollView>
+            </HorizontalScrollView>
 
         </android.support.constraint.ConstraintLayout>
 
