@@ -35,12 +35,22 @@ public class ScheduleParser extends PageParser {
             course.put("teacher", data[data.length - 1]);
             course.put("days", td.get(2).text());
             course.put("room", td.get(3).text());
-            if (td.get(4).text().equals("Full Year")) {
+
+            String termStr = td.get(4).text().trim().toLowerCase();
+            if (termStr.equals("full year") || termStr.isEmpty()) {
                 course.put("term", "year");
             }
             else {
-                String[] t = td.get(4).text().split(" ");
-                course.put("term", t[0].charAt(0) + t[1]);
+                String term = Character.toString(termStr.charAt(0));
+                if (termStr.length() > 1) {
+                    for (int i = 1; i < termStr.length(); i++) {
+                        if (Character.isDigit(termStr.charAt(i))) {
+                            term += termStr.charAt(i);
+                            break;
+                        }
+                    }
+                }
+                course.put("term", term);
             }
 
             courses.put(course);

@@ -15,6 +15,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.kidcontact.focussis.R;
 import org.kidcontact.focussis.data.Schedule;
@@ -33,7 +34,7 @@ import java.util.List;
  */
 
 public class ScheduleFragment extends NetworkTabAwareFragment {
-
+    private static final String TAG = "ScheduleFragment";
     private Schedule schedule;
 
     @Override
