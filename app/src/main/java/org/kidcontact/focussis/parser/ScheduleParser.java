@@ -7,6 +7,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.kidcontact.focussis.util.JSONUtil;
 
 /**
  * Created by slensky on 3/18/18.
@@ -59,7 +60,7 @@ public class ScheduleParser extends PageParser {
         }
 
         json.put("courses", courses);
-        return this.concatJson(json, this.getMarkingPeriods(html));
+        return JSONUtil.concatJson(json, this.getMarkingPeriods(html));
     }
 
 }

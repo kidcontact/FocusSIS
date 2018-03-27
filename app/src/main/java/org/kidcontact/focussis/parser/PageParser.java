@@ -53,13 +53,4 @@ public abstract class PageParser {
         return json;
     }
 
-    protected JSONObject concatJson(JSONObject json1, JSONObject json2) throws JSONException {
-        Iterator it = json2.keys();
-        while (it.hasNext()) {
-            String key = (String)it.next();
-            json1.put(key, json2.get(key));
-        }
-        return json1;
-    }
-
 }

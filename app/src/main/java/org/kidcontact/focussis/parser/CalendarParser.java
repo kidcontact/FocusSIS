@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.kidcontact.focussis.util.DateUtil;
+import org.kidcontact.focussis.util.JSONUtil;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -68,7 +69,7 @@ public class CalendarParser extends PageParser {
             json.put("events", events);
         }
 
-        return this.concatJson(json, this.getMarkingPeriods(html));
+        return JSONUtil.concatJson(json, this.getMarkingPeriods(html));
     }
 
 }

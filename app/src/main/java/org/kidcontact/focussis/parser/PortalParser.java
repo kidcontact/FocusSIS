@@ -19,6 +19,7 @@ import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 import org.jsoup.select.NodeVisitor;
 import org.kidcontact.focussis.util.DateUtil;
+import org.kidcontact.focussis.util.JSONUtil;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -192,7 +193,7 @@ public class PortalParser extends PageParser {
         if (events.length() > 0) {
             json.put("events", events);
         }
-        return this.concatJson(json, this.getMarkingPeriods(html));
+        return JSONUtil.concatJson(json, this.getMarkingPeriods(html));
     }
 
 }

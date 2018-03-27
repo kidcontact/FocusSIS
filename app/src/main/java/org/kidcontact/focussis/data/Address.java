@@ -14,7 +14,7 @@ import java.util.List;
  * Created by slensky on 5/21/17.
  */
 
-public class Address extends MarkingPeriodPage {
+public class Address {
 
     private final String TAG = "Address";
     private final String address;
@@ -26,8 +26,6 @@ public class Address extends MarkingPeriodPage {
     private final List<AddressContact> contacts;
 
     public Address(JSONObject addressJSON) {
-        super(addressJSON);
-
         String address = null;
         String apartment = null;
         String city = null;

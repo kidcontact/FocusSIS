@@ -22,9 +22,8 @@ import java.util.Map;
  * Created by Angga on 27/04/2016 12.05.
  */
 public class MultipartRequest extends Request<NetworkResponse> {
-    private final String twoHyphens = "--";
     private final String lineEnd = "\r\n";
-    private final String boundary = "apiclient-" + System.currentTimeMillis();
+    private final String boundary = "IZRFVXxqiYxWX3x";
 
     private Response.Listener<NetworkResponse> mListener;
     private Response.ErrorListener mErrorListener;
@@ -39,8 +38,8 @@ public class MultipartRequest extends Request<NetworkResponse> {
      * @param errorListener on error http or library timeout
      */
     public MultipartRequest(String url, Map<String, String> headers,
-                            Response.Listener<NetworkResponse> listener,
-                            Response.ErrorListener errorListener) {
+                                  Response.Listener<NetworkResponse> listener,
+                                  Response.ErrorListener errorListener) {
         super(Method.POST, url, errorListener);
         this.mListener = listener;
         this.mErrorListener = errorListener;
@@ -56,8 +55,8 @@ public class MultipartRequest extends Request<NetworkResponse> {
      * @param errorListener on error event handler
      */
     public MultipartRequest(int method, String url,
-                            Response.Listener<NetworkResponse> listener,
-                            Response.ErrorListener errorListener) {
+                                  Response.Listener<NetworkResponse> listener,
+                                  Response.ErrorListener errorListener) {
         super(method, url, errorListener);
         this.mListener = listener;
         this.mErrorListener = errorListener;
@@ -92,7 +91,7 @@ public class MultipartRequest extends Request<NetworkResponse> {
             }
 
             // close multipart form data after text and file data
-            dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+            dos.writeBytes("--" + boundary + "--" +lineEnd);
 
             return bos.toByteArray();
         } catch (IOException e) {
@@ -172,7 +171,7 @@ public class MultipartRequest extends Request<NetworkResponse> {
      * @throws IOException
      */
     private void buildTextPart(DataOutputStream dataOutputStream, String parameterName, String parameterValue) throws IOException {
-        dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
+        dataOutputStream.writeBytes("--" + boundary + lineEnd);
         dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"" + parameterName + "\"" + lineEnd);
         //dataOutputStream.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
         dataOutputStream.writeBytes(lineEnd);
@@ -188,7 +187,7 @@ public class MultipartRequest extends Request<NetworkResponse> {
      * @throws IOException
      */
     private void buildDataPart(DataOutputStream dataOutputStream, DataPart dataFile, String inputName) throws IOException {
-        dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
+        dataOutputStream.writeBytes("--" + boundary + lineEnd);
         dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"" +
                 inputName + "\"; filename=\"" + dataFile.getFileName() + "\"" + lineEnd);
         if (dataFile.getType() != null && !dataFile.getType().trim().isEmpty()) {

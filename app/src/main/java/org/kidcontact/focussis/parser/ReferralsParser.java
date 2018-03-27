@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
+import org.kidcontact.focussis.util.JSONUtil;
 
 import java.util.Iterator;
 
@@ -113,7 +114,7 @@ public class ReferralsParser extends PageParser {
             }
         }
 
-        return this.concatJson(json, this.getMarkingPeriods(html));
+        return JSONUtil.concatJson(json, this.getMarkingPeriods(html));
     }
 
 }

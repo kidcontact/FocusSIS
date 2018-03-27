@@ -1,6 +1,7 @@
 package org.kidcontact.focussis.network;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.android.volley.NetworkResponse;
@@ -8,24 +9,31 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 
-import net.fortuna.ical4j.model.property.Url;
-
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.kidcontact.focussis.data.CalendarEvent;
+import org.kidcontact.focussis.data.Student;
 import org.kidcontact.focussis.network.UrlBuilder.FocusUrl;
 import org.kidcontact.focussis.parser.CalendarEventParser;
 import org.kidcontact.focussis.parser.CalendarParser;
 import org.kidcontact.focussis.parser.CourseParser;
+import org.kidcontact.focussis.parser.DemographicParser;
 import org.kidcontact.focussis.parser.PageParser;
 import org.kidcontact.focussis.parser.PortalParser;
 import org.kidcontact.focussis.parser.ReferralsParser;
 import org.kidcontact.focussis.parser.ScheduleParser;
+import org.kidcontact.focussis.parser.StudentParser;
+import org.kidcontact.focussis.util.JSONUtil;
 
+import java.net.CookieManager;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by slensky on 3/12/18.
@@ -36,6 +44,9 @@ public class FocusApi {
 
     private final String username;
     private final String password;
+    private boolean hasAccessedStudentPage; // api access requires first sending GET to student url
+    private Student student;
+
     private final Context context;
     private final RequestQueue requestQueue;
 
@@ -86,7 +97,7 @@ public class FocusApi {
 
         };
 
-        this.queueRequest(loginRequest);
+        queueRequest(loginRequest);
         return loginRequest;
     }
 
@@ -100,7 +111,7 @@ public class FocusApi {
             }
         }, errorListener);
 
-        this.queueRequest(logoutRequest);
+        queueRequest(logoutRequest);
         return logoutRequest;
     }
 
@@ -120,7 +131,7 @@ public class FocusApi {
             }
         }, errorListener);
 
-        this.queueRequest(portalRequest);
+        queueRequest(portalRequest);
         return portalRequest;
     }
 
@@ -140,7 +151,7 @@ public class FocusApi {
             }
         }, errorListener);
 
-        this.queueRequest(courseRequest);
+        queueRequest(courseRequest);
         return courseRequest;
     }
 
@@ -160,7 +171,7 @@ public class FocusApi {
             }
         }, errorListener);
 
-        this.queueRequest(scheduleRequest);
+        queueRequest(scheduleRequest);
         return scheduleRequest;
     }
 
@@ -180,7 +191,7 @@ public class FocusApi {
             }
         }, errorListener);
 
-        this.queueRequest(calendarRequest);
+        queueRequest(calendarRequest);
         return calendarRequest;
     }
 
@@ -204,64 +215,99 @@ public class FocusApi {
             }
         }, errorListener);
 
-        this.queueRequest(eventRequest);
+        queueRequest(eventRequest);
         return eventRequest;
     }
 
-//    public Request getDemographic(final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
-////        StringRequest demographicRequest = new StringRequest(
-////                Request.Method.GET, UrlBuilder.get(FocusUrl.SCHEDULE), new Response.Listener<String>() {
-////            @Override
-////            public void onResponse(String response) {
-////                PageParser scheduleParser = new ScheduleParser();
-////                try {
-////                    listener.onResponse(scheduleParser.parse(response));
-////                } catch (JSONException e) {
-////                    Log.e(TAG, "JSONException while parsing schedule");
-////                    e.printStackTrace();
-////                    listener.onResponse(null);
-////                }
-////            }
-////        }, errorListener);
-//
-//        MultipartRequest demographicRequest = new MultipartRequest(
-//                Request.Method.POST, UrlBuilder.get(FocusUrl.STUDENT), new Response.Listener<NetworkResponse>() {
-//            @Override
-//            public void onResponse(NetworkResponse response) {
-//
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//
-//            }
-//        }) {
-//            @Override
-//            protected Map<String, String> getParams() {
-//                Map<String, String> params = new HashMap<>();
-//                params.put("api_token", "gh659gjhvdyudo973823tt9gvjf7i6ric75r76");
-//                params.put("name", mNameInput.getText().toString());
-//                params.put("location", mLocationInput.getText().toString());
-//                params.put("about", mAvatarInput.getText().toString());
-//                params.put("contact", mContactInput.getText().toString());
-//                return params;
-//            }
-//
-//            @Override
-//            protected Map<String, DataPart> getByteData() {
-//                Map<String, DataPart> params = new HashMap<>();
-//                // file name could found file base or direct access from real path
-//                // for now just get bitmap data from ImageView
-//                params.put("avatar", new DataPart("file_avatar.jpg", AppHelper.getFileDataFromDrawable(getBaseContext(), mAvatarImage.getDrawable()), "image/jpeg"));
-//                params.put("cover", new DataPart("file_cover.jpg", AppHelper.getFileDataFromDrawable(getBaseContext(), mCoverImage.getDrawable()), "image/jpeg"));
-//
-//                return params;
-//            }
-//        };
-//
-//        this.queueRequest(demographicRequest);
-//        return demographicRequest;
-//    }
+    private void ensureStudentPage(final MultipartRequest nextRequest) {
+        if (!hasAccessedStudentPage) {
+            Log.d(TAG, "Retrieving student page for first time");
+            final StringRequest studentRequest = new StringRequest(Request.Method.GET, UrlBuilder.get(FocusUrl.STUDENT), new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                final PageParser studentParser = new StudentParser();
+                try {
+                    final JSONObject parsed = studentParser.parse(response);
+                    ImageRequest imageRequest = new ImageRequest(parsed.getString("picture"),
+                            new Response.Listener<Bitmap>() {
+                                @Override
+                                public void onResponse(Bitmap bitmap) {
+                                    try {
+                                        parsed.remove("picture");
+                                        student = new Student(parsed);
+                                        student.setPicture(bitmap);
+                                        hasAccessedStudentPage = true;
+                                        queueRequest(nextRequest);
+                                    } catch (JSONException e) {
+                                        Log.e(TAG, "Error parsing student JSON (error in code, not Focus)");
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }, 0, 0, null,
+                            new Response.ErrorListener() {
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.w(TAG, "Network error fetching image, continuing anyway");
+                                    try {
+                                        parsed.remove("picture");
+                                        student = new Student(parsed);
+                                        hasAccessedStudentPage = true;
+                                        queueRequest(nextRequest);
+                                    } catch (JSONException e) {
+                                        Log.e(TAG, "Error parsing student JSON (error in code, not Focus)");
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                    queueRequest(imageRequest);
+                } catch (JSONException e) {
+                    Log.e(TAG, "JSONException while parsing student page");
+                    e.printStackTrace();
+                    nextRequest.deliverResponse(null);
+                }
+                }
+            }, nextRequest.getErrorListener());
+            queueRequest(studentRequest);
+        }
+        else {
+            queueRequest(nextRequest);
+        }
+    }
+
+    public Request getDemographic(final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
+        final MultipartRequest demographicRequest = new MultipartRequest(
+                Request.Method.POST, UrlBuilder.get(FocusUrl.STUDENT), new Response.Listener<NetworkResponse>() {
+            @Override
+            public void onResponse(NetworkResponse response) {
+                PageParser demographicParser = new DemographicParser();
+                String responseStr = new String(response.data);
+                try {
+                    JSONObject parsed = demographicParser.parse(responseStr);
+                    parsed = JSONUtil.concatJson(parsed, student.getJson());
+                    listener.onResponse(parsed);
+                } catch (JSONException e) {
+                    Log.e(TAG, "JSONException while parsing demographic");
+                    e.printStackTrace();
+                    listener.onResponse(null);
+                }
+            }
+        }, errorListener) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                String req = "{\"requests\":[" +
+                        "{\"controller\":\"EditController\",\"method\":\"cache:getFieldData\",\"token\":\"6f62bdafe60d9a146aa7be7174bcc31f8340360e\",\"args\":[\"general\",\"SISStudent\",%s]}," +
+                        "{\"controller\":\"EditController\",\"method\":\"cache:getFieldData\",\"token\":\"6f62bdafe60d9a146aa7be7174bcc31f8340360e\",\"args\":[\"9\",\"SISStudent\",%<s]}" +
+                        "]}";
+                Log.i(TAG,String.format(req, student.getId()));
+
+                params.put("__call__", String.format(req, student.getId()));
+                return params;
+            }
+        };
+
+        ensureStudentPage(demographicRequest);
+        return demographicRequest;
+    }
 
     public Request getReferrals(final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
         StringRequest referralsRequest = new StringRequest(
@@ -279,7 +325,7 @@ public class FocusApi {
             }
         }, errorListener);
 
-        this.queueRequest(referralsRequest);
+        queueRequest(referralsRequest);
         return referralsRequest;
     }
 
@@ -289,7 +335,15 @@ public class FocusApi {
 
     private void queueRequest(Request request) {
         Log.i(TAG, "Queuing " + request.getUrl());
+        CookieManager cookieManager = RequestSingleton.getCookieManager();
+        for (int i = 0; i < cookieManager.getCookieStore().getCookies().size(); i++) {
+            cookieManager.getCookieStore().getCookies().get(0).setSecure(false);
+        }
         requestQueue.add(request);
+    }
+
+    public Student getStudent() {
+        return student;
     }
 
 }

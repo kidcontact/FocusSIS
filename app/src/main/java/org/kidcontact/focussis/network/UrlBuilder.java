@@ -21,6 +21,8 @@ public class UrlBuilder {
         API,
     }
     private static String tld = "https://focus.asdnh.org/";
+    //private static String tld = "http://10.0.2.2/";
+
 
     public static String get(FocusUrl url) {
         switch (url) {

@@ -2,14 +2,18 @@ package org.kidcontact.focussis.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.kidcontact.focussis.R;
 import org.kidcontact.focussis.data.Demographic;
-import org.kidcontact.focussis.network.ApiBuilder;
 import org.kidcontact.focussis.network.FocusApiSingleton;
 import org.kidcontact.focussis.util.DateUtil;
 import org.kidcontact.focussis.views.IconWithTextView;
@@ -21,6 +25,7 @@ import java.util.List;
  */
 
 public class DemographicFragment extends NetworkTabAwareFragment {
+    private static final String TAG = "DemographicFragment";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,13 +45,19 @@ public class DemographicFragment extends NetworkTabAwareFragment {
 
     @Override
     protected void onSuccess(JSONObject response) {
+        try {
+            Log.i(TAG, response.toString(2));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         Demographic demographic = new Demographic(response);
+        demographic.setPicture(api.getStudent().getPicture());
         View view = getView();
         if (view != null) {
             IconWithTextView name = (IconWithTextView) view.findViewById(R.id.view_name);
             name.setText(demographic.getName());
             IconWithTextView dob = (IconWithTextView) view.findViewById(R.id.view_dob);
-            dob.setText(DateUtil.dateTimeToLongString(demographic.getBirthday()));
+            dob.setText(DateUtil.dateTimeToLongString(demographic.getBirthdate()));
             //IconWithTextView email = (IconWithTextView) view.findViewById(R.id.view_email);
             //email.setText(demographic.getEmail());
             IconWithTextView gender = (IconWithTextView) view.findViewById(R.id.view_gender);
@@ -55,13 +66,13 @@ public class DemographicFragment extends NetworkTabAwareFragment {
             grade.setText(ordinal(demographic.getGrade()) + ", " + ordinal(demographic.getLevel()) + " year");
 
             IconWithTextView bus = (IconWithTextView) view.findViewById(R.id.view_bus);
-            if (demographic.getArrivalBus() == demographic.getDismissalBus()) {
+            if (demographic.getArrivalBus().equals(demographic.getDismissalBus())) {
                 bus.setHint(getString(R.string.demographic_bus_single_hint));
-                if (demographic.getArrivalBus() == 0) {
+                if (demographic.getArrivalBus() == null) {
                     bus.setText(getString(R.string.demographic_bus_not_assigned));
                 }
                 else {
-                    bus.setText(Integer.toString(demographic.getArrivalBus()));
+                    bus.setText(demographic.getArrivalBus());
                 }
             }
             else {
@@ -70,13 +81,13 @@ public class DemographicFragment extends NetworkTabAwareFragment {
             }
             bus.setText(demographic.getArrivalBus() + "/" + demographic.getDismissalBus());
             IconWithTextView locker = (IconWithTextView) view.findViewById(R.id.view_locker);
-            locker.setText(Integer.toString(demographic.getLocker()));
+            locker.setText(demographic.getLocker());
             IconWithTextView medical = (IconWithTextView) view.findViewById(R.id.view_medical_record_status);
             medical.setText(demographic.getMedicalRecordStatus());
             IconWithTextView photoAuth = (IconWithTextView) view.findViewById(R.id.view_photo_auth);
             photoAuth.setText(boolToYesNo(demographic.isPhotoAuthorized()));
             IconWithTextView cumulative = (IconWithTextView) view.findViewById(R.id.view_cumulative_file);
-            cumulative.setText(boolToYesNo(demographic.isCumulativeFile()));
+            cumulative.setText(demographic.getCumulativeFile());
             IconWithTextView studentID = (IconWithTextView) view.findViewById(R.id.view_student_id);
             studentID.setText(Integer.toString(demographic.getId()));
         }
@@ -88,18 +99,17 @@ public class DemographicFragment extends NetworkTabAwareFragment {
     public void refresh() {
         requestFinished = false;
         networkFailed = false;
-        // TODO: implement api call
-//        api.getPortal(new Response.Listener<JSONObject>() {
-//            @Override
-//            public void onResponse(JSONObject response) {
-//                onSuccess(response);
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                onError(error);
-//            }
-//        });
+        api.getDemographic(new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                onSuccess(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                onError(error);
+            }
+        });
     }
 
     @Override
