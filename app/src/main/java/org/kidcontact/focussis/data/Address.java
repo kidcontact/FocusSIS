@@ -43,7 +43,7 @@ public class Address {
         try {
             apartment = addressJSON.getString("apt");
         } catch (JSONException e) {
-            Log.e(TAG, "apartment not found in JSON");
+            Log.w(TAG, "apartment not found in JSON");
         }
 
         try {
@@ -77,44 +77,53 @@ public class Address {
 
                 String cAddress = null;
                 String cApartment = null;
-                String cCellPhone = null;
                 String cCity = null;
+                String cPhone = null;
                 String cEmail = null;
-                String cHomePhone = null;
                 String cName = null;
-                String cPrivateEmail = null;
                 String cRelationship = null;
                 String cState = null;
                 String cZip = null;
-                try {
-                    cAddress = contactJSON.getString("address");
-                } catch (JSONException e) {
-                    Log.e(TAG, "address not found in contact JSON");
+                boolean cCustody = false;
+                boolean cEmergency = false;
+                List<AddressContactDetail> cDetails = null;
+                if (contactJSON.has("address")) {
+                    try {
+                        cAddress = contactJSON.getString("address");
+                    } catch (JSONException e) {
+                        Log.e(TAG, "address not found in contact JSON");
+                    }
+                    try {
+                        cApartment = contactJSON.getString("apt");
+                    } catch (JSONException e) {
+                        Log.w(TAG, "apartment not found in contact JSON");
+                    }
+                    try {
+                        cCity = contactJSON.getString("city");
+                    } catch (JSONException e) {
+                        Log.e(TAG, "city not found in contact JSON");
+                    }
+                    try {
+                        cState = contactJSON.getString("state");
+                    } catch (JSONException e) {
+                        Log.e(TAG, "state not found in contact JSON");
+                    }
+                    try {
+                        cZip = contactJSON.getString("zip");
+                    } catch (JSONException e) {
+                        Log.e(TAG, "zip not found in contact JSON");
+                    }
                 }
+
                 try {
-                    cApartment = contactJSON.getString("apt");
+                    cPhone = contactJSON.getString("phone");
                 } catch (JSONException e) {
-                    Log.e(TAG, "apartment not found in contact JSON");
-                }
-                try {
-                    cCellPhone = contactJSON.getString("cell_phone");
-                } catch (JSONException e) {
-                    Log.e(TAG, "cell phone not found in contact JSON");
-                }
-                try {
-                    cCity = contactJSON.getString("city");
-                } catch (JSONException e) {
-                    Log.e(TAG, "city not found in contact JSON");
+                    Log.w(TAG, "phone not found in contact JSON");
                 }
                 try {
                     cEmail = contactJSON.getString("email");
                 } catch (JSONException e) {
-                    Log.e(TAG, "email not found in contact JSON");
-                }
-                try {
-                    cHomePhone = contactJSON.getString("home_phone");
-                } catch (JSONException e) {
-                    Log.e(TAG, "home phone not found in contact JSON");
+                    Log.w(TAG, "email not found in contact JSON");
                 }
                 try {
                     cName = contactJSON.getString("name");
@@ -122,27 +131,45 @@ public class Address {
                     Log.e(TAG, "name not found in contact JSON");
                 }
                 try {
-                    cPrivateEmail = contactJSON.getString("private_email");
-                } catch (JSONException e) {
-                    Log.e(TAG, "private email not found in contact JSON");
-                }
-                try {
                     cRelationship = contactJSON.getString("relationship");
                     cRelationship = Character.toUpperCase(cRelationship.charAt(0)) + cRelationship.substring(1);
                 } catch (JSONException e) {
-                    Log.e(TAG, "relationship not found in contact JSON");
+                    Log.w(TAG, "relationship not found in contact JSON");
                 }
                 try {
-                    cState = contactJSON.getString("state");
+                    cCustody = contactJSON.getBoolean("custody");
                 } catch (JSONException e) {
-                    Log.e(TAG, "state not found in contact JSON");
+                    Log.e(TAG, "custody not found in contact JSON");
                 }
                 try {
-                    cZip = contactJSON.getString("zip");
+                    cEmergency = contactJSON.getBoolean("emergency");
                 } catch (JSONException e) {
-                    Log.e(TAG, "zip not found in contact JSON");
+                    Log.e(TAG, "emergency not found in contact JSON");
                 }
-                contacts.add(new AddressContact(cAddress, cApartment, cCellPhone, cCity, cEmail, cHomePhone, cName, cPrivateEmail, cRelationship, cState, cZip));
+
+                if (contactJSON.has("details")) {
+                    try {
+                        JSONArray detailsJSON = contactJSON.getJSONArray("details");
+                        cDetails = new ArrayList<>();
+                        for (int j = 0; j < detailsJSON.length(); j++) {
+                            String title = detailsJSON.getJSONObject(j).getString("title");
+                            String value = detailsJSON.getJSONObject(j).getString("value");
+                            AddressContactDetail.Type type = AddressContactDetail.Type.OTHER;
+                            if (detailsJSON.getJSONObject(j).getString("type").equals("phone")) {
+                                type = AddressContactDetail.Type.PHONE;
+                            }
+                            else if (detailsJSON.getJSONObject(j).getString("type").equals("email")) {
+                                type = AddressContactDetail.Type.EMAIL;
+                            }
+                            cDetails.add(new AddressContactDetail(title, value, type));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "error parsing contact details");
+                    }
+                }
+
+                contacts.add(new AddressContact(cAddress, cApartment, cCity, cPhone, cEmail, cName, cRelationship, cState, cZip, cCustody, cEmergency, cDetails));
             }
         } catch (JSONException e) {
             Log.e(TAG, "contacts not found in JSON");

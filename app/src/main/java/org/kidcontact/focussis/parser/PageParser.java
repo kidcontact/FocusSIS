@@ -53,4 +53,12 @@ public abstract class PageParser {
         return json;
     }
 
+    protected String sanitizePhoneNumber(String phoneNumber) {
+        return phoneNumber
+                .replace("-", "")
+                .replace("(", "")
+                .replace(")", "")
+                .replace(" ", "");
+    }
+
 }

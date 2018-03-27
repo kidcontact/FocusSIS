@@ -21,7 +21,7 @@
             android:title="@string/nav_demographic" />
         <item
             android:id="@+id/nav_address"
-            android:icon="@drawable/ic_location_city_black_24px"
+            android:icon="@drawable/ic_contacts_black_24px"
             android:title="@string/nav_address" />
         <item
             android:id="@+id/nav_referrals"

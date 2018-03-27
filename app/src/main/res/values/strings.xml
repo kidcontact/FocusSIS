@@ -9,7 +9,7 @@
     <string name="schedule_label">Schedule</string>
     <string name="calendar_label">Calendar</string>
     <string name="demographic_label">Demographic</string>
-    <string name="address_label">Address</string>
+    <string name="address_label">Contacts</string>
     <string name="referrals_label">Referrals</string>
     <string name="absences_label">Absences</string>
     <string name="final_grades_label">Final Grades &amp; GPA</string>
@@ -23,7 +23,7 @@
     <string name="nav_schedule">Schedule</string>
     <string name="nav_calendar">Calendar</string>
     <string name="nav_demographic">Demographic</string>
-    <string name="nav_address">Address</string>
+    <string name="nav_address">Contacts</string>
     <string name="nav_referrals">Referrals</string>
     <string name="nav_absences">Absences</string>
     <string name="nav_final_grades">Final Grades and GPA</string>
@@ -95,7 +95,10 @@
     <string name="address_contact_home_phone_hint">Home phone</string>
     <string name="address_contact_cell_phone_hint">Cell phone</string>
     <string name="address_contact_relationship_hint">Relationship</string>
+    <string name="address_contact_custody_hint">Custody</string>
+    <string name="address_contact_emergency_hint">Emergency contact</string>
     <string name="address_contact_name_hint">Name</string>
+    <string name="address_contact_details_hint">Additional details</string>
     <string name="address_contact_title">Contact</string>
 
     <!-- Referrals -->
@@ -164,5 +167,9 @@
     <string name="retry_dialog_button">Retry</string>
     <string name="retry_dialog_cancel">Cancel</string>
     <string name="logout_progress_dialog_message">Logging out…</string>
+
+    <!-- Misc -->
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 </resources>

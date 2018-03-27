@@ -1,5 +1,7 @@
 package org.kidcontact.focussis.data;
 
+import java.util.List;
+
 /**
  * Created by slensky on 5/22/17.
  */
@@ -8,28 +10,34 @@ public class AddressContact {
 
     private final String address;
     private final String apartment;
-    private final String cellPhone;
     private final String city;
+    private final String phone;
     private final String email;
-    private final String homePhone;
     private final String name;
-    private final String privateEmail;
     private final String relationship;
     private final String state;
     private final String zip;
+    private final boolean custody;
+    private final boolean emergency;
+    private final List<AddressContactDetail> details;
 
-    public AddressContact(String address, String apartment, String cellPhone, String city, String email, String homePhone, String name, String privateEmail, String relationship, String state, String zip) {
+    public AddressContact(String address, String apartment, String city, String phone, String email, String name, String relationship, String state, String zip, boolean custody, boolean emergency, List<AddressContactDetail> details) {
         this.address = address;
         this.apartment = apartment;
-        this.cellPhone = cellPhone;
         this.city = city;
+        this.phone = phone;
         this.email = email;
-        this.homePhone = homePhone;
         this.name = name;
-        this.privateEmail = privateEmail;
         this.relationship = relationship;
         this.state = state;
         this.zip = zip;
+        this.custody = custody;
+        this.emergency = emergency;
+        this.details = details;
+    }
+
+    public boolean hasAddress() {
+        return address != null;
     }
 
     public String getAddress() {
@@ -40,28 +48,32 @@ public class AddressContact {
         return apartment;
     }
 
-    public String getCellPhone() {
-        return cellPhone;
-    }
-
     public String getCity() {
         return city;
+    }
+
+    public boolean hasPhone() {
+        return phone != null;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public boolean hasEmail() {
+        return email != null;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public String getHomePhone() {
-        return homePhone;
-    }
-
     public String getName() {
         return name;
     }
 
-    public String getPrivateEmail() {
-        return privateEmail;
+    public boolean hasRelationship() {
+        return relationship != null;
     }
 
     public String getRelationship() {
@@ -75,4 +87,21 @@ public class AddressContact {
     public String getZip() {
         return zip;
     }
+
+    public boolean isCustody() {
+        return custody;
+    }
+
+    public boolean isEmergency() {
+        return emergency;
+    }
+
+    public boolean hasDetails() {
+        return details != null && details.size() > 0;
+    }
+
+    public List<AddressContactDetail> getDetails() {
+        return details;
+    }
+
 }

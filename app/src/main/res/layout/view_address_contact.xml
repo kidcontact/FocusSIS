@@ -47,11 +47,32 @@
             custom:hint="@string/address_contact_relationship_hint"/>
 
         <org.kidcontact.focussis.views.IconWithTextView
+            android:id="@+id/view_custody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            custom:icon="@drawable/ic_gavel_black_24px"
+            custom:hint="@string/address_contact_custody_hint"/>
+
+        <org.kidcontact.focussis.views.IconWithTextView
+            android:id="@+id/view_emergency"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            custom:icon="@drawable/ic_warning_black_24px"
+            custom:hint="@string/address_contact_emergency_hint"/>
+
+        <org.kidcontact.focussis.views.IconWithTextView
             android:id="@+id/view_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             custom:icon="@drawable/ic_home_black_24px"
             custom:hint="@string/address_contact_address_hint"/>
+
+        <org.kidcontact.focussis.views.IconWithTextView
+            android:id="@+id/view_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            custom:icon="@drawable/ic_phone_black_24px"
+            custom:hint="@string/address_phone_hint"/>
 
         <org.kidcontact.focussis.views.IconWithTextView
             android:id="@+id/view_email"
@@ -61,25 +82,32 @@
             custom:hint="@string/address_contact_email_hint"/>
 
         <org.kidcontact.focussis.views.IconWithTextView
-            android:id="@+id/view_private_email"
+            android:id="@+id/view_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            custom:icon="@drawable/ic_email_secure_black_24px"
-            custom:hint="@string/address_contact_private_email_hint"/>
+            custom:icon="@drawable/ic_information_outline_black_24px"
+            custom:hint="@string/address_contact_details_hint"/>
 
-        <org.kidcontact.focussis.views.IconWithTextView
-            android:id="@+id/view_home_phone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            custom:icon="@drawable/ic_phone_classic_black_24px"
-            custom:hint="@string/address_contact_home_phone_hint"/>
+        <!--<org.kidcontact.focussis.views.IconWithTextView-->
+            <!--android:id="@+id/view_private_email"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--custom:icon="@drawable/ic_email_secure_black_24px"-->
+            <!--custom:hint="@string/address_contact_private_email_hint"/>-->
 
-        <org.kidcontact.focussis.views.IconWithTextView
-            android:id="@+id/view_cell_phone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            custom:icon="@drawable/ic_phone_black_24px"
-            custom:hint="@string/address_contact_cell_phone_hint"/>
+        <!--<org.kidcontact.focussis.views.IconWithTextView-->
+            <!--android:id="@+id/view_home_phone"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--custom:icon="@drawable/ic_phone_classic_black_24px"-->
+            <!--custom:hint="@string/address_contact_home_phone_hint"/>-->
+
+        <!--<org.kidcontact.focussis.views.IconWithTextView-->
+            <!--android:id="@+id/view_cell_phone"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--custom:icon="@drawable/ic_phone_black_24px"-->
+            <!--custom:hint="@string/address_contact_cell_phone_hint"/>-->
 
     </LinearLayout>
 

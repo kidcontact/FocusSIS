@@ -45,11 +45,6 @@ public class DemographicFragment extends NetworkTabAwareFragment {
 
     @Override
     protected void onSuccess(JSONObject response) {
-        try {
-            Log.i(TAG, response.toString(2));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         Demographic demographic = new Demographic(response);
         demographic.setPicture(api.getStudent().getPicture());
         View view = getView();
@@ -136,11 +131,11 @@ public class DemographicFragment extends NetworkTabAwareFragment {
         }
     }
 
-    private static String boolToYesNo(boolean b) {
+    private String boolToYesNo(boolean b) {
         if (b) {
-            return "Yes";
+            return getString(R.string.yes);
         }
-        return "No";
+        return getString(R.string.no);
     }
 
 }

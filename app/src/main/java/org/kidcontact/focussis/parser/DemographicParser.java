@@ -15,13 +15,6 @@ public class DemographicParser extends PageParser {
 
     @Override
     public JSONObject parse(String jsonStr) throws JSONException {
-        int maxLogSize = 2000;
-        for(int i = 0; i <= jsonStr.length() / maxLogSize; i++) {
-            int start = i * maxLogSize;
-            int end = (i+1) * maxLogSize;
-            end = end > jsonStr.length() ? jsonStr.length() : end;
-            Log.v(TAG, jsonStr.substring(start, end));
-        }
         JSONArray json = new JSONArray(jsonStr);
         JSONArray result0 = json.getJSONObject(0).getJSONArray("result");
         JSONArray result1 = json.getJSONObject(1).getJSONArray("result");
@@ -111,11 +104,7 @@ public class DemographicParser extends PageParser {
         parsed.put("medical_record_status", medicalRecords);
 
         parsed.put("photo_auth", result1.getJSONObject(6).getInt("value") == 1);
-        String studentMobile = result1.getJSONObject(7).getString("value")
-                .replace(" ", "")
-                .replace("-", "")
-                .replace("(", "")
-                .replace(")", "");
+        String studentMobile = sanitizePhoneNumber(result1.getJSONObject(7).getString("value"));
         if (!studentMobile.isEmpty() && !studentMobile.equals("000")) {
             parsed.put("student_mobile", studentMobile);
         }

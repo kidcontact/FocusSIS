@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import org.kidcontact.focussis.data.CalendarEvent;
 import org.kidcontact.focussis.data.Student;
 import org.kidcontact.focussis.network.UrlBuilder.FocusUrl;
+import org.kidcontact.focussis.parser.AddressParser;
 import org.kidcontact.focussis.parser.CalendarEventParser;
 import org.kidcontact.focussis.parser.CalendarParser;
 import org.kidcontact.focussis.parser.CourseParser;
@@ -298,7 +299,7 @@ public class FocusApi {
                         "{\"controller\":\"EditController\",\"method\":\"cache:getFieldData\",\"token\":\"6f62bdafe60d9a146aa7be7174bcc31f8340360e\",\"args\":[\"general\",\"SISStudent\",%s]}," +
                         "{\"controller\":\"EditController\",\"method\":\"cache:getFieldData\",\"token\":\"6f62bdafe60d9a146aa7be7174bcc31f8340360e\",\"args\":[\"9\",\"SISStudent\",%<s]}" +
                         "]}";
-                Log.i(TAG,String.format(req, student.getId()));
+                Log.d(TAG,String.format(req, student.getId()));
 
                 params.put("__call__", String.format(req, student.getId()));
                 return params;
@@ -307,6 +308,42 @@ public class FocusApi {
 
         ensureStudentPage(demographicRequest);
         return demographicRequest;
+    }
+
+    public Request getAddress(final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
+        final MultipartRequest addressRequest = new MultipartRequest(
+                Request.Method.POST, UrlBuilder.get(FocusUrl.STUDENT), new Response.Listener<NetworkResponse>() {
+            @Override
+            public void onResponse(NetworkResponse response) {
+                PageParser addressParser = new AddressParser();
+                String responseStr = new String(response.data);
+                try {
+                    JSONObject parsed = addressParser.parse(responseStr);
+                    parsed = JSONUtil.concatJson(parsed, student.getJson());
+                    listener.onResponse(parsed);
+                } catch (JSONException e) {
+                    Log.e(TAG, "JSONException while parsing address");
+                    e.printStackTrace();
+                    listener.onResponse(null);
+                }
+            }
+        }, errorListener) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                String req = "{\"requests\":[" +
+                        "{\"controller\":\"AddressController\",\"method\":\"getAddresses\",\"token\":\"abb1810fed911fb83956bc40780ab74d147548c0\",\"args\":[%s]}," +
+                        "{\"controller\":\"AddressController\",\"method\":\"getContacts\",\"token\":\"9c1d08797dbab3df87fb894dd22599c84500897b\",\"args\":[%<s]}" +
+                        "]}";
+                Log.d(TAG, String.format(req, student.getId()));
+
+                params.put("__call__", String.format(req, student.getId()));
+                return params;
+            }
+        };
+
+        ensureStudentPage(addressRequest);
+        return addressRequest;
     }
 
     public Request getReferrals(final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
