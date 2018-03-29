@@ -13,9 +13,12 @@ public class CourseAssignment {
     private final DateTime due;
     private final String category;
     private final int maxGrade;
+    private final String maxGradeString;
     private final double studentGrade;
+    private final String studentGradeString;
     private final String letterGrade;
     private final int percentGrade;
+    private final String overallGradeString;
     private final String description;
 
     public enum Status {
@@ -30,16 +33,19 @@ public class CourseAssignment {
     private final Status status;
 
 
-    public CourseAssignment(String name, DateTime assigned, DateTime due, String category, int maxGrade, double studentGrade, String letterGrade, int percentGrade, String description, Status status) {
+    public CourseAssignment(String name, DateTime assigned, DateTime due, String category, int maxGrade, String maxGradeString, double studentGrade, String studentGradeString, String letterGrade, int percentGrade, String overallGradeString, String description, Status status) {
         this.name = name;
         this.assigned = assigned;
         this.due = due;
         this.category = category;
         this.maxGrade = maxGrade;
+        this.maxGradeString = maxGradeString;
         this.studentGrade = studentGrade;
+        this.studentGradeString = studentGradeString;
         this.letterGrade = letterGrade;
         this.percentGrade = percentGrade;
         this.status = status;
+        this.overallGradeString = overallGradeString;
         this.description = description;
     }
 
@@ -77,8 +83,24 @@ public class CourseAssignment {
         return maxGrade;
     }
 
+    public boolean hasMaxGradeString() {
+        return maxGradeString != null;
+    }
+
+    public String getMaxGradeString() {
+        return maxGradeString;
+    }
+
     public double getStudentGrade() {
         return studentGrade;
+    }
+
+    public boolean hasStudentGradeString() {
+        return studentGradeString != null;
+    }
+
+    public String getStudentGradeString() {
+        return studentGradeString;
     }
 
     public String getLetterGrade() {
@@ -87,6 +109,14 @@ public class CourseAssignment {
 
     public int getPercentGrade() {
         return percentGrade;
+    }
+
+    public boolean hasOverallGradeString() {
+        return overallGradeString != null;
+    }
+
+    public String getOverallGradeString() {
+        return overallGradeString;
     }
 
     public String getDescription() {

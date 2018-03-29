@@ -57,9 +57,12 @@ public class Course extends MarkingPeriodPage {
                 }
 
                 int maxGrade = -1;
+                String maxGradeString = null;
                 double studentGrade = -1;
+                String studentGradeString = null;
                 String assignmentLetterGrade = null;
                 int assignmentPercentGrade = -1;
+                String gradeString = null;
                 CourseAssignment.Status status = null;
 
                 if (assignmentJSON.getString("status").equals("pass")) {
@@ -70,27 +73,67 @@ public class Course extends MarkingPeriodPage {
                 }
                 else if (assignmentJSON.getString("status").equals("excluded")) {
                     status = CourseAssignment.Status.EXCLUDED;
-                    maxGrade = assignmentJSON.getInt("max_grade");
+                    if (assignmentJSON.has("max_grade_string")) {
+                        maxGradeString = assignmentJSON.getString("max_grade_string");
+                    }
+                    else {
+                        maxGrade = assignmentJSON.getInt("max_grade");
+                    }
                 }
                 else if (assignmentJSON.getString("status").equals("ng")) {
                     status = CourseAssignment.Status.NOT_GRADED;
-                    maxGrade = assignmentJSON.getInt("max_grade");
+                    if (assignmentJSON.has("max_grade_string")) {
+                        maxGradeString = assignmentJSON.getString("max_grade_string");
+                    }
+                    else {
+                        maxGrade = assignmentJSON.getInt("max_grade");
+                    }
                 }
                 else if (assignmentJSON.getString("status").equals("missing")) {
                     status = CourseAssignment.Status.MISSING;
-                    maxGrade = assignmentJSON.getInt("max_grade");
+                    if (assignmentJSON.has("max_grade_string")) {
+                        maxGradeString = assignmentJSON.getString("max_grade_string");
+                    }
+                    else {
+                        maxGrade = assignmentJSON.getInt("max_grade");
+                    }
                 }
                 else if (assignmentJSON.getString("status").equals("extra")) {
                     status = CourseAssignment.Status.EXTRA_CREDIT;
-                    maxGrade = assignmentJSON.getInt("max_grade");
-                    studentGrade = assignmentJSON.getDouble("student_grade");
+                    if (assignmentJSON.has("max_grade_string")) {
+                        maxGradeString = assignmentJSON.getString("max_grade_string");
+                    }
+                    else {
+                        maxGrade = assignmentJSON.getInt("max_grade");
+                    }
+                    if (assignmentJSON.has("student_grade_string")) {
+                        studentGradeString = assignmentJSON.getString("student_grade_string");
+                    }
+                    else {
+                        studentGrade = assignmentJSON.getDouble("student_grade");
+                    }
                 }
                 else if (assignmentJSON.getString("status").equals("graded")) {
                     status = CourseAssignment.Status.GRADED;
-                    maxGrade = assignmentJSON.getInt("max_grade");
-                    studentGrade = assignmentJSON.getDouble("student_grade");
-                    assignmentLetterGrade = assignmentJSON.getString("letter_overall_grade");
-                    assignmentPercentGrade = assignmentJSON.getInt("percent_overall_grade");
+                    if (assignmentJSON.has("max_grade_string")) {
+                        maxGradeString = assignmentJSON.getString("max_grade_string");
+                    }
+                    else {
+                        maxGrade = assignmentJSON.getInt("max_grade");
+                    }
+                    if (assignmentJSON.has("student_grade_string")) {
+                        studentGradeString = assignmentJSON.getString("student_grade_string");
+                    }
+                    else {
+                        studentGrade = assignmentJSON.getDouble("student_grade");
+                    }
+                    if (assignmentJSON.has("overall_grade_string")) {
+                        gradeString = assignmentJSON.getString("overall_grade_string");
+                    }
+                    else {
+                        assignmentLetterGrade = assignmentJSON.getString("letter_overall_grade");
+                        assignmentPercentGrade = assignmentJSON.getInt("percent_overall_grade");
+                    }
                 }
 
                 String description = null;
@@ -98,7 +141,7 @@ public class Course extends MarkingPeriodPage {
                     description = assignmentJSON.getString("description");
                 }
 
-                assignments.add(new CourseAssignment(assignmentName, assigned, due, category, maxGrade, studentGrade, assignmentLetterGrade, assignmentPercentGrade, description, status));
+                assignments.add(new CourseAssignment(assignmentName, assigned, due, category, maxGrade, maxGradeString, studentGrade, studentGradeString, assignmentLetterGrade, assignmentPercentGrade, gradeString, description, status));
 
             }
         } catch (JSONException e) {

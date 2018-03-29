@@ -260,6 +260,7 @@ public class CourseFragment extends NetworkFragment {
                     final TextView grade = (TextView) row.findViewById(R.id.text_assignment_grade);
                     CourseAssignment.Status status = assignment.getStatus();
                     points.setGravity(Gravity.CENTER_HORIZONTAL);
+                    StringBuilder gradeBuilder;
                     switch (status) {
                         case PASS:
                             points.setText("\u2713");
@@ -270,23 +271,66 @@ public class CourseFragment extends NetworkFragment {
                             grade.setText("Fail");
                             break;
                         case EXCLUDED:
-                            points.setText("* / " + Integer.toString(assignment.getMaxGrade()));
+                            if (assignment.hasMaxGradeString()) {
+                                points.setText("* / " + assignment.getMaxGradeString());
+                            }
+                            else {
+                                points.setText("* / " + Integer.toString(assignment.getMaxGrade()));
+                            }
                             grade.setText("Excluded");
                             break;
                         case NOT_GRADED:
-                            points.setText("NG / " + Integer.toString(assignment.getMaxGrade()));
+                            if (assignment.hasMaxGradeString()) {
+                                points.setText("NG / " + assignment.getMaxGradeString());
+                            }
+                            else {
+                                points.setText("NG / " + Integer.toString(assignment.getMaxGrade()));
+                            }
                             grade.setText("Not Graded");
                             break;
                         case MISSING:
-                            points.setText("M / " + Integer.toString(assignment.getMaxGrade()));
+                            if (assignment.hasMaxGradeString()) {
+                                points.setText("M / " + assignment.getMaxGradeString());
+                            }
+                            else {
+                                points.setText("M / " + Integer.toString(assignment.getMaxGrade()));
+                            }
                             grade.setText("Missing");
                             break;
                         case EXTRA_CREDIT:
-                            points.setText(Integer.toString((int) assignment.getStudentGrade()) + " / " + Integer.toString(assignment.getMaxGrade()));
+                            gradeBuilder = new StringBuilder();
+                            if (assignment.hasStudentGradeString()) {
+                                gradeBuilder.append(assignment.getStudentGradeString());
+                            }
+                            else {
+                                gradeBuilder.append((int) assignment.getStudentGrade());
+                            }
+                            gradeBuilder.append(" / ");
+                            if (assignment.hasMaxGradeString()) {
+                                gradeBuilder.append(assignment.getMaxGradeString());
+                            }
+                            else {
+                                gradeBuilder.append(assignment.getMaxGrade());
+                            }
+                            points.setText(gradeBuilder.toString());
                             grade.setText("Extra Credit");
                             break;
                         default:
-                            points.setText(Integer.toString((int) assignment.getStudentGrade()) + " / " + Integer.toString(assignment.getMaxGrade()));
+                            gradeBuilder = new StringBuilder();
+                            if (assignment.hasStudentGradeString()) {
+                                gradeBuilder.append(assignment.getStudentGradeString());
+                            }
+                            else {
+                                gradeBuilder.append((int) assignment.getStudentGrade());
+                            }
+                            gradeBuilder.append(" / ");
+                            if (assignment.hasMaxGradeString()) {
+                                gradeBuilder.append(assignment.getMaxGradeString());
+                            }
+                            else {
+                                gradeBuilder.append(assignment.getMaxGrade());
+                            }
+                            points.setText(gradeBuilder.toString());
                             grade.setText(Integer.toString(assignment.getPercentGrade()) + "% " + assignment.getLetterGrade());
                             break;
                     }
