@@ -54,11 +54,17 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = "MainActivity";
+    private static final String USERNAME_BUNDLE_KEY = "username";
+    private static final String PASSWORD_BUNDLE_KEY = "password";
+    private static final String SESSION_TIMEOUT_BUNDLE_KEY = "session_timeout";
+    private static final String FRAGMENT_ID_BUNDLE_KEY = "fragment_id";
 
+    private NavigationView navigationView;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private FrameLayout fragmentContainer;
     private PageFragment currentFragment;
+    private int currentFragmentId;
     private LinearLayout loadingLayout;
     private LinearLayout networkErrorLayout;
 
@@ -102,7 +108,8 @@ public class MainActivity extends AppCompatActivity
 
         isVisible = true;
 
-        View header = ((NavigationView) findViewById(R.id.nav_view)).getHeaderView(0);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View header = navigationView.getHeaderView(0);
         TextView name = (TextView) header.findViewById(R.id.nav_text_name);
         TextView email = (TextView) header.findViewById(R.id.nav_text_email);
 
@@ -123,10 +130,10 @@ public class MainActivity extends AppCompatActivity
         tabLayout = (TabLayout) findViewById(R.id.tabs);
 
         currentFragment = new PortalFragment();
+        currentFragmentId = R.id.nav_home;
         switchFragment(currentFragment);
         tabLayout.setupWithViewPager(viewPager);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         Log.d(TAG, "Starting session keep alive thread");
@@ -139,7 +146,7 @@ public class MainActivity extends AppCompatActivity
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    if (isSessionExpired() && !authenticating && isVisible) {
+                    if (api.isSessionExpired() && !authenticating && isVisible) {
                         authenticating = true;
                         Log.i(TAG, "Session timed out, reauthenticating from thread");
                         runOnUiThread(new Runnable() {
@@ -424,7 +431,14 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        currentFragmentId = id;
+        switchFragmentFromNav(id);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
 
+    private void switchFragmentFromNav(int id) {
         if (id == R.id.nav_home) {
             if (!(currentFragment instanceof PortalFragment)) {
                 currentFragment = new PortalFragment();
@@ -470,14 +484,6 @@ public class MainActivity extends AppCompatActivity
                 switchFragment(currentFragment);
             }
         }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    private boolean isSessionExpired() {
-        return api.getSessionTimeout() <= System.currentTimeMillis();
     }
 
     public void reauthenticate() {
@@ -649,6 +655,31 @@ public class MainActivity extends AppCompatActivity
                 loadingLayout.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        Log.d(TAG, "Saving instance state");
+        savedInstanceState.putString(USERNAME_BUNDLE_KEY, username);
+        savedInstanceState.putString(PASSWORD_BUNDLE_KEY, password);
+        savedInstanceState.putLong(SESSION_TIMEOUT_BUNDLE_KEY, api.getSessionTimeout());
+        savedInstanceState.putInt(FRAGMENT_ID_BUNDLE_KEY, currentFragmentId);
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        Log.d(TAG, "Restoring instance state");
+        username = savedInstanceState.getString(USERNAME_BUNDLE_KEY);
+        password = savedInstanceState.getString(PASSWORD_BUNDLE_KEY);
+        api = new FocusApi(username, password, this);
+        api.setSessionTimeout(savedInstanceState.getLong(SESSION_TIMEOUT_BUNDLE_KEY));
+        FocusApiSingleton.setApi(api);
+        // Always call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+        navigationView.getMenu().findItem(savedInstanceState.getInt(FRAGMENT_ID_BUNDLE_KEY)).setChecked(true);
+        switchFragmentFromNav(savedInstanceState.getInt(FRAGMENT_ID_BUNDLE_KEY));
     }
 
     @Override

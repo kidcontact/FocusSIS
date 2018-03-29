@@ -366,8 +366,20 @@ public class FocusApi {
         return referralsRequest;
     }
 
+    public boolean isSessionExpired() {
+        return sessionTimeout <= System.currentTimeMillis();
+    }
+
     public long getSessionTimeout() {
         return sessionTimeout;
+    }
+
+    public void setSessionTimeout(long sessionTimeout) {
+        this.sessionTimeout = sessionTimeout;
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
     }
 
     private void queueRequest(Request request) {
