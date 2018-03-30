@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import org.kidcontact.focussis.data.CalendarEvent;
 import org.kidcontact.focussis.data.Student;
 import org.kidcontact.focussis.network.UrlBuilder.FocusUrl;
+import org.kidcontact.focussis.parser.AbsencesParser;
 import org.kidcontact.focussis.parser.AddressParser;
 import org.kidcontact.focussis.parser.CalendarEventParser;
 import org.kidcontact.focussis.parser.CalendarParser;
@@ -355,7 +356,7 @@ public class FocusApi {
                 try {
                     listener.onResponse(referralsParser.parse(response));
                 } catch (JSONException e) {
-                    Log.e(TAG, "JSONException while parsing schedule");
+                    Log.e(TAG, "JSONException while parsing referrals");
                     e.printStackTrace();
                     listener.onResponse(null);
                 }
@@ -364,6 +365,26 @@ public class FocusApi {
 
         queueRequest(referralsRequest);
         return referralsRequest;
+    }
+
+    public Request getAbsences(final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
+        StringRequest absencesRequest = new StringRequest(
+                Request.Method.GET, UrlBuilder.get(FocusUrl.ABSENCES), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                PageParser absencesParser = new AbsencesParser();
+                try {
+                    listener.onResponse(absencesParser.parse(response));
+                } catch (JSONException e) {
+                    Log.e(TAG, "JSONException while parsing absences");
+                    e.printStackTrace();
+                    listener.onResponse(null);
+                }
+            }
+        }, errorListener);
+
+        queueRequest(absencesRequest);
+        return absencesRequest;
     }
 
     public boolean isSessionExpired() {

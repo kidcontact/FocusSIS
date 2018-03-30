@@ -112,8 +112,8 @@
     <string name="absences_days_attended">Total Full Days Attended</string>
     <string name="absences_days_absent">Total Full Days Absent</string>
     <string name="absences_absent_header">&lt;b>Absent: &lt;/b> %1$d periods (during %2$d days)</string>
-    <string name="absences_absent">&#160;Absent: %1$d periods - &lt;b>%2$d days&lt;/b></string>
-    <string name="absences_excused">&#160;Excused Absence: %1$d periods - &lt;b>%2$d days&lt;/b></string>
+    <string name="absences_absent">&#160;Absent: %1$d periods</string>
+    <string name="absences_excused">&#160;Excused Absence: %1$d periods -- &lt;b>%2$d days&lt;/b></string>
     <string name="absences_other_marks">&lt;b>Other Marks: &lt;/b>%1$d periods (during %2$d days)</string>
     <string name="absences_late">&#160;Late: %1$d periods</string>
     <string name="absences_tardy">&#160;Tardy: %1$d periods</string>

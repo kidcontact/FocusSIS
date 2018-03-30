@@ -32,13 +32,13 @@ public class Absences extends MarkingPeriodPage {
     private final int periodsMisc;
     private final int periodsOffsite;
     private final int daysPartiallyAbsent;
-    private final int daysAbsentUnexcused;
     private final int daysAbsentExcused;
     private final int daysOtherMarks;
 
     public enum Status {
         UNSET,
         PRESENT,
+        HALF_DAY,
         ABSENT,
         EXCUSED,
         LATE,
@@ -64,7 +64,6 @@ public class Absences extends MarkingPeriodPage {
         int periodsMisc = 0;
         int periodsOffsite = 0;
         int daysPartiallyAbsent = 0;
-        int daysAbsentUnexcused = 0;
         int daysAbsentExcused = 0;
         int daysOtherMarks = 0;
         days = new ArrayList<>();
@@ -237,13 +236,6 @@ public class Absences extends MarkingPeriodPage {
         }
 
         try {
-            daysAbsentUnexcused = absencesJSON.getInt("days_absent_unexcused");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "days_absent_unexcused not found in JSON");
-        }
-
-        try {
             daysAbsentExcused = absencesJSON.getInt("days_absent_excused");
         } catch (JSONException e) {
             e.printStackTrace();
@@ -271,7 +263,6 @@ public class Absences extends MarkingPeriodPage {
         this.periodsMisc = periodsMisc;
         this.periodsOffsite = periodsOffsite;
         this.daysPartiallyAbsent = daysPartiallyAbsent;
-        this.daysAbsentUnexcused = daysAbsentUnexcused;
         this.daysAbsentExcused = daysAbsentExcused;
         this.daysOtherMarks = daysOtherMarks;
 
@@ -284,6 +275,8 @@ public class Absences extends MarkingPeriodPage {
                 return Status.ABSENT;
             case "present":
                 return Status.PRESENT;
+            case "half_day":
+                return Status.HALF_DAY;
             case "excused":
                 return Status.EXCUSED;
             case "late":
@@ -355,10 +348,6 @@ public class Absences extends MarkingPeriodPage {
 
     public int getPeriodsAbsentExcused() {
         return periodsAbsentExcused;
-    }
-
-    public int getDaysAbsentUnexcused() {
-        return daysAbsentUnexcused;
     }
 
     public int getDaysAbsentExcused() {

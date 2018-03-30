@@ -93,7 +93,7 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
             TextView absentHeader = (TextView) view.findViewById(R.id.text_absent_header);
             absentHeader.setText(Html.fromHtml(getString(R.string.absences_absent_header, absences.getPeriodsAbsent(), absences.getDaysPartiallyAbsent())));
             TextView absent = (TextView) view.findViewById(R.id.text_absent);
-            absent.setText(Html.fromHtml(getString(R.string.absences_absent, absences.getPeriodsAbsentUnexcused(), absences.getDaysAbsentUnexcused())));
+            absent.setText(Html.fromHtml(getString(R.string.absences_absent, absences.getPeriodsAbsentUnexcused())));
             TextView absentExcused = (TextView) view.findViewById(R.id.text_excused_absences);
             absentExcused.setText(Html.fromHtml(getString(R.string.absences_excused, absences.getPeriodsAbsentExcused(), absences.getDaysAbsentExcused())));
             TextView otherMarksHeader = (TextView) view.findViewById(R.id.text_other_marks_header);
@@ -121,8 +121,7 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
                 TextView date = (TextView) absenceRow.findViewById(R.id.text_absence_date);
                 date.setText(DateUtil.dateTimeToShortString(d.getDate()));
                 TextView daily = (TextView) absenceRow.findViewById(R.id.text_absence_daily);
-                String status = d.getStatus().toString().toLowerCase();
-                status = Character.toUpperCase(status.charAt(0)) + status.substring(1);
+                String status = statusToString(d.getStatus());
                 daily.setText(status);
 
                 if (d.getStatus() == Absences.Status.ABSENT) {
@@ -167,18 +166,17 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
     public void refresh() {
         requestFinished = false;
         networkFailed = false;
-        // TODO: implement api absences
-//        api.getPortal(new Response.Listener<JSONObject>() {
-//            @Override
-//            public void onResponse(JSONObject response) {
-//                onSuccess(response);
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                onError(error);
-//            }
-//        });
+        api.getAbsences(new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                onSuccess(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                onError(error);
+            }
+        });
     }
 
     private void showAbsenceDialog(AbsenceDay d) {
@@ -201,8 +199,7 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
             AbsenceLabelView label = (AbsenceLabelView) row.findViewById(R.id.period_absence_label);
             label.setStatus(p.getStatus());
             TextView textLabel = (TextView) row.findViewById(R.id.text_absence_label);
-            String status = p.getStatus().toString().toLowerCase();
-            status = Character.toUpperCase(status.charAt(0)) + status.substring(1);
+            String status = statusToString(p.getStatus());
             textLabel.setText(status);
             table.addView(row);
         }
@@ -227,6 +224,30 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
     private int dpToPixels(int dp) {
         final float scale = getResources().getDisplayMetrics().density;
         return (int) (dp * scale + 0.5f);
+    }
+
+    private String statusToString(Absences.Status status) {
+        switch (status) {
+            case UNSET:
+                return "Unset";
+            case PRESENT:
+                return "Present";
+            case HALF_DAY:
+                return "Half-day";
+            case ABSENT:
+                return "Absent";
+            case EXCUSED:
+                return "Excused";
+            case LATE:
+                return "Late";
+            case TARDY:
+                return "Tardy";
+            case MISC:
+                return "Misc.";
+            case OFFSITE:
+                return "Off Site";
+        }
+        return null;
     }
 
 }
