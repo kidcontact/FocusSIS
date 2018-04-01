@@ -160,7 +160,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
         sessionKeepAliveThread.start();
-
     }
 
     private void switchFragment(final PageFragment fragment) {

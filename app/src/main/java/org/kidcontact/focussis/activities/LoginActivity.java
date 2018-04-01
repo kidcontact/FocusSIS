@@ -46,35 +46,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        final FocusApi api = new FocusApi("stephan.lensky", "426-Summit", this);
-//        api.login(new Response.Listener<Boolean>() {
-//            @Override
-//            public void onResponse(Boolean response) {
-//                Log.i(TAG, "login success: " + response.toString());
-//                api.getPortal(new Response.Listener<JSONObject>() {
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//                        try {
-//                            Log.i(TAG, "portal: " + response.toString(2));
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }, new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        Log.i(TAG, error.toString());
-//                    }
-//                });
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                Log.i(TAG, error.toString());
-//            }
-//        });
-
-
 
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);

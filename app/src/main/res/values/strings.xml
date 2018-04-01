@@ -113,7 +113,7 @@
     <string name="absences_days_absent">Total Full Days Absent</string>
     <string name="absences_absent_header">&lt;b>Absent: &lt;/b> %1$d periods (during %2$d days)</string>
     <string name="absences_absent">&#160;Absent: %1$d periods</string>
-    <string name="absences_excused">&#160;Excused Absence: %1$d periods -- &lt;b>%2$d days&lt;/b></string>
+    <string name="absences_excused">&#160;Excused Absence: %1$d periods - &lt;b>%2$d days&lt;/b></string>
     <string name="absences_other_marks">&lt;b>Other Marks: &lt;/b>%1$d periods (during %2$d days)</string>
     <string name="absences_late">&#160;Late: %1$d periods</string>
     <string name="absences_tardy">&#160;Tardy: %1$d periods</string>
@@ -150,13 +150,13 @@
 
     <!-- About page -->
     <string name="about_page_description">The Focus student information system (SIS) allows students to easily check their grades and view various other academic information. This app was developed by a student at a high school using the Focus SIS, and is in no way associated with Focus School Software LLC.</string>
-    <string name="about_email">mail@kidcontact.org</string>
-    <string name="about_website">http://kidcontact.org</string>
+    <string name="about_email">mail@slensky.com</string>
+    <string name="about_website">http://slensky.com</string>
     <string name="about_github">Find the code on GitHub</string>
-    <string name="about_github_link">http://github.com/kidcontact/focus-api</string>
+    <string name="about_github_link">https://github.com/stephanlensky/FocusSIS</string>
     <string name="copyright">Copyright © %1$d</string>
     <string name="license">Licensed under GNU GPL v3.0</string>
-    <string name="about_license_link">https://github.com/kidcontact/focus-api/blob/master/LICENSE</string>
+    <string name="about_license_link">https://github.com/stephanlensky/FocusSIS/blob/master/LICENSE</string>
 
     <!-- Dialogs -->
     <string name="auth_progress_dialog">Authenticating…</string>
@@ -167,6 +167,12 @@
     <string name="retry_dialog_button">Retry</string>
     <string name="retry_dialog_cancel">Cancel</string>
     <string name="logout_progress_dialog_message">Logging out…</string>
+
+    <!-- ACRA -->
+    <string name="acra_dialog_title">Focus has crashed</string>
+    <string name="acra_dialog_text">Send a bug report to help fix this crash in future versions?</string>
+    <string name="acra_dialog_positive_button">OK</string>
+    <string name="acra_dialog_negative_button">Cancel</string>
 
     <!-- Misc -->
     <string name="yes">Yes</string>
