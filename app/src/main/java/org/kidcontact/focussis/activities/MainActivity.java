@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity
         name.setText(first + " " + last);
         email.setText(username + "@asdnh.org");
 
-        Log.d(TAG, "Configure viewpager + tab layout + portal fragment");
+        Log.d(TAG, "Configure viewpager + tab layout");
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         fragmentContainer = (FrameLayout) findViewById(R.id.fragment_container);
@@ -128,12 +128,7 @@ public class MainActivity extends AppCompatActivity
         networkErrorLayout = (LinearLayout) findViewById(R.id.layout_network_failure);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
-
-        currentFragment = new PortalFragment();
-        currentFragmentId = R.id.nav_home;
-        switchFragment(currentFragment);
         tabLayout.setupWithViewPager(viewPager);
-
         navigationView.setNavigationItemSelectedListener(this);
 
         Log.d(TAG, "Starting session keep alive thread");
@@ -160,6 +155,30 @@ public class MainActivity extends AppCompatActivity
             }
         });
         sessionKeepAliveThread.start();
+
+        if (savedInstanceState == null) {
+            currentFragment = new PortalFragment();
+            currentFragmentId = R.id.nav_home;
+            switchFragment(currentFragment);
+        }
+        else {
+            Log.d(TAG, "Restoring saved instance state");
+            username = savedInstanceState.getString(USERNAME_BUNDLE_KEY);
+            password = savedInstanceState.getString(PASSWORD_BUNDLE_KEY);
+            api = new FocusApi(username, password, this);
+            FocusApiSingleton.setApi(api);
+            if (api.hasSession()) {
+                api.setSessionTimeout(savedInstanceState.getLong(SESSION_TIMEOUT_BUNDLE_KEY));
+                api.setLoggedIn(true);
+            }
+            else {
+                reauthenticate();
+            }
+
+            // switch back to correct fragment
+            navigationView.getMenu().findItem(savedInstanceState.getInt(FRAGMENT_ID_BUNDLE_KEY)).setChecked(true);
+            switchFragmentFromNav(savedInstanceState.getInt(FRAGMENT_ID_BUNDLE_KEY));
+        }
     }
 
     private void switchFragment(final PageFragment fragment) {
@@ -665,20 +684,6 @@ public class MainActivity extends AppCompatActivity
         savedInstanceState.putInt(FRAGMENT_ID_BUNDLE_KEY, currentFragmentId);
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
-    }
-
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        Log.d(TAG, "Restoring instance state");
-        username = savedInstanceState.getString(USERNAME_BUNDLE_KEY);
-        password = savedInstanceState.getString(PASSWORD_BUNDLE_KEY);
-        api = new FocusApi(username, password, this);
-        api.setSessionTimeout(savedInstanceState.getLong(SESSION_TIMEOUT_BUNDLE_KEY));
-        FocusApiSingleton.setApi(api);
-        // Always call the superclass so it can restore the view hierarchy
-        super.onRestoreInstanceState(savedInstanceState);
-        navigationView.getMenu().findItem(savedInstanceState.getInt(FRAGMENT_ID_BUNDLE_KEY)).setChecked(true);
-        switchFragmentFromNav(savedInstanceState.getInt(FRAGMENT_ID_BUNDLE_KEY));
     }
 
     @Override

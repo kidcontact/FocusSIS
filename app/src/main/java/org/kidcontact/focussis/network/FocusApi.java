@@ -32,6 +32,7 @@ import org.kidcontact.focussis.parser.StudentParser;
 import org.kidcontact.focussis.util.JSONUtil;
 
 import java.net.CookieManager;
+import java.net.HttpCookie;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -401,6 +402,15 @@ public class FocusApi {
 
     public void setLoggedIn(boolean loggedIn) {
         this.loggedIn = loggedIn;
+    }
+
+    public boolean hasSession() {
+        for (HttpCookie c : RequestSingleton.getCookieManager().getCookieStore().getCookies()) {
+            if (c.getName().equals("PHPSESSID")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void queueRequest(Request request) {
