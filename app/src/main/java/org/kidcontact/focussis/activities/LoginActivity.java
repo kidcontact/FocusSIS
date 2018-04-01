@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -50,8 +51,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        LinearLayout ll = (LinearLayout) findViewById(R.id.login_layout);
-        ll.setPadding(ll.getPaddingLeft(), getWindowManager().getDefaultDisplay().getHeight() / 6, ll.getPaddingRight(), ll.getPaddingBottom());
+        RelativeLayout rl = (RelativeLayout) findViewById(R.id.login_layout);
+        rl.setPadding(rl.getPaddingLeft(), getWindowManager().getDefaultDisplay().getHeight() / 6, rl.getPaddingRight(), rl.getPaddingBottom());
 
         _loginButton.setOnClickListener(new View.OnClickListener() {
 

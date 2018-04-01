@@ -35,6 +35,7 @@
     <string name="login_pass_hint">Password</string>
     <string name="login_remember_user">Remember me</string>
     <string name="login_button">Login</string>
+    <string name="login_disclaimer">This application is in no way affiliated with Focus School Software LLC.</string>
 
     <!-- Portal page -->
     <string name="portal_courses_tab">COURSES</string>
