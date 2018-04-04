@@ -35,6 +35,7 @@ import org.kidcontact.focussis.fragments.AddressFragment;
 import org.kidcontact.focussis.fragments.CalendarFragment;
 import org.kidcontact.focussis.fragments.DemographicFragment;
 import org.kidcontact.focussis.fragments.EmptyFragment;
+import org.kidcontact.focussis.fragments.FinalGradesFragment;
 import org.kidcontact.focussis.fragments.LoadingFragment;
 import org.kidcontact.focussis.fragments.NetworkErrorFragment;
 import org.kidcontact.focussis.fragments.NetworkTabAwareFragment;
@@ -83,8 +84,38 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        if (savedInstanceState != null) {
+            Log.d(TAG, "Restoring saved instance state");
+            username = savedInstanceState.getString(USERNAME_BUNDLE_KEY);
+            password = savedInstanceState.getString(PASSWORD_BUNDLE_KEY);
+            api = new FocusApi(username, password, this);
+            FocusApiSingleton.setApi(api);
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_main);
+            // cancel request made by onCreate of fragment
+            RequestSingleton.getInstance(this).getRequestQueue().cancelAll(new RequestQueue.RequestFilter() {
+                @Override
+                public boolean apply(Request<?> request) {
+                    return true;
+                }
+            });
+            if (api.hasSession()) {
+                api.setSessionTimeout(savedInstanceState.getLong(SESSION_TIMEOUT_BUNDLE_KEY));
+                if (!api.isSessionExpired()) {
+                    api.setLoggedIn(true);
+                }
+                else {
+                    reauthenticate();
+                }
+            }
+            else {
+                reauthenticate();
+            }
+        }
+        else {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_main);
+        }
 
         Log.d(TAG, "Toolbar init");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -162,22 +193,10 @@ public class MainActivity extends AppCompatActivity
             switchFragment(currentFragment);
         }
         else {
-            Log.d(TAG, "Restoring saved instance state");
-            username = savedInstanceState.getString(USERNAME_BUNDLE_KEY);
-            password = savedInstanceState.getString(PASSWORD_BUNDLE_KEY);
-            api = new FocusApi(username, password, this);
-            FocusApiSingleton.setApi(api);
-            if (api.hasSession()) {
-                api.setSessionTimeout(savedInstanceState.getLong(SESSION_TIMEOUT_BUNDLE_KEY));
-                api.setLoggedIn(true);
-            }
-            else {
-                reauthenticate();
-            }
-
             // switch back to correct fragment
-            navigationView.getMenu().findItem(savedInstanceState.getInt(FRAGMENT_ID_BUNDLE_KEY)).setChecked(true);
-            switchFragmentFromNav(savedInstanceState.getInt(FRAGMENT_ID_BUNDLE_KEY));
+            currentFragmentId = savedInstanceState.getInt(FRAGMENT_ID_BUNDLE_KEY);
+            navigationView.getMenu().findItem(currentFragmentId).setChecked(true);
+            switchFragmentFromNav(currentFragmentId);
         }
     }
 
@@ -231,8 +250,10 @@ public class MainActivity extends AppCompatActivity
                 fragmentContainer.setVisibility(View.GONE);
                 loadingLayout.setVisibility(View.VISIBLE);
                 tabLayout.setVisibility(View.GONE);
-                ((ViewPagerAdapter) viewPager.getAdapter()).clear();
-                viewPager.getAdapter().notifyDataSetChanged();
+                if (viewPager.getAdapter() != null) {
+                    ((ViewPagerAdapter) viewPager.getAdapter()).clear();
+                    viewPager.getAdapter().notifyDataSetChanged();
+                }
             }
         }
         else {
@@ -240,8 +261,10 @@ public class MainActivity extends AppCompatActivity
             tabLayout.setVisibility(View.GONE);
             loadingLayout.setVisibility(View.GONE);
             fragmentContainer.setVisibility(View.VISIBLE);
-            ((ViewPagerAdapter) viewPager.getAdapter()).clear();
-            viewPager.getAdapter().notifyDataSetChanged();
+            if (viewPager.getAdapter() != null) {
+                ((ViewPagerAdapter) viewPager.getAdapter()).clear();
+                viewPager.getAdapter().notifyDataSetChanged();
+            }
         }
 
         Log.d(TAG, "Committing transaction");
@@ -298,8 +321,10 @@ public class MainActivity extends AppCompatActivity
                     loadingLayout.setVisibility(View.GONE);
                     fragmentContainer.setVisibility(View.VISIBLE);
                     tabLayout.setVisibility(View.GONE);
-                    ((ViewPagerAdapter) viewPager.getAdapter()).clear();
-                    viewPager.getAdapter().notifyDataSetChanged();
+                    if (viewPager.getAdapter() != null) {
+                        ((ViewPagerAdapter) viewPager.getAdapter()).clear();
+                        viewPager.getAdapter().notifyDataSetChanged();
+                    }
                 }
             }
             else {
@@ -493,7 +518,10 @@ public class MainActivity extends AppCompatActivity
                 switchFragment(currentFragment);
             }
         } else if (id == R.id.nav_final_grades) {
-
+            if (!(currentFragment instanceof FinalGradesFragment)) {
+                currentFragment = new FinalGradesFragment();
+                switchFragment(currentFragment);
+            }
         } else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_about) {
@@ -681,6 +709,7 @@ public class MainActivity extends AppCompatActivity
         savedInstanceState.putString(USERNAME_BUNDLE_KEY, username);
         savedInstanceState.putString(PASSWORD_BUNDLE_KEY, password);
         savedInstanceState.putLong(SESSION_TIMEOUT_BUNDLE_KEY, api.getSessionTimeout());
+
         savedInstanceState.putInt(FRAGMENT_ID_BUNDLE_KEY, currentFragmentId);
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/scrollview_finalgrades"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_finalgrades_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                tools:text="@string/finalgrades_final_grades"
+                style="@style/primaryHeadingText" />
+
+            <TextView
+                android:id="@+id/text_finalgrades_stats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="2dp"
+                tools:text="Cumulative GPA: -\nCumulative Weighted GPA: -\nCredits Earned: -"
+                style="@style/primaryBodyText" />
+
+            <TextView
+                android:id="@+id/text_comment_codes_link"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/finalgrades_comment_codes_link"
+                android:clickable="true"
+                android:textColorLink="#0645AD"
+                style="@style/primaryBodyText"/>
+
+            <Spinner
+                android:id="@+id/spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp" />
+
+            <!--<HorizontalScrollView-->
+                <!--android:id="@+id/horizontalView"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="0dp"-->
+                <!--android:scrollbarStyle="outsideInset"-->
+                <!--android:fillViewport="true"-->
+                <!--android:paddingBottom="16dp"-->
+                <!--android:paddingRight="16dp"-->
+                <!--android:paddingLeft="16dp"-->
+                <!--android:scrollbars="horizontal"-->
+                <!--android:layout_weight="1">-->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <include layout="@layout/view_loading"
+                        android:visibility="gone" />
+
+                    <TableLayout
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:id="@+id/table_finalgrades"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:divider="?android:attr/dividerHorizontal"
+                        android:showDividers="middle"
+                        android:shrinkColumns="2"/>
+
+                </LinearLayout>
+
+            <!--</HorizontalScrollView>-->
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

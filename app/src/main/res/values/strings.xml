@@ -124,6 +124,28 @@
     <string name="absences_daily_header">Overall Daily Status</string>
     <string name="absences_table_header">Days with Absences</string>
 
+    <!-- Final Grades Page -->
+    <string name="finalgrades_final_grades">Final Grades</string>
+    <string name="finalgrades_final_exam_grades">Final Exam Grades</string>
+    <string name="finalgrades_all_sem_final_grades">All Semester Final Grades</string>
+    <string name="finalgrades_all_sem_final_exam_grades">All Semester Final Exam Grades</string>
+    <string name="finalgrades_current_sem_final_grades">%1$s Final Grades</string>
+    <string name="finalgrades_current_sem_final_exam_grades">%1$s Final Exam Grades</string>
+    <string name="finalgrades_gpa">&lt;b>Cumulative GPA:&lt;b/> %1$s</string>
+    <string name="finalgrades_weighted_gpa">&lt;b>Cumulative Weighted GPA:&lt;b/> %1$s</string>
+    <string name="finalgrades_credits_earned">&lt;b>Credits Earned:&lt;b/> %1$s</string>
+    <string name="finalgrades_course_history">Course History</string>
+    <string name="finalgrades_all_semesters">All Semesters</string>
+    <string name="finalgrades_all_semesters_exams">All Semester Exams</string>
+    <string name="finalgrades_year_header">Year</string>
+    <string name="finalgrades_mp_header">MP</string>
+    <string name="finalgrades_course_header">Course Title</string>
+    <string name="finalgrades_grade_header">Grade</string>
+    <string name="finalgrades_comment_codes_link">View comment codes</string>
+    <string name="finalgrades_comment_codes_dialog_title">Comment Codes</string>
+    <string name="finalgrades_comment_codes_positive_button">OK</string>
+    <string name="finalgrades_grade_dialog_positive_button">OK</string>
+
     <!-- Network error messages -->
     <string name="network_error_timeout">Network error</string>
     <string name="network_error_auth">Invalid username or password</string>
@@ -138,6 +160,7 @@
     <string name="EXTRA_USERNAME">org.kidcontact.focussis.USERNAME</string>
     <string name="EXTRA_PASSWORD">org.kidcontact.focussis.PASSWORD</string>
     <string name="EXTRA_COURSE_ID">org.kidcontact.focussis.COURSE_ID</string>
+    <string name="EXTRA_TAB_SAVED_BUNDLE">org.kidcontact.focussis.TAB_SAVED_BUNDLE</string>
 
     <!-- Preferences -->
     <string name="login_prefs">loginPrefs</string>

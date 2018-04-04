@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -12,10 +13,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.kidcontact.focussis.data.CalendarEvent;
+import org.kidcontact.focussis.data.FinalGradesPage;
 import org.kidcontact.focussis.data.Student;
 import org.kidcontact.focussis.network.UrlBuilder.FocusUrl;
 import org.kidcontact.focussis.parser.AbsencesParser;
@@ -24,6 +25,8 @@ import org.kidcontact.focussis.parser.CalendarEventParser;
 import org.kidcontact.focussis.parser.CalendarParser;
 import org.kidcontact.focussis.parser.CourseParser;
 import org.kidcontact.focussis.parser.DemographicParser;
+import org.kidcontact.focussis.parser.FinalGradesPageParser;
+import org.kidcontact.focussis.parser.FinalGradesParser;
 import org.kidcontact.focussis.parser.PageParser;
 import org.kidcontact.focussis.parser.PortalParser;
 import org.kidcontact.focussis.parser.ReferralsParser;
@@ -31,12 +34,16 @@ import org.kidcontact.focussis.parser.ScheduleParser;
 import org.kidcontact.focussis.parser.StudentParser;
 import org.kidcontact.focussis.util.JSONUtil;
 
-import java.net.CookieManager;
 import java.net.HttpCookie;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Formatter;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Created by slensky on 3/12/18.
@@ -49,6 +56,8 @@ public class FocusApi {
     private final String password;
     private boolean hasAccessedStudentPage; // api access requires first sending GET to student url
     private Student student;
+    private boolean hasAccessedFinalGradesPage; // api access requires first sending GET to final grades url
+    private FinalGradesPage finalGradesPage;
 
     private final Context context;
     private final RequestQueue requestQueue;
@@ -388,6 +397,112 @@ public class FocusApi {
         return absencesRequest;
     }
 
+    private void ensureFinalGradesPage(final DeliverableStringRequest nextRequest) {
+        if (!hasAccessedFinalGradesPage) {
+            Log.d(TAG, "Retrieving final grades page for first time");
+            final StringRequest finalGradesRequest = new StringRequest(Request.Method.GET, UrlBuilder.get(FocusUrl.FINAL_GRADES), new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    final PageParser finalGradesPageParser = new FinalGradesPageParser();
+                    try {
+                        final JSONObject parsed = finalGradesPageParser.parse(response);
+                        finalGradesPage = new FinalGradesPage(parsed);
+                        hasAccessedFinalGradesPage = true;
+                        queueRequest(nextRequest);
+                    } catch (JSONException e) {
+                        Log.e(TAG, "JSONException while parsing final grades page");
+                        e.printStackTrace();
+                        nextRequest.deliverResponse(null);
+                    }
+                }
+            }, nextRequest.getErrorListener());
+            queueRequest(finalGradesRequest);
+        }
+        else {
+            queueRequest(nextRequest);
+        }
+    }
+
+    private void signRequest(Map<String, String> request, String secret) throws NoSuchAlgorithmException, InvalidKeyException {
+        String digest = String.format("-%s-%s-%s", request.get("accessID"), request.get("api"), request.get("method"));
+        SecretKeySpec signingKey = new SecretKeySpec(secret.getBytes(), "HmacSHA1");
+        Mac mac = Mac.getInstance("HmacSHA1");
+        mac.init(signingKey);
+
+        Formatter formatter = new Formatter();
+        for (byte b : mac.doFinal(digest.getBytes())) {
+            formatter.format("%02x", b);
+        }
+        request.put("signature", formatter.toString());
+    }
+
+    public enum FinalGradesType {
+        COURSE_HISTORY,
+        CURRENT_SEMESTER,
+        CURRENT_SEMESTER_EXAMS,
+        ALL_SEMESTERS,
+        ALL_SEMESTERS_EXAMS
+    }
+    public Request getFinalGrades(final FinalGradesType type, final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
+        DeliverableStringRequest finalGradesRequest = new DeliverableStringRequest(
+                Request.Method.POST, UrlBuilder.get(FocusUrl.API), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                PageParser finalGradesParser = new FinalGradesParser();
+                try {
+                    JSONObject parsed = finalGradesParser.parse(response);
+                    parsed = JSONUtil.concatJson(parsed, finalGradesPage.getJson());
+                    listener.onResponse(parsed);
+                } catch (JSONException e) {
+                    Log.e(TAG, "JSONException while parsing final grades");
+                    e.printStackTrace();
+                    listener.onResponse(null);
+                }
+            }
+        }, errorListener) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new LinkedHashMap<>();
+                params.put("accessID", finalGradesPage.getStudentId());
+                params.put("api", "finalGrades");
+                params.put("method", "requestGrades");
+                params.put("modname", "Grades/StudentRCGrades.php");
+                String argKey = "arguments[]";
+                switch (type) {
+                    case COURSE_HISTORY:
+                        params.put(argKey, "-1");
+                        break;
+                    case CURRENT_SEMESTER:
+                        params.put(argKey, finalGradesPage.getCurrentSemesterTargetMarkingPeriod());
+                        break;
+                    case CURRENT_SEMESTER_EXAMS:
+                        params.put(argKey, finalGradesPage.getCurrentSemesterExamsTargetMarkingPeriod());
+                        break;
+                    case ALL_SEMESTERS:
+                        params.put(argKey, "all_SEM");
+                        break;
+                    case ALL_SEMESTERS_EXAMS:
+                        params.put(argKey, "all_SEM_exams");
+                        break;
+                }
+                params.put("arguments[1][**FIRST-REQUEST**]", "true");
+                try {
+                    signRequest(params, finalGradesPage.getHmacSecret());
+                } catch (NoSuchAlgorithmException e) {
+                    Log.e(TAG, "Could not find HmacSHA1 algorithm for signing final grades request");
+                    e.printStackTrace();
+                } catch (InvalidKeyException e) {
+                    Log.e(TAG, "Invalid key for HmacSHA1 algorithm while signing final grades request");
+                    e.printStackTrace();
+                }
+                return  params;
+            }
+        };
+
+        ensureFinalGradesPage(finalGradesRequest);
+        return finalGradesRequest;
+    }
+
     public boolean isSessionExpired() {
         return sessionTimeout <= System.currentTimeMillis();
     }
@@ -415,10 +530,11 @@ public class FocusApi {
 
     private void queueRequest(Request request) {
         Log.i(TAG, "Queuing " + request.getUrl());
-        CookieManager cookieManager = RequestSingleton.getCookieManager();
-        for (int i = 0; i < cookieManager.getCookieStore().getCookies().size(); i++) {
-            cookieManager.getCookieStore().getCookies().get(0).setSecure(false);
-        }
+        // necessary for http monitoring (debug only)
+//        CookieManager cookieManager = RequestSingleton.getCookieManager();
+//        for (int i = 0; i < cookieManager.getCookieStore().getCookies().size(); i++) {
+//            cookieManager.getCookieStore().getCookies().get(0).setSecure(false);
+//        }
         requestQueue.add(request);
     }
 

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/text_finalgrade_year"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/finalgrades_year_header"
+        style="@style/primaryBoldBodyText"
+        android:layout_weight="2"/>
+
+    <TextView
+        android:id="@+id/text_finalgrade_mp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/finalgrades_mp_header"
+        style="@style/primaryBoldBodyText"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:id="@+id/text_finalgrade_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/finalgrades_course_header"
+        style="@style/primaryBoldBodyText"
+        android:layout_weight="6"/>
+
+    <TextView
+        android:id="@+id/text_finalgrade_grade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/finalgrades_grade_header"
+        style="@style/primaryBoldBodyText"
+        android:layout_weight="3"/>
+
+</TableRow>

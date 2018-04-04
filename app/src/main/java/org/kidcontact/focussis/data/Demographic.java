@@ -91,7 +91,7 @@ public class Demographic {
         try {
             forcePasswordChange = demographicJSON.getBoolean("force_pass_change");
         } catch (JSONException e) {
-            Log.e(TAG, "No force pass change found in JSON");
+            Log.w(TAG, "No force pass change found in JSON");
             forcePasswordChange = false;
         }
 
