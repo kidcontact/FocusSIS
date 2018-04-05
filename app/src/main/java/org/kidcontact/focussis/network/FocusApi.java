@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.kidcontact.focussis.data.CalendarEvent;
 import org.kidcontact.focussis.data.FinalGradesPage;
+import org.kidcontact.focussis.data.FocusPreferences;
 import org.kidcontact.focussis.data.Student;
 import org.kidcontact.focussis.network.UrlBuilder.FocusUrl;
 import org.kidcontact.focussis.parser.AbsencesParser;
@@ -29,6 +30,7 @@ import org.kidcontact.focussis.parser.FinalGradesPageParser;
 import org.kidcontact.focussis.parser.FinalGradesParser;
 import org.kidcontact.focussis.parser.PageParser;
 import org.kidcontact.focussis.parser.PortalParser;
+import org.kidcontact.focussis.parser.PreferencesParser;
 import org.kidcontact.focussis.parser.ReferralsParser;
 import org.kidcontact.focussis.parser.ScheduleParser;
 import org.kidcontact.focussis.parser.StudentParser;
@@ -81,7 +83,7 @@ public class FocusApi {
         hasAccessedStudentPage = false;
         hasAccessedFinalGradesPage = false;
         StringRequest loginRequest = new StringRequest(
-                Request.Method.POST, UrlBuilder.get(FocusUrl.LOGIN),new Response.Listener<String>() {
+                Request.Method.POST, UrlBuilder.get(FocusUrl.LOGIN), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 boolean success = false;
@@ -505,6 +507,56 @@ public class FocusApi {
 
         ensureFinalGradesPage(finalGradesRequest);
         return finalGradesRequest;
+    }
+
+    public Request getPreferences(final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
+        StringRequest preferencesRequest = new StringRequest(
+                Request.Method.GET, UrlBuilder.get(FocusUrl.PREFERENCES), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                PageParser preferencesParser = new PreferencesParser();
+                try {
+                    listener.onResponse(preferencesParser.parse(response));
+                } catch (JSONException e) {
+                    Log.e(TAG, "JSONException while parsing preferences");
+                    e.printStackTrace();
+                    listener.onResponse(null);
+                }
+            }
+        }, errorListener);
+
+        queueRequest(preferencesRequest);
+        return preferencesRequest;
+    }
+
+    public Request setPreferences(final FocusPreferences preferences, final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
+        StringRequest preferencesRequest = new StringRequest(
+                Request.Method.POST, UrlBuilder.get(FocusUrl.PREFERENCES), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                PageParser preferencesParser = new PreferencesParser();
+                try {
+                    listener.onResponse(preferencesParser.parse(response));
+                } catch (JSONException e) {
+                    Log.e(TAG, "JSONException while parsing preferences");
+                    e.printStackTrace();
+                    listener.onResponse(null);
+                }
+            }
+        }, errorListener) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> params = new HashMap<String, String>();
+                if (preferences.isEnglishLanguage()) {
+                    params.put("values[Preferences][LANGUAGE]", "en_US");
+                    params.put("btn_save", "Save");
+                }
+                return params;
+            }
+        };
+
+        queueRequest(preferencesRequest);
+        return preferencesRequest;
     }
 
     public boolean isSessionExpired() {

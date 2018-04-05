@@ -19,6 +19,8 @@ public class UrlBuilder {
         REFERRALS,
         FINAL_GRADES,
         API,
+        PREFERENCES,
+        PREFERENCES_PASSWORD
     }
     private static String tld = "https://focus.asdnh.org/";
     //private static String tld = "http://10.0.2.2/";
@@ -52,6 +54,10 @@ public class UrlBuilder {
                 return UrlBuilder.tld + "focus/Modules.php?force_package=SIS&modname=Grades/StudentRCGrades.php";
             case API:
                 return UrlBuilder.tld + "focus/API/APIEndpoint.php";
+            case PREFERENCES:
+                return UrlBuilder.tld + "focus/Modules.php?force_package=SIS&modname=Users/Preferences.php";
+            case PREFERENCES_PASSWORD:
+                return UrlBuilder.tld + "focus/Modules.php?modname=Users/Preferences.php&system_tab=&tab=password";
             default:
                 return UrlBuilder.tld;
         }

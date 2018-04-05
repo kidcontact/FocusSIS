@@ -1,6 +1,8 @@
 package org.kidcontact.focussis.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +25,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.kidcontact.focussis.data.FocusPreferences;
 import org.kidcontact.focussis.network.ApiBuilder;
 import org.kidcontact.focussis.R;
 import org.kidcontact.focussis.network.FocusApi;
@@ -43,6 +46,11 @@ public class LoginActivity extends AppCompatActivity {
     private SharedPreferences loginPrefs;
     private SharedPreferences.Editor loginPrefsEditor;
     private Boolean saveLogin;
+
+    private AlertDialog languageErrorDialog;
+    private FocusPreferences focusPreferences;
+
+    private FocusApi api;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,11 +77,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                try {
-                    login();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                login();
             }
         });
 
@@ -85,9 +89,43 @@ public class LoginActivity extends AppCompatActivity {
             _passwordText.setText(loginPrefs.getString(getString(R.string.login_prefs_password), ""));
             _saveLoginCheckBox.setChecked(true);
         }
+
+        languageErrorDialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.language_alert_title)
+                .setMessage(R.string.language_alert_message)
+                .setPositiveButton(R.string.language_alert_positive, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                        final ProgressDialog progressDialog = ProgressDialog.show(LoginActivity.this, null, getString(R.string.language_change_progress),true);
+                        focusPreferences.setEnglishLanguage(true);
+                        api.setPreferences(focusPreferences, new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                progressDialog.hide();
+                                progressDialog.dismiss();
+                                login();
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                progressDialog.hide();
+                                progressDialog.dismiss();
+                                onLoginFailed(getString(R.string.network_error_timeout));
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton(R.string.language_alert_negative, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                })
+                .create();
     }
 
-    public void login() throws JSONException {
+    public void login() {
         _loginButton.setEnabled(false);
 
         final ProgressDialog progressDialog = ProgressDialog.show(LoginActivity.this, null, getString(R.string.auth_progress_dialog),true);
@@ -100,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
         final String username = tempUsername;
         final String password = _passwordText.getText().toString();
 
-        final FocusApi api = new FocusApi(username, password, this);
+        api = new FocusApi(username, password, this);
         api.login(new Response.Listener<Boolean>() {
             @Override
             public void onResponse(Boolean response) {
@@ -117,15 +155,47 @@ public class LoginActivity extends AppCompatActivity {
                         loginPrefsEditor.clear();
                         loginPrefsEditor.commit();
                     }
-                    progressDialog.hide();
-                    progressDialog.dismiss();
-                    FocusApiSingleton.setApi(api);
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent.putExtra(getString(R.string.EXTRA_USERNAME), username);
-                    intent.putExtra(getString(R.string.EXTRA_PASSWORD), password);
-                    startActivity(intent);
-                    finish();
+
+                    api.getPreferences(new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            focusPreferences = new FocusPreferences(response);
+                            if (focusPreferences.isEnglishLanguage()) {
+                                progressDialog.hide();
+                                progressDialog.dismiss();
+                                FocusApiSingleton.setApi(api);
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                intent.putExtra(getString(R.string.EXTRA_USERNAME), username);
+                                intent.putExtra(getString(R.string.EXTRA_PASSWORD), password);
+                                startActivity(intent);
+                                finish();
+                            }
+                            else {
+                                progressDialog.hide();
+                                progressDialog.dismiss();
+                                _loginButton.setEnabled(true);
+                                languageErrorDialog.show();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            progressDialog.hide();
+                            Log.i(TAG, "Getting preferences failed failed");
+                            if (error.networkResponse != null) {
+                                if (error.networkResponse.statusCode == 500) {
+                                    onLoginFailed(getString(R.string.network_error_server));
+                                }
+                                else {
+                                    onLoginFailed(getString(R.string.network_error_timeout));
+                                }
+                            }
+                            else {
+                                onLoginFailed(getString(R.string.network_error_timeout));
+                            }
+                        }
+                    });
                 }
                 else {
                     progressDialog.hide();

@@ -36,6 +36,11 @@
     <string name="login_remember_user">Remember me</string>
     <string name="login_button">Login</string>
     <string name="login_disclaimer">This application is not affiliated with Focus School Software LLC.</string>
+    <string name="language_alert_title">Language set incorrectly</string>
+    <string name="language_alert_message">This application requires that your language be set to "English" in the Focus preferences. Would you like to automatically set the language now?</string>
+    <string name="language_alert_positive">OK, change my language</string>
+    <string name="language_alert_negative">Cancel</string>
+    <string name="language_change_progress">Changing Language…</string>
 
     <!-- Portal page -->
     <string name="portal_courses_tab">COURSES</string>
