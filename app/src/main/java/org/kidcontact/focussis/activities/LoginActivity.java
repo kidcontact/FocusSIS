@@ -48,6 +48,17 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // finish activity and resume MainActivity if the app was already open
+        // https://stackoverflow.com/questions/19545889/app-restarts-rather-than-resumes
+        if (!isTaskRoot()
+                && getIntent().hasCategory(Intent.CATEGORY_LAUNCHER)
+                && getIntent().getAction() != null
+                && getIntent().getAction().equals(Intent.ACTION_MAIN)) {
+
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
