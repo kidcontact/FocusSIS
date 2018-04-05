@@ -29,6 +29,7 @@ import org.kidcontact.focussis.parser.DemographicParser;
 import org.kidcontact.focussis.parser.FinalGradesPageParser;
 import org.kidcontact.focussis.parser.FinalGradesParser;
 import org.kidcontact.focussis.parser.PageParser;
+import org.kidcontact.focussis.parser.PasswordResponseParser;
 import org.kidcontact.focussis.parser.PortalParser;
 import org.kidcontact.focussis.parser.PreferencesParser;
 import org.kidcontact.focussis.parser.ReferralsParser;
@@ -557,6 +558,36 @@ public class FocusApi {
 
         queueRequest(preferencesRequest);
         return preferencesRequest;
+    }
+
+    public Request changePassword(final String currentPassword, final String newPassword, final String verifyNewPassword, final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
+        StringRequest passwordRequest = new StringRequest(
+                Request.Method.POST, UrlBuilder.get(FocusUrl.PREFERENCES_PASSWORD), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                PageParser passwordParser = new PasswordResponseParser();
+                try {
+                    listener.onResponse(passwordParser.parse(response));
+                } catch (JSONException e) {
+                    Log.e(TAG, "JSONException while parsing password");
+                    e.printStackTrace();
+                    listener.onResponse(null);
+                }
+            }
+        }, errorListener) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("values[current]", currentPassword);
+                params.put("values[verify]", verifyNewPassword);
+                params.put("values[new]", newPassword);
+                params.put("btn_save", "Save");
+                return params;
+            }
+        };
+
+        queueRequest(passwordRequest);
+        return passwordRequest;
     }
 
     public boolean isSessionExpired() {

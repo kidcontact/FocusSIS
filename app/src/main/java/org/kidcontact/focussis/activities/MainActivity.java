@@ -30,6 +30,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
 import org.kidcontact.focussis.fragments.AboutFragment;
+import org.kidcontact.focussis.fragments.SettingsFragment;
 import org.kidcontact.focussis.fragments.AbsencesFragment;
 import org.kidcontact.focussis.fragments.AddressFragment;
 import org.kidcontact.focussis.fragments.CalendarFragment;
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
         if (savedInstanceState != null) {
             Log.d(TAG, "Restoring saved instance state");
             username = savedInstanceState.getString(USERNAME_BUNDLE_KEY);
@@ -523,7 +525,10 @@ public class MainActivity extends AppCompatActivity
                 switchFragment(currentFragment);
             }
         } else if (id == R.id.nav_settings) {
-
+            if (!(currentFragment instanceof SettingsFragment)) {
+                currentFragment = new SettingsFragment();
+                switchFragment(currentFragment);
+            }
         } else if (id == R.id.nav_about) {
             if (!(currentFragment instanceof AboutFragment)) {
                 currentFragment = new AboutFragment();
@@ -607,6 +612,7 @@ public class MainActivity extends AppCompatActivity
                 progressDialog.dismiss();
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.putExtra(getString(R.string.EXTRA_DISABLE_AUTO_SIGN_IN), true);
                 startActivity(intent);
                 finish();
             }
@@ -737,6 +743,10 @@ public class MainActivity extends AppCompatActivity
     protected void onPause() {
         super.onPause();
         this.isVisible = false;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
 }

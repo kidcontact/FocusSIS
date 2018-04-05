@@ -5,7 +5,9 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
 import android.content.Intent;
@@ -40,6 +42,8 @@ public class LoginActivity extends AppCompatActivity {
 
     @BindView(R.id.input_username) EditText _usernameText;
     @BindView(R.id.input_password) EditText _passwordText;
+    @BindView(R.id.text_layout_email) TextInputLayout _usernameLayout;
+    @BindView(R.id.text_layout_password) TextInputLayout _passwordLayout;
     @BindView(R.id.btn_login) Button _loginButton;
     @BindView(R.id.check_remember) CheckBox _saveLoginCheckBox;
 
@@ -52,8 +56,11 @@ public class LoginActivity extends AppCompatActivity {
 
     private FocusApi api;
 
+    private SharedPreferences defaultSharedPrefs;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
         // finish activity and resume MainActivity if the app was already open
@@ -69,6 +76,8 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        Intent intent = getIntent();
 
         RelativeLayout rl = (RelativeLayout) findViewById(R.id.login_layout);
         rl.setPadding(rl.getPaddingLeft(), getWindowManager().getDefaultDisplay().getHeight() / 6, rl.getPaddingRight(), rl.getPaddingBottom());
@@ -123,12 +132,18 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 })
                 .create();
+
+        defaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (saveLogin && defaultSharedPrefs.getBoolean("automatic_login", false)
+                && !intent.getBooleanExtra(getString(R.string.EXTRA_DISABLE_AUTO_SIGN_IN), false)
+                && loginPrefs.getString(getString(R.string.login_prefs_password), null) != null) { // occurs after password change
+            login();
+        }
+
     }
 
     public void login() {
         _loginButton.setEnabled(false);
-
-        final ProgressDialog progressDialog = ProgressDialog.show(LoginActivity.this, null, getString(R.string.auth_progress_dialog),true);
 
         String tempUsername = _usernameText.getText().toString();
         if (tempUsername.contains("@")) {
@@ -137,6 +152,30 @@ public class LoginActivity extends AppCompatActivity {
 
         final String username = tempUsername;
         final String password = _passwordText.getText().toString();
+
+        boolean attemptLogin = true;
+        if (username.isEmpty()) {
+            _usernameLayout.setError(getString(R.string.login_blank_username_error));
+            attemptLogin = false;
+        }
+        else {
+            _usernameLayout.setErrorEnabled(false);
+        }
+
+        if (password.isEmpty()) {
+            _passwordLayout.setError(getString(R.string.login_blank_password_error));
+            attemptLogin = false;
+        }
+        else {
+            _passwordLayout.setErrorEnabled(false);
+        }
+
+        if (!attemptLogin) {
+            _loginButton.setEnabled(true);
+            return;
+        }
+
+        final ProgressDialog progressDialog = ProgressDialog.show(LoginActivity.this, null, getString(R.string.auth_progress_dialog),true);
 
         api = new FocusApi(username, password, this);
         api.login(new Response.Listener<Boolean>() {
@@ -156,46 +195,59 @@ public class LoginActivity extends AppCompatActivity {
                         loginPrefsEditor.commit();
                     }
 
-                    api.getPreferences(new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            focusPreferences = new FocusPreferences(response);
-                            if (focusPreferences.isEnglishLanguage()) {
-                                progressDialog.hide();
-                                progressDialog.dismiss();
-                                FocusApiSingleton.setApi(api);
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                intent.putExtra(getString(R.string.EXTRA_USERNAME), username);
-                                intent.putExtra(getString(R.string.EXTRA_PASSWORD), password);
-                                startActivity(intent);
-                                finish();
+                    if (defaultSharedPrefs.getBoolean("always_check_preferences", true)) {
+                        api.getPreferences(new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                focusPreferences = new FocusPreferences(response);
+                                if (focusPreferences.isEnglishLanguage()) {
+                                    progressDialog.hide();
+                                    progressDialog.dismiss();
+                                    FocusApiSingleton.setApi(api);
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    intent.putExtra(getString(R.string.EXTRA_USERNAME), username);
+                                    intent.putExtra(getString(R.string.EXTRA_PASSWORD), password);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                                else {
+                                    progressDialog.hide();
+                                    progressDialog.dismiss();
+                                    _loginButton.setEnabled(true);
+                                    languageErrorDialog.show();
+                                }
                             }
-                            else {
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
                                 progressDialog.hide();
-                                progressDialog.dismiss();
-                                _loginButton.setEnabled(true);
-                                languageErrorDialog.show();
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            progressDialog.hide();
-                            Log.i(TAG, "Getting preferences failed failed");
-                            if (error.networkResponse != null) {
-                                if (error.networkResponse.statusCode == 500) {
-                                    onLoginFailed(getString(R.string.network_error_server));
+                                Log.i(TAG, "Getting preferences failed");
+                                if (error.networkResponse != null) {
+                                    if (error.networkResponse.statusCode == 500) {
+                                        onLoginFailed(getString(R.string.network_error_server));
+                                    }
+                                    else {
+                                        onLoginFailed(getString(R.string.network_error_timeout));
+                                    }
                                 }
                                 else {
                                     onLoginFailed(getString(R.string.network_error_timeout));
                                 }
                             }
-                            else {
-                                onLoginFailed(getString(R.string.network_error_timeout));
-                            }
-                        }
-                    });
+                        });
+                    }
+                    else {
+                        progressDialog.hide();
+                        progressDialog.dismiss();
+                        FocusApiSingleton.setApi(api);
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.putExtra(getString(R.string.EXTRA_USERNAME), username);
+                        intent.putExtra(getString(R.string.EXTRA_PASSWORD), password);
+                        startActivity(intent);
+                        finish();
+                    }
                 }
                 else {
                     progressDialog.hide();
@@ -222,59 +274,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
-//        final RequestQueue queue = RequestSingleton.getInstance(this).getRequestQueue();
-//        JSONObject data = new JSONObject().put(getString(R.string.key_login_username), username).put(getString(R.string.key_login_password), password);
-//        JsonObjectRequest loginRequest = new JsonObjectRequest
-//                (Request.Method.POST, ApiBuilder.getSessionUrl(), data, new Response.Listener<JSONObject>() {
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//                        Log.d(TAG, "Login successful");
-//                        if (_saveLoginCheckBox.isChecked()) {
-//                            Log.i(TAG, "Remembering user " + username);
-//                            loginPrefsEditor.putBoolean(getString(R.string.login_prefs_save_login), true);
-//                            loginPrefsEditor.putString(getString(R.string.login_prefs_username), username);
-//                            loginPrefsEditor.putString(getString(R.string.login_prefs_password), password);
-//                            loginPrefsEditor.commit();
-//                        } else {
-//                            Log.i(TAG, "Remember me not checked, clearing prefs");
-//                            loginPrefsEditor.clear();
-//                            loginPrefsEditor.commit();
-//                        }
-//                        progressDialog.hide();
-//                        progressDialog.dismiss();
-//                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                        intent.putExtra(getString(R.string.EXTRA_USERNAME), username);
-//                        intent.putExtra(getString(R.string.EXTRA_PASSWORD), password);
-//                        startActivity(intent);
-//                        finish();
-//
-//                    }
-//                }, new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        progressDialog.hide();
-//                        Log.i(TAG, "Login failed");
-//                        if (error.networkResponse != null) {
-//                            if (error.networkResponse.statusCode == 401) {
-//                                onLoginFailed(getString(R.string.network_error_auth));
-//                                _passwordText.setText("");
-//                            }
-//                            else if (error.networkResponse.statusCode == 500) {
-//                                onLoginFailed(getString(R.string.network_error_server));
-//                            }
-//                            else {
-//                                onLoginFailed(getString(R.string.network_error_timeout));
-//                            }
-//                        }
-//                        else {
-//                            onLoginFailed(getString(R.string.network_error_timeout));
-//                        }
-//                    }
-//                });
-//        Log.i(TAG, "Sending request to login");
-//        queue.add(loginRequest);
 
     }
 

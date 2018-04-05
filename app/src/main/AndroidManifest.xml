@@ -10,7 +10,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme.Launcher">
         <activity android:name=".activities.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,7 +20,8 @@
         <activity
             android:name=".activities.MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="Portal" />
+            android:label="Portal"
+            android:theme="@style/AppTheme"/>
         <activity android:name=".activities.CrashReportActivity"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"

@@ -41,6 +41,8 @@
     <string name="language_alert_positive">OK, change my language</string>
     <string name="language_alert_negative">Cancel</string>
     <string name="language_change_progress">Changing Language…</string>
+    <string name="login_blank_username_error">Username cannot be blank</string>
+    <string name="login_blank_password_error">Password cannot be blank</string>
 
     <!-- Portal page -->
     <string name="portal_courses_tab">COURSES</string>
@@ -166,6 +168,7 @@
     <string name="EXTRA_PASSWORD">org.kidcontact.focussis.PASSWORD</string>
     <string name="EXTRA_COURSE_ID">org.kidcontact.focussis.COURSE_ID</string>
     <string name="EXTRA_TAB_SAVED_BUNDLE">org.kidcontact.focussis.TAB_SAVED_BUNDLE</string>
+    <string name="EXTRA_DISABLE_AUTO_SIGN_IN">org.kidcontact.focussis.DISABLE_AUTO_SIGN_IN</string>
 
     <!-- Preferences -->
     <string name="login_prefs">loginPrefs</string>
@@ -176,6 +179,31 @@
     <!-- JSON keys for API fields -->
     <string name="key_login_username">username</string>
     <string name="key_login_password">password</string>
+
+    <!-- Preferences page -->
+    <string name="settings_title_general">General</string>
+    <string name="settings_title_login">Log in</string>
+    <string name="settings_title_account">Account</string>
+    <string name="settings_automatic_login_title">Sign in automatically</string>
+    <string name="settings_automatic_login_summary">Automatically log in when the app starts</string>
+    <string name="settings_always_check_preferences_title">Always check language on login</string>
+    <string name="settings_always_check_preferences_summary">Prevents crashes if your language is set incorrectly on Focus, but can make logging in slightly slower</string>
+    <string name="settings_username_title">Username</string>
+    <string name="settings_change_password_title">Change password</string>
+    <string name="settings_date_format_title">Date format</string>
+    <string name="settings_date_format_summary">Current format: %1$s</string>
+    <string name="settings_current_password_hint">Current password</string>
+    <string name="settings_new_password_hint">New password</string>
+    <string name="settings_verify_new_password_hint">Confirm new password</string>
+    <string name="settings_change_password_empty_error">Password cannot be blank</string>
+    <string name="settings_change_password_progress_dialog">Please wait…</string>
+    <string name="settings_change_password_success_title">Success</string>
+    <string name="settings_change_password_error_title">Error</string>
+    <string name="settings_change_password_success_message">Your password has been changed</string>
+    <string name="settings_change_password_incorrect_password">Your current password was incorrect</string>
+    <string name="settings_change_password_passwords_dont_match">New passwords do not match</string>
+    <string name="settings_change_password_other_error">Please try again</string>
+    <string name="settings_change_password_network_error">Network timed out, please try again</string>
 
     <!-- About page -->
     <string name="about_page_description">The Focus student information system (SIS) allows students to easily check their grades and view various other academic information. This app was developed by a student at a high school using the Focus SIS, and is in no way associated with Focus School Software LLC.</string>
@@ -204,6 +232,7 @@
     <string name="acra_dialog_negative_button">Cancel</string>
 
     <!-- Misc -->
+    <string name="ok">OK</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
 

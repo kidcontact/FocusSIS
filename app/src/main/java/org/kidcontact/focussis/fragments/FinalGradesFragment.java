@@ -13,6 +13,7 @@ import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.URLSpan;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -296,7 +297,15 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
             html += "<br><b>Comments: </b>" + fg.getComment();
         }
 
-        gradeDialog.setMessage(Html.fromHtml(html));
+        float dpi = getContext().getResources().getDisplayMetrics().density;
+        TextView messageView = new TextView(getContext());
+        messageView.setText(Html.fromHtml(html));
+        messageView.setTextIsSelectable(true);
+        messageView.setTextColor(getResources().getColor(R.color.textPrimary));
+        messageView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.subheadingText));
+        messageView.setPadding(16, 0, 16, 0);
+
+        gradeDialog.setView(messageView, (int)(19*dpi), (int)(5*dpi), (int)(14*dpi), (int)(5*dpi) );
         gradeDialog.show();
     }
 

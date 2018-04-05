@@ -43,7 +43,8 @@
                 android:divider="@drawable/divider"
                 android:paddingTop="40dp"
                 android:layout_below="@id/text_about"
-                android:layout_alignParentBottom="true">
+                android:layout_alignParentBottom="true"
+                android:gravity="bottom">
 
                 <RelativeLayout
                     android:id="@+id/email_layout"

@@ -10,6 +10,7 @@ import android.support.v4.widget.Space;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -360,7 +361,16 @@ public class CourseFragment extends NetworkFragment {
                             if (assignment.hasDescription()) {
                                 html += "<br><b>Description: </b>" + assignment.getDescription();
                             }
-                            alertDialog.setMessage(Html.fromHtml(html));
+
+                            float dpi = getContext().getResources().getDisplayMetrics().density;
+                            TextView messageView = new TextView(getContext());
+                            messageView.setText(Html.fromHtml(html));
+                            messageView.setTextIsSelectable(true);
+                            messageView.setTextColor(getResources().getColor(R.color.textPrimary));
+                            messageView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.subheadingText));
+                            messageView.setPadding(16, 0, 16, 0);
+
+                            alertDialog.setView(messageView, (int)(19*dpi), (int)(5*dpi), (int)(14*dpi), (int)(5*dpi) );
                             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int which) {
@@ -437,5 +447,7 @@ public class CourseFragment extends NetworkFragment {
             }
         });
     }
+
+
 
 }

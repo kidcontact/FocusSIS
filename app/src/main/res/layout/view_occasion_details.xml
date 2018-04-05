@@ -9,12 +9,14 @@
         android:id="@+id/text_event_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textIsSelectable="true"
         style="@style/primaryBodyText"/>
     
     <TextView
         android:id="@+id/text_event_school"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textIsSelectable="true"
         style="@style/primaryBodyText" />
 
 </LinearLayout>
