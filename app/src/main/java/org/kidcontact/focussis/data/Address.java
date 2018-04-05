@@ -67,7 +67,7 @@ public class Address {
         try {
             phone = addressJSON.getString("phone");
         } catch (JSONException e) {
-            Log.e(TAG, "phone not found in JSON");
+            Log.w(TAG, "phone not found in JSON");
         }
 
         try {
@@ -203,6 +203,10 @@ public class Address {
 
     public String getZip() {
         return zip;
+    }
+
+    public boolean hasPhone() {
+        return phone != null;
     }
 
     public String getPhone() {

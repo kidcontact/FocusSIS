@@ -130,6 +130,10 @@ public class FinalGrade implements Comparable<FinalGrade> {
         return gradeLevel;
     }
 
+    public boolean hasLastUpdated() {
+        return lastUpdated != null;
+    }
+
     public DateTime getLastUpdated() {
         return lastUpdated;
     }

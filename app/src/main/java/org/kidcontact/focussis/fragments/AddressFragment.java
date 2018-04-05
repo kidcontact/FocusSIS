@@ -175,6 +175,9 @@ public class AddressFragment extends NetworkTabAwareFragment {
     }
 
     private String formatPhone(String phone) {
+        if (phone.length() < 4) {
+            return phone;
+        }
         phone = phone.substring(0, phone.length() - 4) + "-" + phone.substring(phone.length() - 4);
         if (phone.length() > 8) {
             phone = "(" + phone.substring(0, 3) + ") " + phone.substring(3);

@@ -33,7 +33,7 @@ public class AddressParser extends PageParser {
         parsed.put("city", result0.getJSONObject(0).getString("city"));
         parsed.put("state", result0.getJSONObject(0).getString("state"));
         parsed.put("zip", result0.getJSONObject(0).getString("zipcode"));
-        if (!JSONObject.NULL.equals(result0.getJSONObject(0).getString("phone"))) {
+        if (!JSONObject.NULL.equals(result0.getJSONObject(0).get("phone")) && result0.getJSONObject(0).getString("phone").length() > 4) {
             parsed.put("phone", sanitizePhoneNumber(result0.getJSONObject(0).getString("phone")));
         }
 
@@ -65,10 +65,13 @@ public class AddressParser extends PageParser {
                     String key = (String)keys.next();
                     if ( c.getJSONObject("_details").get(key) instanceof JSONObject ) {
                         JSONObject d = c.getJSONObject("_details").getJSONObject(key);
+                        if (JSONObject.NULL.equals(d.get("value")) || d.getString("value").length() == 0) {
+                            continue;
+                        }
                         JSONObject parsedD = new JSONObject();
 
                         parsedD.put("title", d.getString("title"));
-                        if (d.getString("title").toLowerCase().contains("phone")) {
+                        if (d.getString("title").toLowerCase().contains("phone") && sanitizePhoneNumber(d.getString("value")).length() > 4) {
                             parsedD.put("type", "phone");
                             parsedD.put("value", sanitizePhoneNumber(d.getString("value")));
                         }
@@ -101,7 +104,7 @@ public class AddressParser extends PageParser {
                     parsedC.put("city", addressJson.getString("city"));
                     parsedC.put("state", addressJson.getString("state"));
                     parsedC.put("zip", addressJson.getString("zipcode"));
-                    if (!JSONObject.NULL.equals(addressJson.getString("phone"))) {
+                    if (!JSONObject.NULL.equals(addressJson.get("phone")) && addressJson.getString("phone").length() > 4) {
                         parsedC.put("phone", sanitizePhoneNumber(addressJson.getString("phone")));
                     }
                 }

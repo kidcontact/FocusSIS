@@ -2,7 +2,6 @@ package org.kidcontact.focussis.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,6 @@ import android.view.ViewGroup;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.kidcontact.focussis.R;
 import org.kidcontact.focussis.data.Demographic;
@@ -61,10 +59,10 @@ public class DemographicFragment extends NetworkTabAwareFragment {
             grade.setText(ordinal(demographic.getGrade()) + ", " + ordinal(demographic.getLevel()) + " year");
 
             IconWithTextView bus = (IconWithTextView) view.findViewById(R.id.view_bus);
-            if (demographic.getArrivalBus().equals(demographic.getDismissalBus())) {
+            if (demographic.getArrivalBus() == null || demographic.getArrivalBus().equals(demographic.getDismissalBus())) {
                 bus.setHint(getString(R.string.demographic_bus_single_hint));
                 if (demographic.getArrivalBus() == null) {
-                    bus.setText(getString(R.string.demographic_bus_not_assigned));
+                    bus.setText(getString(R.string.demographic_unassigned));
                 }
                 else {
                     bus.setText(demographic.getArrivalBus());
@@ -76,7 +74,12 @@ public class DemographicFragment extends NetworkTabAwareFragment {
             }
             bus.setText(demographic.getArrivalBus() + "/" + demographic.getDismissalBus());
             IconWithTextView locker = (IconWithTextView) view.findViewById(R.id.view_locker);
-            locker.setText(demographic.getLocker());
+            if (demographic.getLocker() != null) {
+                locker.setText(demographic.getLocker());
+            }
+            else {
+                locker.setText(getString(R.string.demographic_unassigned));
+            }
             IconWithTextView medical = (IconWithTextView) view.findViewById(R.id.view_medical_record_status);
             medical.setText(demographic.getMedicalRecordStatus());
             IconWithTextView photoAuth = (IconWithTextView) view.findViewById(R.id.view_photo_auth);

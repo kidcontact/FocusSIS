@@ -39,10 +39,21 @@ public class FinalGradesParser extends PageParser {
                     parsedGrade.put("syear", grade.getString("syear"));
                     parsedGrade.put("name", grade.getString("course_title"));
                     Object affectsGpa = grade.get("affects_gpa");
-                    parsedGrade.put("affects_gpa", !JSONObject.NULL.equals(affectsGpa) && ((String) affectsGpa).toLowerCase().equals("y"));
+                    parsedGrade.put("affects_gpa",
+                            !JSONObject.NULL.equals(affectsGpa)
+                                    && ((String) affectsGpa).toLowerCase().equals("y")
+                                    && !JSONObject.NULL.equals(grade.get("gpa_points"))
+                                    && !JSONObject.NULL.equals(grade.get("weighted_gpa_points")));
                     if (parsedGrade.getBoolean("affects_gpa")) {
-                        parsedGrade.put("gpa_points", Double.parseDouble(grade.getString("gpa_points")));
-                        parsedGrade.put("weighted_gpa_points", Double.parseDouble(grade.getString("weighted_gpa_points")));
+                        try {
+                            parsedGrade.put("gpa_points", Double.parseDouble(grade.getString("gpa_points")));
+                            parsedGrade.put("weighted_gpa_points", Double.parseDouble(grade.getString("weighted_gpa_points")));
+                        } catch (NumberFormatException e) {
+                            Log.w(TAG, "gpa_points/weighted_gpa_points is not a number!");
+                            e.printStackTrace();
+                            parsedGrade.put("affects_gpa", false);
+                        }
+
                     }
                     String[] teacher = grade.getString("teacher").split(", ");
                     if (teacher.length > 1) {
@@ -72,7 +83,10 @@ public class FinalGradesParser extends PageParser {
                     if (!JSONObject.NULL.equals(gradeLevel)) {
                         parsedGrade.put("grade_level", Integer.parseInt((String) gradeLevel));
                     }
-                    parsedGrade.put("last_updated", grade.getString("last_updated_date"));
+                    Object lastUpdated = grade.get("last_updated_date");
+                    if (!JSONObject.NULL.equals(lastUpdated)) {
+                        parsedGrade.put("last_updated", (String) lastUpdated);
+                    }
                     parsedGrade.put("location", grade.getString("location_title"));
                     parsedGrade.put("mp_id", grade.getString("marking_period_id"));
 

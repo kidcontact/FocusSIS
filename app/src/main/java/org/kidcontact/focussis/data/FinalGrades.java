@@ -121,7 +121,10 @@ public class FinalGrades extends MarkingPeriodPage {
                         if (grade.has("grade_level")) {
                             gradeLevel = grade.getInt("grade_level");
                         }
-                        DateTime lastUpdated = new DateTime(grade.getString("last_updated"));
+                        DateTime lastUpdated = null;
+                        if (grade.has("last_updated")) {
+                            lastUpdated = new DateTime(grade.getString("last_updated"));
+                        }
                         String location = grade.getString("location");
                         String mpId = grade.getString("mp_id");
                         String mpTitle = grade.getString("mp_title");

@@ -78,6 +78,8 @@ public class FocusApi {
     }
 
     public Request login(final Response.Listener<Boolean> listener, final Response.ErrorListener errorListener) {
+        hasAccessedStudentPage = false;
+        hasAccessedFinalGradesPage = false;
         StringRequest loginRequest = new StringRequest(
                 Request.Method.POST, UrlBuilder.get(FocusUrl.LOGIN),new Response.Listener<String>() {
             @Override
@@ -456,7 +458,9 @@ public class FocusApi {
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing final grades");
                     e.printStackTrace();
-                    listener.onResponse(null);
+                    errorListener.onErrorResponse(new VolleyError(e.toString()));
+                    throw new RuntimeException(e);
+//                    listener.onResponse(null);
                 }
             }
         }, errorListener) {
