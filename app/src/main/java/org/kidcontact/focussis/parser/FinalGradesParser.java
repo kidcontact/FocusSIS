@@ -95,9 +95,12 @@ public class FinalGradesParser extends PageParser {
                         parsedGrade.put("mp_title", markingPeriod.getString("title"));
                         //parsedGrade.put("mp_sort_order", markingPeriod.getString("sort_order"));
                         String yearId = parsedGrade.getString("mp_id");
-                        if (!JSONObject.NULL.equals(markingPeriod.get("parent_id"))) {
-                            yearId = markingPeriod.getString("parent_id");
+                        JSONObject parentMarkingPeriod = markingPeriod;
+                        while (parentMarkingPeriod != null && !JSONObject.NULL.equals(markingPeriod.get("parent_id"))) {
+                            yearId = parentMarkingPeriod.getString("parent_id");
+                            parentMarkingPeriod = getObjectFromDomainById("marking_period", yearId);
                         }
+
                         JSONObject year = getObjectFromDomainById("year", yearId);
                         if (year != null) {
                             parsedGrade.put("year_title", year.getString("title"));
@@ -170,60 +173,72 @@ public class FinalGradesParser extends PageParser {
     }
 
     private JSONObject getObjectFromDomainById(String domainName, String id) throws JSONException {
-        if (json.getJSONObject("result").getJSONObject("defaults").has(domainName)) {
-            JSONObject defaultDomain = json.getJSONObject("result").getJSONObject("defaults").getJSONObject(domainName);
-            Iterator<?> domainKeys = defaultDomain.keys();
-            while (domainKeys.hasNext()) {
-                String domainKey = (String) domainKeys.next();
-                if (!(defaultDomain.get(domainKey) instanceof JSONObject)) {
-                    continue;
-                }
-
-                JSONObject subdomain = defaultDomain.getJSONObject(domainKey);
-                Iterator<?> subdomainKeys = subdomain.keys();
-                while(subdomainKeys.hasNext()) {
-                    String subdomainKey = (String) subdomainKeys.next();
-                    if (!(subdomain.get(subdomainKey) instanceof JSONObject)) {
+        try {
+            if (json.getJSONObject("result").getJSONObject("defaults").has(domainName)
+                    && json.getJSONObject("result").getJSONObject("defaults").get(domainName) instanceof JSONObject) {
+                JSONObject defaultDomain = json.getJSONObject("result").getJSONObject("defaults").getJSONObject(domainName);
+                Iterator<?> domainKeys = defaultDomain.keys();
+                while (domainKeys.hasNext()) {
+                    String domainKey = (String) domainKeys.next();
+                    if (!(defaultDomain.get(domainKey) instanceof JSONObject)) {
                         continue;
                     }
 
-                    if (subdomainKey.equals(id)) {
-                        return subdomain.getJSONObject(subdomainKey);
+                    JSONObject subdomain = defaultDomain.getJSONObject(domainKey);
+                    Iterator<?> subdomainKeys = subdomain.keys();
+                    while(subdomainKeys.hasNext()) {
+                        String subdomainKey = (String) subdomainKeys.next();
+                        if (!(subdomain.get(subdomainKey) instanceof JSONObject)) {
+                            continue;
+                        }
+
+                        if (subdomainKey.equals(id)) {
+                            return subdomain.getJSONObject(subdomainKey);
+                        }
                     }
-                }
 
+                }
             }
-        }
-        else {
-            // Log.w(TAG, "defaults does not have domain " + domainName);
+            else {
+                // Log.w(TAG, "defaults does not have domain " + domainName);
+            }
+        } catch (JSONException e) {
+            Log.w(TAG, "JSONException while parsing defaults");
+            e.printStackTrace();
         }
 
-        if (json.getJSONObject("result").getJSONObject("domains").has(domainName)) {
-            JSONObject domain = json.getJSONObject("result").getJSONObject("domains").getJSONObject(domainName);
-            Iterator<?> domainKeys = domain.keys();
-            while(domainKeys.hasNext()) {
-                String domainKey = (String) domainKeys.next();
-                if (!(domain.get(domainKey) instanceof JSONObject)) {
-                    continue;
-                }
-
-                JSONObject subdomain = domain.getJSONObject(domainKey);
-                Iterator<?> subdomainKeys = subdomain.keys();
-                while(subdomainKeys.hasNext()) {
-                    String subdomainKey = (String) subdomainKeys.next();
-                    if (!(subdomain.get(subdomainKey) instanceof JSONObject)) {
+        try {
+            if (json.getJSONObject("result").getJSONObject("domains").has(domainName)
+                    && json.getJSONObject("result").getJSONObject("domains").get(domainName) instanceof JSONObject) {
+                JSONObject domain = json.getJSONObject("result").getJSONObject("domains").getJSONObject(domainName);
+                Iterator<?> domainKeys = domain.keys();
+                while(domainKeys.hasNext()) {
+                    String domainKey = (String) domainKeys.next();
+                    if (!(domain.get(domainKey) instanceof JSONObject)) {
                         continue;
                     }
 
-                    if (subdomainKey.equals(id)) {
-                        return subdomain.getJSONObject(subdomainKey);
-                    }
-                }
+                    JSONObject subdomain = domain.getJSONObject(domainKey);
+                    Iterator<?> subdomainKeys = subdomain.keys();
+                    while(subdomainKeys.hasNext()) {
+                        String subdomainKey = (String) subdomainKeys.next();
+                        if (!(subdomain.get(subdomainKey) instanceof JSONObject)) {
+                            continue;
+                        }
 
+                        if (subdomainKey.equals(id)) {
+                            return subdomain.getJSONObject(subdomainKey);
+                        }
+                    }
+
+                }
             }
-        }
-        else {
-            Log.w(TAG, "domains does not have domain " + domainName);
+            else {
+                Log.w(TAG, "domains does not have domain " + domainName);
+            }
+        } catch (JSONException e) {
+            Log.w(TAG, "JSONException parsing domains");
+            e.printStackTrace();
         }
 
         return null;
