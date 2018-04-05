@@ -28,6 +28,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -166,7 +167,7 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
     public void refresh() {
         requestFinished = false;
         networkFailed = false;
-        api.getAbsences(new Response.Listener<JSONObject>() {
+        Request request = api.getAbsences(new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 onSuccess(response);
@@ -177,6 +178,8 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
                 onError(error);
             }
         });
+        // absences takes quite a long time to load for some reason
+        request.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
     private void showAbsenceDialog(AbsenceDay d) {
