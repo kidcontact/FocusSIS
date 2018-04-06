@@ -45,9 +45,6 @@
     <string name="login_blank_password_error">Password cannot be blank</string>
 
     <!-- Portal page -->
-    <string name="portal_courses_tab">COURSES</string>
-    <string name="portal_events_tab">EVENTS</string>
-    <string name="portal_assignments_tab">ASSIGNMENTS</string>
     <string name="portal_empty_fragment">Whoops, looks like there isn\'t anything here!</string>
 
     <!-- Course page -->
@@ -72,7 +69,6 @@
     <string name="calendar_event_header">Events</string>
     <string name="calendar_event_dialog_button">OK</string>
     <string name="calendar_event_date">Date</string>
-    <string name="calendar_event_title">Title</string>
     <string name="calendar_event_teacher">Teacher</string>
     <string name="calendar_event_course_name">Course</string>
     <string name="calendar_event_section">Section</string>
@@ -95,13 +91,9 @@
     <string name="demographic_locker_hint">Locker</string>
 
     <!-- Address -->
-    <string name="address_address_hint">Address</string>
     <string name="address_phone_hint">Phone</string>
     <string name="address_contact_address_hint">Address</string>
     <string name="address_contact_email_hint">Email</string>
-    <string name="address_contact_private_email_hint">Private email</string>
-    <string name="address_contact_home_phone_hint">Home phone</string>
-    <string name="address_contact_cell_phone_hint">Cell phone</string>
     <string name="address_contact_relationship_hint">Relationship</string>
     <string name="address_contact_custody_hint">Custody</string>
     <string name="address_contact_emergency_hint">Emergency contact</string>
@@ -110,7 +102,6 @@
     <string name="address_contact_title">Contact</string>
 
     <!-- Referrals -->
-    <string name="referrals_other_violation_header">Notes</string>
     <string name="referrals_violation_header">Violation</string>
     <string name="referrals_entry_date_header">Entry Date</string>
     <string name="referrals_name_header">Reporter</string>
@@ -133,7 +124,6 @@
 
     <!-- Final Grades Page -->
     <string name="finalgrades_final_grades">Final Grades</string>
-    <string name="finalgrades_final_exam_grades">Final Exam Grades</string>
     <string name="finalgrades_all_sem_final_grades">All Semester Final Grades</string>
     <string name="finalgrades_all_sem_final_exam_grades">All Semester Final Exam Grades</string>
     <string name="finalgrades_current_sem_final_grades">%1$s Final Grades</string>
@@ -167,7 +157,6 @@
     <string name="EXTRA_USERNAME">org.kidcontact.focussis.USERNAME</string>
     <string name="EXTRA_PASSWORD">org.kidcontact.focussis.PASSWORD</string>
     <string name="EXTRA_COURSE_ID">org.kidcontact.focussis.COURSE_ID</string>
-    <string name="EXTRA_TAB_SAVED_BUNDLE">org.kidcontact.focussis.TAB_SAVED_BUNDLE</string>
     <string name="EXTRA_DISABLE_AUTO_SIGN_IN">org.kidcontact.focussis.DISABLE_AUTO_SIGN_IN</string>
 
     <!-- Preferences -->
@@ -177,12 +166,9 @@
     <string name="login_prefs_password">password</string>
 
     <!-- JSON keys for API fields -->
-    <string name="key_login_username">username</string>
-    <string name="key_login_password">password</string>
 
     <!-- Preferences page -->
     <string name="settings_title_general">General</string>
-    <string name="settings_title_login">Log in</string>
     <string name="settings_title_account">Account</string>
     <string name="settings_automatic_login_title">Sign in automatically</string>
     <string name="settings_automatic_login_summary">Automatically log in when the app starts</string>
@@ -190,8 +176,6 @@
     <string name="settings_always_check_preferences_summary">Prevents crashes if your language is set incorrectly on Focus, but can make logging in slightly slower</string>
     <string name="settings_username_title">Username</string>
     <string name="settings_change_password_title">Change password</string>
-    <string name="settings_date_format_title">Date format</string>
-    <string name="settings_date_format_summary">Current format: %1$s</string>
     <string name="settings_current_password_hint">Current password</string>
     <string name="settings_new_password_hint">New password</string>
     <string name="settings_verify_new_password_hint">Confirm new password</string>
@@ -211,9 +195,6 @@
     <string name="about_website">http://slensky.com</string>
     <string name="about_github">Find the code on GitHub</string>
     <string name="about_github_link">https://github.com/stephanlensky/FocusSIS</string>
-    <string name="copyright">Copyright © %1$d</string>
-    <string name="license">Licensed under GNU GPL v3.0</string>
-    <string name="about_license_link">https://github.com/stephanlensky/FocusSIS/blob/master/LICENSE</string>
 
     <!-- Dialogs -->
     <string name="auth_progress_dialog">Authenticating…</string>

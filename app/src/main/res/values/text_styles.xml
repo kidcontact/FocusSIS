@@ -19,15 +19,7 @@
         <item name="android:textColor">@color/textPrimary</item>
     </style>
 
-    <style name="primaryBoldSubheadingText" parent="primarySubheadingText">
-        <item name="android:textStyle">bold</item>
-    </style>
-
     <style name="secondarySubheadingText" parent="subheadingText">
-        <item name="android:textColor">@color/textTertiary</item>
-    </style>
-
-    <style name="tertiarySubheadingText" parent="subheadingText">
         <item name="android:textColor">@color/textTertiary</item>
     </style>
 
@@ -41,10 +33,6 @@
     </style>
 
     <style name="secondaryBodyText" parent="bodyText">
-        <item name="android:textColor">@color/textTertiary</item>
-    </style>
-
-    <style name="tertiaryBodyText" parent="bodyText">
         <item name="android:textColor">@color/textTertiary</item>
     </style>
 

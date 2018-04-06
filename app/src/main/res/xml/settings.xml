@@ -33,7 +33,7 @@
             android:key="username_display"
             android:title="@string/settings_username_title"/>
 
-        <org.kidcontact.focussis.views.PasswordChangePreference
+        <com.slensky.focussis.views.PasswordChangePreference
             android:key="password_change"
             android:title="@string/settings_change_password_title" />
 

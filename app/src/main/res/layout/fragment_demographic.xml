@@ -22,7 +22,7 @@
                 android:layout_margin="16dp">
 
                 <LinearLayout
-                    xmlns:custom="http://schemas.android.com/apk/res/org.kidcontact.focussis"
+                    xmlns:custom="http://schemas.android.com/apk/res/com.slensky.focussis"
                     android:id="@+id/ll_basic"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -30,35 +30,35 @@
                     android:showDividers="middle"
                     android:divider="@drawable/divider">
 
-                    <org.kidcontact.focussis.views.IconWithTextView
+                    <com.slensky.focussis.views.IconWithTextView
                         android:id="@+id/view_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         custom:icon="@drawable/ic_person_black_24px"
                         custom:hint="@string/demographic_name_hint"/>
 
-                    <org.kidcontact.focussis.views.IconWithTextView
+                    <com.slensky.focussis.views.IconWithTextView
                         android:id="@+id/view_dob"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         custom:icon="@drawable/ic_cake_variant_black_24px"
                         custom:hint="@string/demographic_dob_hint"/>
 
-                    <!--<org.kidcontact.focussis.views.IconWithTextView
+                    <com.slensky.focussis.views.IconWithTextView
                         android:id="@+id/view_email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         custom:icon="@drawable/ic_email_black_24px"
                         custom:hint="@string/demographic_email_hint"/>-->
 
-                    <org.kidcontact.focussis.views.IconWithTextView
+                    <com.slensky.focussis.views.IconWithTextView
                         android:id="@+id/view_gender"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         custom:icon="@drawable/ic_gender_male_female_black_24px"
                         custom:hint="@string/demographic_gender_hint"/>
 
-                    <org.kidcontact.focussis.views.IconWithTextView
+                    <com.slensky.focussis.views.IconWithTextView
                         android:id="@+id/view_grade"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -77,7 +77,7 @@
                 android:layout_margin="16dp">
 
                 <LinearLayout
-                    xmlns:custom="http://schemas.android.com/apk/res/org.kidcontact.focussis"
+                    xmlns:custom="http://schemas.android.com/apk/res/com.slensky.focussis"
                     android:id="@+id/ll_detailed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -85,42 +85,42 @@
                     android:showDividers="middle"
                     android:divider="@drawable/divider">
 
-                    <org.kidcontact.focussis.views.IconWithTextView
+                    <com.slensky.focussis.views.IconWithTextView
                         android:id="@+id/view_bus"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:icon="@drawable/ic_directions_bus_black_24px"
                         app:hint="@string/demographic_bus_multiple_hint"/>
 
-                    <org.kidcontact.focussis.views.IconWithTextView
+                    <com.slensky.focussis.views.IconWithTextView
                         android:id="@+id/view_locker"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:icon="@drawable/ic_locker_multiple_black_24px"
                         app:hint="@string/demographic_locker_hint"/>
 
-                    <org.kidcontact.focussis.views.IconWithTextView
+                    <com.slensky.focussis.views.IconWithTextView
                         android:id="@+id/view_medical_record_status"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:icon="@drawable/ic_medical_bag_black_24px"
                         app:hint="@string/demographic_medical_hint"/>
 
-                    <org.kidcontact.focussis.views.IconWithTextView
+                    <com.slensky.focussis.views.IconWithTextView
                         android:id="@+id/view_photo_auth"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:icon="@drawable/ic_camera_black_24px"
                         app:hint="@string/demographic_photo_auth_hint"/>
 
-                    <org.kidcontact.focussis.views.IconWithTextView
+                    <com.slensky.focussis.views.IconWithTextView
                         android:id="@+id/view_cumulative_file"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:icon="@drawable/ic_clipboard_text_black_24px"
                         app:hint="@string/demographic_cumulative_file_hint"/>
 
-                    <org.kidcontact.focussis.views.IconWithTextView
+                    <com.slensky.focussis.views.IconWithTextView
                         android:id="@+id/view_student_id"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

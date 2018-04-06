@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.kidcontact.focussis.fragments.PortalCoursesFragment">
+    tools:context="org.kidcontact.focussis.com.kidcontact.focussis.fragments.PortalCoursesFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/course_recycler_view"

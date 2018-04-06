@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.kidcontact.focussis">
+    package="com.slensky.focussis">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".FocusApplication"
+        android:name="com.slensky.focussis.FocusApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Launcher">
-        <activity android:name=".activities.LoginActivity">
+        <activity android:name="com.slensky.focussis.activities.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.MainActivity"
+            android:name="com.slensky.focussis.activities.MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="Portal"
             android:theme="@style/AppTheme"/>
-        <activity android:name=".activities.CrashReportActivity"
+        <activity android:name="com.slensky.focussis.activities.CrashReportActivity"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
             android:launchMode="singleInstance" />
