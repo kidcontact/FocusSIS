@@ -51,8 +51,8 @@ public class DemographicFragment extends NetworkTabAwareFragment {
             name.setText(demographic.getName());
             IconWithTextView dob = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_dob);
             dob.setText(DateUtil.dateTimeToLongString(demographic.getBirthdate()));
-            //IconWithTextView email = (IconWithTextView) view.findViewById(R.id.view_email);
-            //email.setText(demographic.getEmail());
+            IconWithTextView email = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_email);
+            email.setText(demographic.getEmail());
             IconWithTextView gender = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_gender);
             gender.setText(demographic.getGender());
             IconWithTextView grade = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_grade);
