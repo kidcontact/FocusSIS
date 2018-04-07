@@ -4,7 +4,7 @@ Third-party Android app to retrieve and display student grade information from t
 
 ## Contributing
 
-I will do my best to keep the application up-to-date and fix any issues that crop up as a result of the Focus website updating, but as I am no longer a student at the school, my time to fix these problems will be limited. If you do find a problem with the application and can write a patch to fix it, I would be more than happy to accept a pull request.
+I will do my best to keep the application up-to-date and fix any issues that crop up as a result of the Focus website updating, but as I am no longer a student at the school my time to fix these problems will be limited. If you do find a problem with the application and can write a patch to fix it, I would be more than happy to accept a pull request.
 
 Most likely, problems that occur will be caused by the Focus website updating. The part of the application which deals directly with Focus can be found under the `networking` and `parser` packages.
 
