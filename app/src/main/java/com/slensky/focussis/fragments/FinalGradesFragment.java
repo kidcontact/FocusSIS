@@ -52,6 +52,7 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
 
     private AlertDialog commentCodesDialog;
     private AlertDialog gradeDialog;
+    private TextView messageView;
 
     // used for truncation hack on name column
     List<String> originalNameColumnText = new ArrayList<>();
@@ -137,6 +138,13 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
                     }
                 })
                 .create();
+        messageView = new TextView(getContext());
+        messageView.setTextIsSelectable(true);
+        messageView.setTextColor(getResources().getColor(com.slensky.focussis.R.color.textPrimary));
+        messageView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(com.slensky.focussis.R.dimen.subheadingText));
+        messageView.setPadding(16, 0, 16, 0);
+        float dpi = getContext().getResources().getDisplayMetrics().density;
+        gradeDialog.setView(messageView, (int)(19*dpi), (int)(5*dpi), (int)(14*dpi), (int)(5*dpi) );
 
         return view;
     }
@@ -294,15 +302,7 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
             html += "<br><b>Comments: </b>" + fg.getComment();
         }
 
-        float dpi = getContext().getResources().getDisplayMetrics().density;
-        TextView messageView = new TextView(getContext());
         messageView.setText(Html.fromHtml(html));
-        messageView.setTextIsSelectable(true);
-        messageView.setTextColor(getResources().getColor(com.slensky.focussis.R.color.textPrimary));
-        messageView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(com.slensky.focussis.R.dimen.subheadingText));
-        messageView.setPadding(16, 0, 16, 0);
-
-        gradeDialog.setView(messageView, (int)(19*dpi), (int)(5*dpi), (int)(14*dpi), (int)(5*dpi) );
         gradeDialog.show();
     }
 
