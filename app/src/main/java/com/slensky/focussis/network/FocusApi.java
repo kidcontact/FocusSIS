@@ -143,7 +143,8 @@ public class FocusApi {
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing portal");
                     e.printStackTrace();
-                    listener.onResponse(null);
+                    errorListener.onErrorResponse(new VolleyError(e.toString()));
+                    throw new RuntimeException(e);
                 }
             }
         }, errorListener);
@@ -163,7 +164,8 @@ public class FocusApi {
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing course (ID " + id + ")");
                     e.printStackTrace();
-                    listener.onResponse(null);
+                    errorListener.onErrorResponse(new VolleyError(e.toString()));
+                    throw new RuntimeException(e);
                 }
             }
         }, errorListener);
@@ -183,7 +185,8 @@ public class FocusApi {
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing schedule");
                     e.printStackTrace();
-                    listener.onResponse(null);
+                    errorListener.onErrorResponse(new VolleyError(e.toString()));
+                    throw new RuntimeException(e);
                 }
             }
         }, errorListener);
@@ -203,7 +206,8 @@ public class FocusApi {
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing calendar");
                     e.printStackTrace();
-                    listener.onResponse(null);
+                    errorListener.onErrorResponse(new VolleyError(e.toString()));
+                    throw new RuntimeException(e);
                 }
             }
         }, errorListener);
@@ -227,7 +231,8 @@ public class FocusApi {
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing calendar");
                     e.printStackTrace();
-                    listener.onResponse(null);
+                    errorListener.onErrorResponse(new VolleyError(e.toString()));
+                    throw new RuntimeException(e);
                 }
             }
         }, errorListener);
@@ -279,7 +284,8 @@ public class FocusApi {
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing student page");
                     e.printStackTrace();
-                    nextRequest.deliverResponse(null);
+                    nextRequest.getErrorListener().onErrorResponse(new VolleyError(e.toString()));
+                    throw new RuntimeException(e);
                 }
                 }
             }, nextRequest.getErrorListener());
@@ -304,7 +310,8 @@ public class FocusApi {
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing demographic");
                     e.printStackTrace();
-                    listener.onResponse(null);
+                    errorListener.onErrorResponse(new VolleyError(e.toString()));
+                    throw new RuntimeException(e);
                 }
             }
         }, errorListener) {
@@ -340,7 +347,8 @@ public class FocusApi {
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing address");
                     e.printStackTrace();
-                    listener.onResponse(null);
+                    errorListener.onErrorResponse(new VolleyError(e.toString()));
+                    throw new RuntimeException(e);
                 }
             }
         }, errorListener) {
@@ -373,7 +381,8 @@ public class FocusApi {
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing referrals");
                     e.printStackTrace();
-                    listener.onResponse(null);
+                    errorListener.onErrorResponse(new VolleyError(e.toString()));
+                    throw new RuntimeException(e);
                 }
             }
         }, errorListener);
@@ -393,7 +402,8 @@ public class FocusApi {
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing absences");
                     e.printStackTrace();
-                    listener.onResponse(null);
+                    errorListener.onErrorResponse(new VolleyError(e.toString()));
+                    throw new RuntimeException(e);
                 }
             }
         }, errorListener);
@@ -417,7 +427,8 @@ public class FocusApi {
                     } catch (JSONException e) {
                         Log.e(TAG, "JSONException while parsing final grades page");
                         e.printStackTrace();
-                        nextRequest.deliverResponse(null);
+                        nextRequest.getErrorListener().onErrorResponse(new VolleyError(e.toString()));
+                        throw new RuntimeException(e);
                     }
                 }
             }, nextRequest.getErrorListener());
@@ -463,7 +474,6 @@ public class FocusApi {
                     e.printStackTrace();
                     errorListener.onErrorResponse(new VolleyError(e.toString()));
                     throw new RuntimeException(e);
-//                    listener.onResponse(null);
                 }
             }
         }, errorListener) {
@@ -521,7 +531,8 @@ public class FocusApi {
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing preferences");
                     e.printStackTrace();
-                    listener.onResponse(null);
+                    errorListener.onErrorResponse(new VolleyError(e.toString()));
+                    throw new RuntimeException(e);
                 }
             }
         }, errorListener);
@@ -541,7 +552,8 @@ public class FocusApi {
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing preferences");
                     e.printStackTrace();
-                    listener.onResponse(null);
+                    errorListener.onErrorResponse(new VolleyError(e.toString()));
+                    throw new RuntimeException(e);
                 }
             }
         }, errorListener) {
@@ -571,7 +583,8 @@ public class FocusApi {
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing password");
                     e.printStackTrace();
-                    listener.onResponse(null);
+                    errorListener.onErrorResponse(new VolleyError(e.toString()));
+                    throw new RuntimeException(e);
                 }
             }
         }, errorListener) {
