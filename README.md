@@ -1,3 +1,13 @@
 # FocusSIS
 
-Android app to retrieve and display student grade information from the Focus student information system. Makes use of the third party API currently in development [https://github.com/kidcontact/focus-api](https://github.com/kidcontact/focus-api) to communicate with Focus.
+Third-party Android app to retrieve and display student grade information from the Focus student information system. This app was originally created by as the senior project of a student at the Academy for Science and Design aiming to make the website more easily accessible on mobile devices with small screens. The Google Play listing for the application can be found [here](https://play.google.com/apps/testing/com.slensky.focussis). Please report any problems with the application to [focusbugreports@slensky.com](mailto:focusbugreports@slensky.com), or just open an issue on this repository. This project was developed for purely academic purposes, and is not associated with Focus School Software LLC.
+
+## Contributing
+
+I will do my best to keep the application up-to-date and fix any issues that crop up as a result of the Focus website updating, but as I am no longer a student at the school my time to fix these problems will be limited. If you do find a problem with the application and can write a patch to fix it, I would be more than happy to accept a pull request.
+
+Most likely, problems that occur will be caused by the Focus website updating. The part of the application which deals directly with Focus can be found under the `networking` and `parser` packages.
+
+- If Focus changes the URL to one of their pages, it can be updated in the `networking.URLBuilder` class.
+- To make more detailed changes to networking behavior (for example, if Focus decides to move additional pages to use their internal API), the changes need to be made in the `networking.FocusAPI` class and relevant parser classes.
+- Parsing of HTML and JSON provided by the Focus internal API is done by a variety of classes in the `parser` package. The parsed results are then placed into a standardized JSON format (defined loosely [here](https://github.com/stephanlensky/focus-api)) before being passed to the corrresponding models in the `data` package. If the layout of one of the pages is changed slightly, simply update the HTML parsing in the appropriate Parser class.
