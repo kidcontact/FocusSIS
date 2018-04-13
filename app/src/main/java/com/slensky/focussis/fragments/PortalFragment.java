@@ -155,4 +155,15 @@ public class PortalFragment extends NetworkTabAwareFragment {
         }
         return false;
     }
+
+    public CourseFragment getCourseFragment() {
+        if (tabFragments != null && tabFragments.get(0).isAdded()) {
+            FragmentManager fm = tabFragments.get(0).getChildFragmentManager();
+            Fragment fragment = fm.findFragmentById(com.slensky.focussis.R.id.fragment_container);
+            if (fragment instanceof CourseFragment) {
+                return (CourseFragment) fragment;
+            }
+        }
+        return null;
+    }
 }

@@ -27,6 +27,15 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:title="@string/settings_title_course">
+
+        <Preference
+            android:key="clear_all_saved_assignments"
+            android:title="@string/settings_clear_all_saved_assignments" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:title="@string/settings_title_account">
 
         <Preference

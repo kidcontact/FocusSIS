@@ -5,17 +5,40 @@
     android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true"
-    android:background="?android:attr/selectableItemBackground" >
+    android:background="?android:attr/selectableItemBackground">
 
-    <TextView
-        android:id="@+id/text_assignment_name"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_marginBottom="12dp"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="12dp"
-        style="@style/primaryBodyText" />
+        >
+
+        <ImageView
+            android:id="@+id/image_edited"
+            android:layout_width="wrap_content"
+            android:layout_height="18dp"
+            android:visibility="gone"
+            android:layout_marginRight="4dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_mode_edit_grey_24px" />
+
+        <TextView
+            android:id="@+id/text_assignment_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/image_edited"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center_vertical"
+            style="@style/primaryBodyText" />
+
+    </RelativeLayout>
+
 
     <TextView
         android:id="@+id/text_assignment_points"

@@ -5,6 +5,7 @@
     <!-- Toolbar -->
     <string name="toolbar_menu_refresh">Refresh</string>
     <string name="toolbar_menu_logout">Log out</string>
+    <string name="toolbar_menu_delete_saved_assignments">Reset course</string> <!-- For course page only -->
     <string name="portal_label">Portal</string>
     <string name="schedule_label">Schedule</string>
     <string name="calendar_label">Calendar</string>
@@ -54,6 +55,22 @@
     <string name="assignment_assigned_header">Assigned</string>
     <string name="assignment_due_header">Due</string>
     <string name="assignment_category_header">Category</string>
+    <string name="assignment_add_new_title">Add new assignment</string>
+    <string name="assignment_edit_title">Edit assignment</string>
+    <string name="assignment_add_new_name_hint">Name</string>
+    <string name="assignment_add_new_name_empty">Name cannot be empty</string>
+    <string name="assignment_add_new_due">Due:</string>
+    <string name="assignment_add_new_due_hint">mm/dd/yy</string>
+    <string name="assignment_add_new_due_invalid">Invalid date</string>
+    <string name="assignment_add_new_due_empty">Due cannot be empty</string>
+    <string name="assignment_add_new_category">Category:</string>
+    <string name="assignment_add_new_description_hint">Description</string>
+    <string name="assignment_add_new_positive_button">Add</string>
+    <string name="assignment_menu_edit">Edit assignment</string>
+    <string name="assignment_menu_delete">Delete assignment</string>
+    <string name="assignment_menu_reset">Reset assignment</string>
+
+    <string name="course_prefs_assignment_menu_category">course%1$sRememberedCategory</string>
 
     <!-- Schedule page -->
     <string name="course_name_header">Course</string>
@@ -169,11 +186,15 @@
 
     <!-- Preferences page -->
     <string name="settings_title_general">General</string>
+    <string name="settings_title_course">Courses</string>
     <string name="settings_title_account">Account</string>
     <string name="settings_automatic_login_title">Sign in automatically</string>
     <string name="settings_automatic_login_summary">Automatically log in when the app starts</string>
     <string name="settings_always_check_preferences_title">Always check language on login</string>
     <string name="settings_always_check_preferences_summary">Prevents crashes if your language is set incorrectly on Focus, but can make logging in slightly slower</string>
+    <string name="settings_clear_all_saved_assignments">Clear all saved assignments</string>
+    <string name="settings_clear_all_saved_assignments_warning">Are you sure you want to clear your saved assignments? This will delete all custom and edited assignments from all of your courses.</string>
+    <string name="settings_clear_all_saved_assignemnts_positive">Clear assignments</string>
     <string name="settings_username_title">Username</string>
     <string name="settings_change_password_title">Change password</string>
     <string name="settings_current_password_hint">Current password</string>
@@ -214,6 +235,7 @@
 
     <!-- Misc -->
     <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
 

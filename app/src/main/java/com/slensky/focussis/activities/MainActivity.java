@@ -28,6 +28,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.slensky.focussis.R;
+import com.slensky.focussis.data.Portal;
 import com.slensky.focussis.fragments.AboutFragment;
 import com.slensky.focussis.fragments.AbsencesFragment;
 import com.slensky.focussis.fragments.AddressFragment;
@@ -35,6 +37,7 @@ import com.slensky.focussis.fragments.CalendarFragment;
 import com.slensky.focussis.fragments.DemographicFragment;
 import com.slensky.focussis.fragments.FinalGradesFragment;
 import com.slensky.focussis.fragments.NetworkErrorFragment;
+import com.slensky.focussis.fragments.NetworkFragment;
 import com.slensky.focussis.fragments.PageFragment;
 import com.slensky.focussis.fragments.PortalFragment;
 import com.slensky.focussis.fragments.ReferralsFragment;
@@ -106,10 +109,12 @@ public class MainActivity extends AppCompatActivity
                     api.setLoggedIn(true);
                 }
                 else {
+                    authenticating = true;
                     reauthenticate();
                 }
             }
             else {
+                authenticating = true;
                 reauthenticate();
             }
         }
@@ -406,6 +411,36 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem refreshItem = findMenuItem(menu, getString(R.string.toolbar_menu_refresh));
+        MenuItem resetCourseItem = findMenuItem(menu, getString(R.string.toolbar_menu_delete_saved_assignments));
+        if (currentFragment instanceof NetworkFragment) {
+            refreshItem.setVisible(true);
+        }
+        else {
+            refreshItem.setVisible(false);
+        }
+
+        if (currentFragment instanceof PortalFragment && ((PortalFragment) currentFragment).isCurrentFragmentNested()) {
+            resetCourseItem.setVisible(true);
+        }
+        else {
+            resetCourseItem.setVisible(false);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+
+    private MenuItem findMenuItem(Menu menu, CharSequence title) {
+        for (int i = 0; i < menu.size(); i++) {
+            if (menu.getItem(i).getTitle().equals(title)) {
+                return menu.getItem(i);
+            }
+        }
+        return null;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(com.slensky.focussis.R.menu.main, menu);
@@ -427,7 +462,12 @@ public class MainActivity extends AppCompatActivity
             logout();
             return true;
         }
-
+        else if (id == R.id.action_delete_saved_assignments) {
+            if (currentFragment instanceof PortalFragment && ((PortalFragment) currentFragment).getCourseFragment() != null) {
+                ((PortalFragment) currentFragment).getCourseFragment().resetCourse();
+            }
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }

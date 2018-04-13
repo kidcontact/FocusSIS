@@ -31,7 +31,7 @@ public class Course extends MarkingPeriodPage {
     public Course(JSONObject courseJSON) {
         super(courseJSON);
 
-        List<CourseAssignment> assignments;
+        List<CourseAssignment> assignments = new ArrayList<>();
         List<CourseCategory> categories;
         String id;
         String letterGrade;
@@ -42,13 +42,13 @@ public class Course extends MarkingPeriodPage {
 
         try {
             JSONArray assignmentsJSON = courseJSON.getJSONArray("assignments");
-            assignments = new ArrayList<CourseAssignment>();
 
             for (int i = 0; i < assignmentsJSON.length(); i++) {
                 JSONObject assignmentJSON = assignmentsJSON.getJSONObject(i);
                 String assignmentName = assignmentJSON.getString("name");
                 DateTime assigned = new DateTime(assignmentJSON.getString("assigned"));
                 DateTime due = new DateTime(assignmentJSON.getString("due"));
+                DateTime lastModified = new DateTime(assignmentJSON.getString("last_modified"));
                 String category = null;
                 if (assignmentJSON.has("category")) {
                     category = assignmentJSON.getString("category");
@@ -139,11 +139,10 @@ public class Course extends MarkingPeriodPage {
                     description = assignmentJSON.getString("description");
                 }
 
-                assignments.add(new CourseAssignment(assignmentName, assigned, due, category, maxGrade, maxGradeString, studentGrade, studentGradeString, assignmentLetterGrade, assignmentPercentGrade, gradeString, description, status));
+                assignments.add(new CourseAssignment(assignmentName, assigned, due, lastModified, category, maxGrade, maxGradeString, studentGrade, studentGradeString, assignmentLetterGrade, assignmentPercentGrade, gradeString, description, status, getCurrentMarkingPeriod().getId()));
 
             }
         } catch (JSONException e) {
-            assignments = null;
             Log.e(TAG, "Error parsing course assignment JSON");
 
         }
@@ -254,7 +253,7 @@ public class Course extends MarkingPeriodPage {
     }
 
     public boolean hasAssignments() {
-        return assignments != null;
+        return assignments.size() > 0;
     }
 
     public boolean hasCategories() {

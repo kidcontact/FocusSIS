@@ -195,10 +195,17 @@ public class CourseParser extends PageParser {
             groups = DateUtil.nattyDateParser.parse(td.get(5).text());
             String due = DateUtil.ISO_DATE_FORMATTER.format(groups.get(0).getDates().get(0));
 
+            String lastModified = assigned;
+            if (!td.get(9).text().trim().isEmpty()) {
+                groups = DateUtil.nattyDateParser.parse(td.get(9).text());
+                lastModified = DateUtil.ISO_DATE_FORMATTER.format(groups.get(0).getDates().get(0));
+            }
+
             assignment.put("name", name);
             assignment.put("status", status);
             assignment.put("assigned", assigned);
             assignment.put("due", due);
+            assignment.put("last_modified", lastModified);
 
             assignments.put(assignment);
             count += 1;

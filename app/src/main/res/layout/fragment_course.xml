@@ -1,153 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/course_coordinator_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <include layout="@layout/view_loading"
-        android:visibility="gone" />
-
-    <include layout="@layout/view_network_failure"
-        android:visibility="gone" />
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/course_fragment_empty_layout"
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/nestedscrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:fillViewport="true">
 
-        <TextView
-            android:id="@+id/text_empty"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/portal_empty_fragment"
-            android:textAlignment="center"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            style="@style/secondarySubheadingText" />
-    </android.support.constraint.ConstraintLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/course_fragment_course_layout"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible"
-            tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="8dp">
+            android:orientation="vertical">
 
+            <include layout="@layout/view_loading"
+                android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/text_course_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                style="@style/primaryHeadingText" />
+            <include layout="@layout/view_network_failure"
+                android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/text_course_teacher"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text_course_name"
-                style="@style/primaryBoldBodyText" />
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/course_fragment_empty_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
 
-            <TextView
-                android:id="@+id/text_course_grade"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="2dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text_course_teacher"
-                style="@style/primaryBodyText" />
-
-            <ScrollView
-                android:id="@+id/scrollview_categories"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:fillViewport="true"
-                android:scrollbarStyle="outsideInset"
-                android:scrollbars="horizontal"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text_course_grade">
-
-                <HorizontalScrollView
-                    android:id="@+id/horizscroll_categories"
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/text_empty"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:scrollbars="horizontal">
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/portal_empty_fragment"
+                    android:textAlignment="center"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    style="@style/secondarySubheadingText" />
+            </android.support.constraint.ConstraintLayout>
 
-                    <TableLayout
-                        android:id="@+id/tablelayout_course_categories"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-                    </TableLayout>
-
-                </HorizontalScrollView>
-            </ScrollView>
-
-            <HorizontalScrollView
-                android:id="@+id/scrollview_assignments"
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/course_fragment_course_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="8dp"
-                android:fillViewport="true"
-                android:scrollbarStyle="outsideInset"
-                android:scrollbars="horizontal"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/scrollview_categories">
+                android:visibility="visible"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="8dp"
+                android:paddingBottom="16dp">
 
-                <TableLayout
-                    android:id="@+id/table_assignments"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:divider="?android:attr/dividerHorizontal"
-                    android:showDividers="middle" />
 
-            </HorizontalScrollView>
+                <TextView
+                    android:id="@+id/text_course_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginRight="24dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    style="@style/primaryHeadingText" />
 
-        </android.support.constraint.ConstraintLayout>
+                <TextView
+                    android:id="@+id/text_course_teacher"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginRight="24dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/text_course_name"
+                    style="@style/primaryBoldBodyText" />
 
-    </ScrollView>
+                <TextView
+                    android:id="@+id/text_course_grade"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginRight="24dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="2dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/text_course_teacher"
+                    style="@style/primaryBodyText" />
 
-</LinearLayout>
+                <ScrollView
+                    android:id="@+id/scrollview_categories"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginRight="24dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:fillViewport="true"
+                    android:scrollbarStyle="outsideInset"
+                    android:scrollbars="horizontal"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/text_course_grade">
+
+                    <HorizontalScrollView
+                        android:id="@+id/horizscroll_categories"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="horizontal">
+
+                        <TableLayout
+                            android:id="@+id/tablelayout_course_categories"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+                        </TableLayout>
+
+                    </HorizontalScrollView>
+                </ScrollView>
+
+                <com.slensky.focussis.views.HorizontalScrollViewWithListener
+                    android:id="@+id/scrollview_assignments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="8dp"
+                    android:fillViewport="true"
+                    android:scrollbarStyle="outsideInset"
+                    android:scrollbars="horizontal"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/scrollview_categories">
+
+                    <TableLayout
+                        android:id="@+id/table_assignments"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        />
+
+                </com.slensky.focussis.views.HorizontalScrollViewWithListener>
+
+            </android.support.constraint.ConstraintLayout>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        app:fabSize="normal"
+        android:clickable="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@android:drawable/ic_input_add"
+        android:tint="@android:color/white"
+        app:layout_behavior="com.slensky.focussis.views.ScrollAwareFABBehavior"
+        android:focusable="true" />
+
+</android.support.design.widget.CoordinatorLayout>

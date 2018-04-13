@@ -19,6 +19,10 @@
         <item name="android:textColor">@color/textPrimary</item>
     </style>
 
+    <style name="primaryBoldSubheadingText" parent="primarySubheadingText">
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="secondarySubheadingText" parent="subheadingText">
         <item name="android:textColor">@color/textTertiary</item>
     </style>
