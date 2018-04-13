@@ -621,22 +621,23 @@ public class CourseFragment extends NetworkFragment {
                 if (editable.toString().isEmpty()) {
                     return;
                 }
+                if (editable.toString().contains(".")) {
+                    dateWrapper.setError(getString(R.string.assignment_add_new_due_invalid));
+                    return;
+                }
 
                 String monthStr;
                 String dayStr;
                 String yearStr;
-                if (editable.toString().length() == 6) {
-                    if (editable.toString().contains(".")) {
-                        dateWrapper.setError(getString(R.string.assignment_add_new_due_invalid));
-                        return;
-                    }
+                String[] dates = editable.toString().split("/");
+
+                if (dates.length == 1 && editable.toString().length() == 6) {
                     monthStr = editable.toString().substring(0, 2);
                     dayStr = editable.toString().substring(2, 4);
                     yearStr = editable.toString().substring(4, 6);
                 }
                 else {
-                    String[] dates = editable.toString().split("/");
-                    if (editable.toString().contains(".") || dates.length != 3) {
+                    if (dates.length != 3) {
                         dateWrapper.setError(getString(R.string.assignment_add_new_due_invalid));
                         return;
                     }
@@ -645,9 +646,17 @@ public class CourseFragment extends NetworkFragment {
                     yearStr = dates[2];
                 }
 
-                int month = Integer.parseInt(monthStr);
-                int day = Integer.parseInt(dayStr);
-                int year = Integer.parseInt(yearStr);
+                int month = 0, day = 0, year = 0;
+                try {
+                    month = Integer.parseInt(monthStr);
+                    day = Integer.parseInt(dayStr);
+                    year = Integer.parseInt(yearStr);
+                } catch (NumberFormatException e) {
+                    Log.e(TAG, "NumberFormatException while parsing date");
+                    e.printStackTrace();
+                    dateWrapper.setError(getString(R.string.assignment_add_new_due_invalid));
+                    return;
+                }
 
                 if (month < 1 || month > 12) {
                     dateWrapper.setError(getString(R.string.assignment_add_new_due_invalid));
