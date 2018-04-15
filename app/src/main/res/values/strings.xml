@@ -71,6 +71,8 @@
     <string name="assignment_menu_delete">Delete assignment</string>
     <string name="assignment_menu_reset">Reset assignment</string>
     <string name="assignment_dialog_edit">Edit</string>
+    <string name="assignment_dialog_reset">Reset</string>
+    <string name="assignment_dialog_delete">Delete</string>
 
     <string name="course_prefs_assignment_menu_category">course%1$sRememberedCategory</string>
 

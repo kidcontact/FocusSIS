@@ -521,6 +521,31 @@ public class CourseFragment extends NetworkFragment {
                             });
 
                     if (assignment.isCustomAssignment() || assignment.isEditedAssignment()) {
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,
+                                assignment.isCustomAssignment() ? context.getString(R.string.assignment_dialog_delete) : context.getString(R.string.assignment_dialog_reset),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        try {
+                                            CourseAssignmentFileHandler.removeSavedAssignment(getContext(), course.getId(), assignment);
+                                        } catch (IOException e) {
+                                            Log.e(TAG, "IOException while attempting to remove saved assignment");
+                                            e.printStackTrace();
+                                        }
+                                        if (assignment.isCustomAssignment()) {
+                                            updateAssignment(assignment, null);
+                                        }
+                                        else { // edited assignment
+                                            for (int j = 0; j < replacedAssignments.size(); j++) {
+                                                if (assignment.overrides(replacedAssignments.get(j))) {
+                                                    updateAssignment(assignment, replacedAssignments.remove(j));
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        dialogInterface.dismiss();
+                                    }
+                                });
                         alertDialog.setIcon(R.drawable.ic_mode_edit);
                     }
 
