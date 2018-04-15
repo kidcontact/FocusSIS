@@ -401,9 +401,7 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
     }
 
     @Override
-    public void refresh() {
-        requestFinished = false;
-        networkFailed = false;
+    protected void makeRequest() {
         api.getFinalGrades(selectedType, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {

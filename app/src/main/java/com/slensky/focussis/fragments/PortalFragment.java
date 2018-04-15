@@ -80,7 +80,7 @@ public class PortalFragment extends NetworkTabAwareFragment {
     }
 
     @Override
-    public void refresh() {
+    protected void makeRequest() {
         if (tabFragments != null && tabFragments.get(0).isAdded()) {
             FragmentManager fm = tabFragments.get(0).getChildFragmentManager();
             Fragment fragment = fm.findFragmentById(com.slensky.focussis.R.id.fragment_container);
@@ -90,8 +90,6 @@ public class PortalFragment extends NetworkTabAwareFragment {
                 return;
             }
         }
-        requestFinished = false;
-        networkFailed = false;
         api.getPortal(new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {

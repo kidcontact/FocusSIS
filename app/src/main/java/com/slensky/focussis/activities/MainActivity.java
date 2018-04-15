@@ -63,6 +63,9 @@ public class MainActivity extends AppCompatActivity
     private static final String SESSION_TIMEOUT_BUNDLE_KEY = "session_timeout";
     private static final String FRAGMENT_ID_BUNDLE_KEY = "fragment_id";
 
+    // tag set on reauthenticate request to prevent that request from getting cancelled by switchFragment()
+    private static final String REAUTH_REQUEST_TAG = "reauth";
+
     private NavigationView navigationView;
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -96,24 +99,19 @@ public class MainActivity extends AppCompatActivity
             FocusApiSingleton.setApi(api);
             super.onCreate(savedInstanceState);
             setContentView(com.slensky.focussis.R.layout.activity_main);
-            // cancel request made by onCreate of fragment
-            RequestSingleton.getInstance(this).getRequestQueue().cancelAll(new RequestQueue.RequestFilter() {
-                @Override
-                public boolean apply(Request<?> request) {
-                    return true;
-                }
-            });
             if (api.hasSession()) {
                 api.setSessionTimeout(savedInstanceState.getLong(SESSION_TIMEOUT_BUNDLE_KEY));
                 if (!api.isSessionExpired()) {
                     api.setLoggedIn(true);
                 }
                 else {
+                    Log.d(TAG, "Session timed out, reauthenticating from saved instance state");
                     authenticating = true;
                     reauthenticate();
                 }
             }
             else {
+                Log.d(TAG, "API has no session, reauthenticating from saved instance state");
                 authenticating = true;
                 reauthenticate();
             }
@@ -121,6 +119,11 @@ public class MainActivity extends AppCompatActivity
         else {
             super.onCreate(savedInstanceState);
             setContentView(com.slensky.focussis.R.layout.activity_main);
+            api = FocusApiSingleton.getApi();
+            Log.d(TAG, "Unpacking intent");
+            Intent intent = getIntent();
+            username = intent.getStringExtra(getString(com.slensky.focussis.R.string.EXTRA_USERNAME));
+            password = intent.getStringExtra(getString(com.slensky.focussis.R.string.EXTRA_PASSWORD));
         }
 
         Log.d(TAG, "Toolbar init");
@@ -136,12 +139,6 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         mDrawerToggle.syncState();
-
-        api = FocusApiSingleton.getApi();
-        Log.d(TAG, "Unpacking intent and adding user's name + email to nav bar");
-        Intent intent = getIntent();
-        username = intent.getStringExtra(getString(com.slensky.focussis.R.string.EXTRA_USERNAME));
-        password = intent.getStringExtra(getString(com.slensky.focussis.R.string.EXTRA_PASSWORD));
 
         isVisible = true;
 
@@ -233,7 +230,7 @@ public class MainActivity extends AppCompatActivity
         RequestSingleton.getInstance(this).getRequestQueue().cancelAll(new RequestQueue.RequestFilter() {
             @Override
             public boolean apply(Request<?> request) {
-                return true;
+                return !REAUTH_REQUEST_TAG.equals(request.getTag());
             }
         });
         FragmentManager fm = getSupportFragmentManager();
@@ -592,6 +589,7 @@ public class MainActivity extends AppCompatActivity
                     authenticating = false;
                     refresh();
                 } else {
+                    Log.d(TAG, "Login unsuccessful (response is false)");
                     progressDialog.dismiss();
                     showAuthenticateRetryDialog(-1);
                 }
@@ -599,6 +597,7 @@ public class MainActivity extends AppCompatActivity
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, "Login unsuccessful (error response)");
                 progressDialog.dismiss();
                 if (error.networkResponse != null) {
                     showAuthenticateRetryDialog(error.networkResponse.statusCode);
@@ -607,7 +606,7 @@ public class MainActivity extends AppCompatActivity
                     showAuthenticateRetryDialog(-1);
                 }
             }
-        });
+        }).setTag(REAUTH_REQUEST_TAG);
     }
 
     private void showAuthenticateRetryDialog(int status) {

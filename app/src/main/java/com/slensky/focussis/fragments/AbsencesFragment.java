@@ -154,9 +154,7 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
     }
 
     @Override
-    public void refresh() {
-        requestFinished = false;
-        networkFailed = false;
+    protected void makeRequest() {
         Request request = api.getAbsences(new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {

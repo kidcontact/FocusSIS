@@ -91,9 +91,7 @@ public class ScheduleFragment extends NetworkTabAwareFragment {
     }
 
     @Override
-    public void refresh() {
-        requestFinished = false;
-        networkFailed = false;
+    protected void makeRequest() {
         api.getSchedule(new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {

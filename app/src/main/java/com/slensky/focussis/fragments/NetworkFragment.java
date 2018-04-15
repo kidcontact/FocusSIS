@@ -13,6 +13,7 @@ import org.json.JSONObject;
  */
 
 public abstract class NetworkFragment extends Fragment {
+    private static final String TAG = "NetworkFragment";
 
     protected boolean networkFailed = false;
     protected VolleyError networkError;
@@ -40,24 +41,28 @@ public abstract class NetworkFragment extends Fragment {
         return requestFinished;
     }
 
-    public abstract void refresh();/* {
+    public void refresh() {
         requestFinished = false;
         networkFailed = false;
-        JsonObjectRequest request = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        onSuccess(response);
+        Thread waitForLogin = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Waiting for API to be logged in before making request");
+                while (api.isSessionExpired() || !api.isLoggedIn()) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        onError(error);
-                    }
-                });
-        configureRequest(request);
-        RequestSingleton.getInstance(getContext()).addToRequestQueue(request);
-    }*/
+                }
+                Log.d(TAG, "Making request");
+                makeRequest();
+            }
+        });
+        waitForLogin.start();
+    }
+
+    protected abstract void makeRequest();
 
     public void onFragmentLoad() {
 

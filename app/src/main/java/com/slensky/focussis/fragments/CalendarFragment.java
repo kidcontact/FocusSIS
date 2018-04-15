@@ -403,9 +403,7 @@ public class CalendarFragment extends NetworkTabAwareFragment {
     }
 
     @Override
-    public void refresh() {
-        requestFinished = false;
-        networkFailed = false;
+    protected void makeRequest() {
         api.getCalendar(year, month + 1, new Response.Listener<JSONObject>() {  // month is 0 indexed in java calendar
             @Override
             public void onResponse(JSONObject response) {

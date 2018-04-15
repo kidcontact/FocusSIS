@@ -63,7 +63,6 @@ public class FocusApi {
     private FinalGradesPage finalGradesPage;
 
     private final Context context;
-    private final RequestQueue requestQueue;
 
     private boolean loggedIn = false;
     private long sessionLengthMillis = 20 * 60 * 1000; // milliseconds
@@ -73,7 +72,6 @@ public class FocusApi {
         this.username = username;
         this.password = password;
         this.context = context;
-        requestQueue = RequestSingleton.getInstance(context).getRequestQueue();
     }
 
     private void updateSessionTimeout() {
@@ -615,6 +613,10 @@ public class FocusApi {
         this.sessionTimeout = sessionTimeout;
     }
 
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
     public void setLoggedIn(boolean loggedIn) {
         this.loggedIn = loggedIn;
     }
@@ -635,7 +637,7 @@ public class FocusApi {
 //        for (int i = 0; i < cookieManager.getCookieStore().getCookies().size(); i++) {
 //            cookieManager.getCookieStore().getCookies().get(0).setSecure(false);
 //        }
-        requestQueue.add(request);
+        RequestSingleton.getInstance(context).addToRequestQueue(request);
     }
 
     public Student getStudent() {

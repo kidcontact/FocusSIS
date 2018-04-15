@@ -66,9 +66,11 @@
     <string name="assignment_add_new_category">Category:</string>
     <string name="assignment_add_new_description_hint">Description</string>
     <string name="assignment_add_new_positive_button">Add</string>
+    <string name="assignment_add_new_update_button">Update</string>
     <string name="assignment_menu_edit">Edit assignment</string>
     <string name="assignment_menu_delete">Delete assignment</string>
     <string name="assignment_menu_reset">Reset assignment</string>
+    <string name="assignment_dialog_edit">Edit</string>
 
     <string name="course_prefs_assignment_menu_category">course%1$sRememberedCategory</string>
 

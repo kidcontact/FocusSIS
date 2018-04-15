@@ -371,7 +371,7 @@ public class CourseFragment extends NetworkFragment {
         }
     }
 
-    private TableRow createAssignmentRowFromAssignment(Context context, LayoutInflater inflater, final CourseAssignment assignment) {
+    private TableRow createAssignmentRowFromAssignment(final Context context, LayoutInflater inflater, final CourseAssignment assignment) {
         TableRow row = (TableRow) inflater.inflate(R.layout.view_course_assignment, assignmentTable, false);
         final TextView name = (TextView) row.findViewById(R.id.text_assignment_name);
         if (assignment.isCustomAssignment() || assignment.isEditedAssignment()) {
@@ -505,10 +505,18 @@ public class CourseFragment extends NetworkFragment {
                     Linkify.addLinks(messageView, Linkify.WEB_URLS);
 
                     alertDialog.setView(messageView, (int)(19*dpi), (int)(5*dpi), (int)(14*dpi), (int)(5*dpi) );
-                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.ok),
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
+                                }
+                            });
+                    alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, context.getString(R.string.assignment_dialog_edit),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    editAssignment(assignment, !assignment.isCustomAssignment());
+                                    dialogInterface.dismiss();
                                 }
                             });
 
@@ -603,7 +611,7 @@ public class CourseFragment extends NetworkFragment {
 
         final AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setTitle(getString(assignment == null ? R.string.assignment_add_new_title : R.string.assignment_edit_title))
-                .setPositiveButton(R.string.assignment_add_new_positive_button, null)
+                .setPositiveButton(assignment == null ? R.string.assignment_add_new_positive_button : R.string.assignment_add_new_update_button, null)
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -836,14 +844,56 @@ public class CourseFragment extends NetworkFragment {
                 if (validInput) {
                     // no change was actually made to the existing assignment
                     if (assignment != null && descOnly &&
-                            ((description == null && assignment.getDescription() == null) || description.equals(assignment.getDescription()))) {
+                            (description != null ? description.equals(assignment.getDescription()) : assignment.getDescription() == null)) {
                         dialog.cancel();
                         return;
                     }
 
+                    // edited assignment description now matches the original assignment
+                    if (assignment != null && descOnly) {
+                        for (int i = 0; i < replacedAssignments.size(); i++) {
+                            if (assignment.overrides(replacedAssignments.get(i))) {
+                                String replacedDesc = replacedAssignments.get(i).getDescription();
+                                if (description != null ? description.equals(replacedDesc) : replacedDesc == null) {
+                                    try {
+                                        CourseAssignmentFileHandler.removeSavedAssignment(getContext(), course.getId(), assignment);
+                                    } catch (IOException e) {
+                                        Log.e(TAG, "IOException while attempting to remove saved assignment");
+                                        e.printStackTrace();
+                                    }
+                                    updateAssignment(assignment, replacedAssignments.remove(i));
+                                    dialog.dismiss();
+                                    return;
+                                }
+                                break;
+                            }
+                        }
+                    }
+
                     DateTime now = DateTime.now();
                     DateTime assigned = assignment != null ? assignment.getAssigned() : now;
-                    CourseAssignment newAssignment = new CourseAssignment(name, assigned, new DateTime(due), now, category, -1, "*", -1, "*", null, -1, null, description, CourseAssignment.Status.NOT_GRADED, course.getCurrentMarkingPeriod().getId());
+                    int maxGrade = -1;
+                    String maxGradeString = "*";
+                    double studentGrade = -1;
+                    String studentGradeString = "*";
+                    String letterGrade = null;
+                    int percentGrade = -1;
+                    String overallGradeString = null;
+                    CourseAssignment.Status status = CourseAssignment.Status.NOT_GRADED;
+                    String mpId = course.getCurrentMarkingPeriod().getId();
+                    if (assignment != null) {
+                        maxGrade = assignment.getMaxGrade();
+                        maxGradeString = assignment.getMaxGradeString();
+                        studentGrade = assignment.getStudentGrade();
+                        studentGradeString = assignment.getStudentGradeString();
+                        letterGrade = assignment.getLetterGrade();
+                        percentGrade = assignment.getPercentGrade();
+                        overallGradeString = assignment.getOverallGradeString();
+                        status = assignment.getStatus();
+                        mpId = assignment.getMarkingPeriodId();
+                    }
+
+                    CourseAssignment newAssignment = new CourseAssignment(name, assigned, new DateTime(due), now, category, maxGrade, maxGradeString, studentGrade, studentGradeString, letterGrade, percentGrade, overallGradeString, description, status, mpId);
                     if (assignment != null && !assignment.isCustomAssignment()) {
                         newAssignment.setEditedAssignment(true);
                         replacedAssignments.add(assignment);
@@ -990,7 +1040,7 @@ public class CourseFragment extends NetworkFragment {
     }
 
     @Override
-    public void refresh() {
+    protected void makeRequest() {
         if (progressLayout != null && progressLayout.getVisibility() != View.VISIBLE) {
             progressLayout.setVisibility(View.VISIBLE);
         }
@@ -1000,8 +1050,6 @@ public class CourseFragment extends NetworkFragment {
         if (fab != null) {
             fab.setVisibility(View.GONE);
         }
-        requestFinished = false;
-        networkFailed = false;
 
         api.getCourse(this.id, new Response.Listener<JSONObject>() {
             @Override
