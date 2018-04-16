@@ -56,7 +56,12 @@ public abstract class NetworkFragment extends Fragment {
                     }
                 }
                 Log.d(TAG, "Making request");
-                makeRequest();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        makeRequest();
+                    }
+                });
             }
         });
         waitForLogin.start();
@@ -67,9 +72,5 @@ public abstract class NetworkFragment extends Fragment {
     public void onFragmentLoad() {
 
     }
-
-//    public void configureRequest(JsonObjectRequest request) {
-//
-//    }
 
 }

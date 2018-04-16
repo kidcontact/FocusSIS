@@ -2,6 +2,7 @@ package com.slensky.focussis.fragments;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,12 +13,14 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.URLSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -29,6 +32,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.slensky.focussis.network.FocusApiSingleton;
+import com.slensky.focussis.util.LayoutUtil;
 import com.slensky.focussis.util.TermUtil;
 import com.slensky.focussis.views.CalendarDayDisableAllDecorator;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -81,6 +85,7 @@ public class CalendarFragment extends NetworkTabAwareFragment {
         java.util.Calendar today = java.util.Calendar.getInstance();
         year = today.get(java.util.Calendar.YEAR);
         month = today.get(java.util.Calendar.MONTH);
+        api = FocusApiSingleton.getApi();
     }
 
     @Override
@@ -132,8 +137,8 @@ public class CalendarFragment extends NetworkTabAwareFragment {
                 //materialCalendarView.addDecorator(new CalendarDayDisableAllDecorator(materialCalendarView.getCurrentDate().getMonth()));
             }
         });
+        sizeCalendar();
 
-        api = FocusApiSingleton.getApi();
         title = getString(com.slensky.focussis.R.string.calendar_label);
         refresh();
 
@@ -400,6 +405,23 @@ public class CalendarFragment extends NetworkTabAwareFragment {
             decoratorThread.start();
         }
 
+    }
+
+    private void sizeCalendar() {
+        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        Log.i(TAG, "dpWidth: " + dpWidth);
+        if(dpWidth > 450){
+            Log.d(TAG, "Screen has large width, setting calendarView to hardcoded dp width");
+            ViewGroup.LayoutParams params = calendarView.getLayoutParams();
+            params.width = LayoutUtil.dpToPixels(getContext(), 450);
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        sizeCalendar();
     }
 
     @Override

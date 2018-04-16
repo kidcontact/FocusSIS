@@ -58,6 +58,7 @@ import com.slensky.focussis.R;
 import com.slensky.focussis.network.FocusApiSingleton;
 import com.slensky.focussis.util.CourseAssignmentFileHandler;
 import com.slensky.focussis.util.DateUtil;
+import com.slensky.focussis.util.LayoutUtil;
 import com.slensky.focussis.views.HorizontalScrollViewWithListener;
 import com.slensky.focussis.views.ScrollAwareFABBehavior;
 
@@ -195,13 +196,13 @@ public class CourseFragment extends NetworkFragment {
                 TextView percentWeightRowHeader = new TextView(getContext());
                 percentWeightRowHeader.setText("Percent of Grade");
                 setTextViewParams(percentWeightRowHeader);
-                percentWeightRowHeader.setPadding(0, dpToPixels(2), dpToPixels(8), dpToPixels(2));
+                percentWeightRowHeader.setPadding(0, LayoutUtil.dpToPixels(getContext(), 2), LayoutUtil.dpToPixels(getContext(), 8), LayoutUtil.dpToPixels(getContext(), 2));
                 percentWeightRowHeader.setTypeface(null, Typeface.BOLD);
                 cweights.addView(percentWeightRowHeader);
                 TextView percentGradeRowHeader = new TextView(getContext());
                 percentGradeRowHeader.setText("Your Score");
                 setTextViewParams(percentGradeRowHeader);
-                percentGradeRowHeader.setPadding(0, dpToPixels(2), dpToPixels(8), dpToPixels(2));
+                percentGradeRowHeader.setPadding(0, LayoutUtil.dpToPixels(getContext(), 2), LayoutUtil.dpToPixels(getContext(), 8), LayoutUtil.dpToPixels(getContext(), 2));
                 percentGradeRowHeader.setTypeface(null, Typeface.BOLD);
                 cgrades.addView(percentGradeRowHeader);
 
@@ -361,7 +362,7 @@ public class CourseFragment extends NetworkFragment {
                         courseLayout.setPadding(courseLayout.getPaddingLeft(),
                                 courseLayout.getPaddingTop(),
                                 courseLayout.getPaddingRight(),
-                                dpToPixels(58));
+                                LayoutUtil.dpToPixels(getContext(), 58));
                         Log.d(TAG, "Adding extra padding to make sure FAB does not overlay information");
                     }
                     courseLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -1042,14 +1043,9 @@ public class CourseFragment extends NetworkFragment {
 
     private void setTextViewParams(TextView textView) {
         textView.setTextColor(getResources().getColor(R.color.textPrimary));
-        int padding = dpToPixels(2);
-        int padding_sides = dpToPixels(8);
+        int padding = LayoutUtil.dpToPixels(getContext(), 2);
+        int padding_sides = LayoutUtil.dpToPixels(getContext(), 8);
         textView.setPadding(padding_sides, padding, padding_sides, padding);
-    }
-
-    private int dpToPixels(int dp) {
-        final float scale = getResources().getDisplayMetrics().density;
-        return (int) (dp * scale + 0.5f);
     }
 
     public void onClickRetry(View v) {
