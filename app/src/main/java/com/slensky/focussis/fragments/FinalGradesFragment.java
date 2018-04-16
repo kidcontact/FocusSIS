@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.slensky.focussis.R;
 import com.slensky.focussis.data.FinalGrade;
 import com.slensky.focussis.network.FocusApi;
 import com.slensky.focussis.network.FocusApiSingleton;
@@ -33,6 +35,7 @@ import com.slensky.focussis.network.FocusApiSingleton;
 import org.json.JSONObject;
 
 import com.slensky.focussis.data.FinalGrades;
+import com.slensky.focussis.util.TableRowAnimationController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -218,8 +221,11 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
                     int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
                     int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY);
                     originalNameColumnText.clear();
-                    for (int i = 1; i < table.getChildCount(); i++) {
+                    for (int i = 2; i < table.getChildCount(); i++) {
                         TextView name = table.getChildAt(i).findViewById(com.slensky.focussis.R.id.text_finalgrade_name);
+                        if (name == null) { // divider row
+                            continue;
+                        }
                         name.measure(widthMeasureSpec, heightMeasureSpec);
                         String originalText = name.getText().toString();
                         originalNameColumnText.add(originalText);
@@ -233,6 +239,7 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
                 }
             });
 
+            TableRowAnimationController animationController = new TableRowAnimationController(getContext());
             for (final FinalGrade fg : finalGrades.getFinalGrades()) {
                 if (!(fg.hasPercentGrade() || fg.hasLetterGrade())) {
                     continue;
@@ -261,6 +268,14 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
                         showDialogForGrade(fg);
                     }
                 });
+
+                View divider = inflater.inflate(R.layout.view_divider, table, false);
+
+                Animation animation = animationController.nextAnimation();
+                //gradeRow.setAnimation(animation);
+                //divider.setAnimation(animation);
+
+                table.addView(divider);
                 table.addView(gradeRow);
             }
 
@@ -469,9 +484,12 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
                 int height = nameHeader.getHeight();
                 int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
                 int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY);
-                for (int i = 1; i < table.getChildCount(); i++) {
+                for (int i = 2; i < table.getChildCount(); i++) {
                     TextView name = table.getChildAt(i).findViewById(com.slensky.focussis.R.id.text_finalgrade_name);
-                    String originalText = originalNameColumnText.get(i - 1);
+                    if (name == null) { // divider row
+                        continue;
+                    }
+                    String originalText = originalNameColumnText.get((i - 1) / 2); // divison to account for divider rows
                     name.setText(originalText);
                     name.measure(widthMeasureSpec, heightMeasureSpec);
                     while (name.getMeasuredWidth() > width) {

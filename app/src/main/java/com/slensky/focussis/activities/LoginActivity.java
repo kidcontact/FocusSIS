@@ -231,7 +231,12 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     else {
                         progressDialog.hide();
-                        progressDialog.dismiss();
+                        try {
+                            progressDialog.dismiss();
+                        } catch (IllegalArgumentException e) {
+                            Log.e(TAG, "Not attached to window manager, could not dismiss dialog");
+                            e.printStackTrace();
+                        }
                         FocusApiSingleton.setApi(api);
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

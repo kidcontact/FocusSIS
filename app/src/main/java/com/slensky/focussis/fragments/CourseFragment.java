@@ -1,5 +1,8 @@
 package com.slensky.focussis.fragments;
 
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
+import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -59,6 +62,7 @@ import com.slensky.focussis.network.FocusApiSingleton;
 import com.slensky.focussis.util.CourseAssignmentFileHandler;
 import com.slensky.focussis.util.DateUtil;
 import com.slensky.focussis.util.LayoutUtil;
+import com.slensky.focussis.util.TableRowAnimationController;
 import com.slensky.focussis.views.HorizontalScrollViewWithListener;
 import com.slensky.focussis.views.ScrollAwareFABBehavior;
 
@@ -89,6 +93,8 @@ public class CourseFragment extends NetworkFragment {
     private List<CourseAssignment> replacedAssignments;
     private boolean editingAssignment = false; // used to prevent assignment details from overlaying edit assignment alert
     private CourseAssignment contextMenuAssignment;
+
+    private LayoutTransition layoutTransition = new LayoutTransition();
 
     public CourseFragment() {
 
@@ -148,11 +154,10 @@ public class CourseFragment extends NetworkFragment {
             networkFailureLayout.setVisibility(View.GONE);
             courseLayout.setVisibility(View.VISIBLE);
 
-            int initialAnimationStartOffset = 100;
             Animation fabAnimation = new TranslateAnimation(0, 0, 175, 0);
             fabAnimation.setDuration(350);
             fabAnimation.setInterpolator(new DecelerateInterpolator());
-            fabAnimation.setStartOffset(initialAnimationStartOffset);
+            fabAnimation.setStartOffset(TableRowAnimationController.initialAnimationStartOffset);
             fab.setAnimation(fabAnimation);
             fab.show();
             fab.setVisibility(View.VISIBLE);
@@ -336,17 +341,14 @@ public class CourseFragment extends NetworkFragment {
             Collections.sort(course.getAssignments(), Collections.<CourseAssignment>reverseOrder());
 
             if (course.hasAssignments()) {
-                int animationStartOffset = initialAnimationStartOffset;
+                TableRowAnimationController animationController = new TableRowAnimationController(getContext());
                 for (int i = 0; i < assignments.size(); i++) {
                     TableRow row = createAssignmentRowFromAssignment(getContext(), inflater, assignments.get(i));
                     View divider = inflater.inflate(R.layout.view_divider, assignmentTable, false);
 
-                    Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in_with_slide);
-                    animation.setStartOffset(animationStartOffset);
-                    animation.setInterpolator(new AccelerateDecelerateInterpolator());
+                    Animation animation = animationController.nextAnimation();
                     row.setAnimation(animation);
                     divider.setAnimation(animation);
-                    animationStartOffset += 46 * Math.pow(0.8, i);
 
                     assignmentTable.addView(divider);
                     assignmentTable.addView(row);
@@ -949,6 +951,9 @@ public class CourseFragment extends NetworkFragment {
             for (int i = 0; i < assignmentTable.getChildCount(); i++) {
                 View row = assignmentTable.getChildAt(i);
                 if (row.getTag() != null && row.getTag().equals(from)) {
+                    if (to == null) {
+                        assignmentTable.setLayoutTransition(layoutTransition);
+                    }
                     assignmentTable.removeViewAt(i); // remove assignment row
                     assignmentTable.removeViewAt(i - 1); // remove divider
                     course.getAssignments().remove(row.getTag());
@@ -966,9 +971,15 @@ public class CourseFragment extends NetworkFragment {
             View divider = inflater.inflate(R.layout.view_divider, assignmentTable, false);
 
             int pos = course.getAssignments().indexOf(to) * 2 + 1;
+
+            if (from == null) {
+                assignmentTable.setLayoutTransition(layoutTransition);
+            }
+
             assignmentTable.addView(newRow, pos);
             assignmentTable.addView(divider, pos);
         }
+        assignmentTable.setLayoutTransition(null);
     }
 
     public void resetCourse() {

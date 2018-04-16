@@ -9,6 +9,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ import com.slensky.focussis.data.Referral;
 import com.slensky.focussis.data.Referrals;
 import com.slensky.focussis.network.FocusApiSingleton;
 import com.slensky.focussis.util.DateUtil;
+import com.slensky.focussis.util.TableRowAnimationController;
 
 import java.util.Collections;
 import java.util.List;
@@ -72,6 +74,7 @@ public class ReferralsFragment extends NetworkTabAwareFragment {
             TableRow headerRow = (TableRow) inflater.inflate(R.layout.view_referral_header, table, false);
             table.addView(headerRow);
 
+            TableRowAnimationController animationController = new TableRowAnimationController(getContext());
             for (final Referral r : refList) {
                 TableRow referralRow = (TableRow) inflater.inflate(R.layout.view_referral, table, false);
                 TextView reporter = (TextView) referralRow.findViewById(R.id.text_reporter_name);
@@ -93,6 +96,13 @@ public class ReferralsFragment extends NetworkTabAwareFragment {
                     }
                 });
 
+                View divider = inflater.inflate(R.layout.view_divider, table, false);
+
+                Animation animation = animationController.nextAnimation();
+                referralRow.setAnimation(animation);
+                divider.setAnimation(animation);
+
+                table.addView(divider);
                 table.addView(referralRow);
             }
 

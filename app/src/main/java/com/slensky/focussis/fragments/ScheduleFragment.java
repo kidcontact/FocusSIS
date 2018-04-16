@@ -5,14 +5,17 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.slensky.focussis.R;
 import com.slensky.focussis.data.Schedule;
 import com.slensky.focussis.network.FocusApiSingleton;
+import com.slensky.focussis.util.TableRowAnimationController;
 import com.slensky.focussis.util.TermUtil;
 
 import org.json.JSONObject;
@@ -61,6 +64,7 @@ public class ScheduleFragment extends NetworkTabAwareFragment {
             table.addView(headerRow);
 
             List<ScheduleCourse> courses = schedule.getCourses();
+            TableRowAnimationController animationController = new TableRowAnimationController(getContext());
             for (ScheduleCourse c : courses) {
                 TableRow courseRow = (TableRow) inflater.inflate(com.slensky.focussis.R.layout.view_schedule_course, table, false);
                 TextView name = (TextView) courseRow.findViewById(com.slensky.focussis.R.id.text_course_name);
@@ -82,6 +86,14 @@ public class ScheduleFragment extends NetworkTabAwareFragment {
                 room.setText(c.getRoom().split(" ")[0]); // changes jr/sr area into just jr/sr for brevity
                 TextView term = (TextView) courseRow.findViewById(com.slensky.focussis.R.id.text_course_term);
                 term.setText(TermUtil.termToString(c.getTerm()));
+
+                View divider = inflater.inflate(R.layout.view_divider, table, false);
+
+                Animation animation = animationController.nextAnimation();
+                courseRow.setAnimation(animation);
+                divider.setAnimation(animation);
+
+                table.addView(divider);
                 table.addView(courseRow);
             }
 

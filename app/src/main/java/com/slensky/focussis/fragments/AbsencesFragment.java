@@ -14,6 +14,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
@@ -24,8 +25,10 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.slensky.focussis.R;
 import com.slensky.focussis.data.Absences;
 import com.slensky.focussis.network.FocusApiSingleton;
+import com.slensky.focussis.util.TableRowAnimationController;
 import com.slensky.focussis.views.AbsenceLabelView;
 
 import org.json.JSONObject;
@@ -104,6 +107,7 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
             TableRow headerRow = (TableRow) inflater.inflate(com.slensky.focussis.R.layout.view_absences_header, table, false);
             table.addView(headerRow);
 
+            TableRowAnimationController animationController = new TableRowAnimationController(getContext());
             for (final AbsenceDay d : absences.getDays()) {
                 if (d.getPeriods().size() == 0) {
                     continue;
@@ -146,6 +150,13 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
                     }
                 });
 
+                View divider = inflater.inflate(R.layout.view_divider, table, false);
+
+                Animation animation = animationController.nextAnimation();
+                //absenceRow.setAnimation(animation);
+                //divider.setAnimation(animation);
+
+                table.addView(divider);
                 table.addView(absenceRow);
             }
 
@@ -192,6 +203,7 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
             TextView textLabel = (TextView) row.findViewById(com.slensky.focussis.R.id.text_absence_label);
             String status = statusToString(p.getStatus());
             textLabel.setText(status);
+
             table.addView(row);
         }
         builder.setView(fl)

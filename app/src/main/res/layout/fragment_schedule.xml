@@ -47,9 +47,7 @@
                 <TableLayout
                     android:id="@+id/table_courses"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:divider="?android:attr/dividerHorizontal"
-                    android:showDividers="middle" />
+                    android:layout_height="match_parent" />
 
             </HorizontalScrollView>
 
