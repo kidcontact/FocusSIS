@@ -2,6 +2,7 @@ package com.slensky.focussis.fragments;
 
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -14,9 +15,11 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -76,7 +79,7 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
         Absences absences = new Absences(response);
         View view = getView();
         if (view != null) {
-
+            final ScrollView scrollView = view.findViewById(R.id.scrollview_absences);
             TextView summary = (TextView) view.findViewById(com.slensky.focussis.R.id.text_absences_summary);
             String html = "<b>" + getString(com.slensky.focussis.R.string.absences_days_possible) + ": </b>" + absences.getDaysPossible() + "|"
                     + "<br><b>" + getString(com.slensky.focussis.R.string.absences_days_attended) + ": </b>" + absences.getDaysAttended() + "| (" + absences.getDaysAttendedPercent() + "%)"
@@ -112,7 +115,7 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
                 if (d.getPeriods().size() == 0) {
                     continue;
                 }
-                TableRow absenceRow = (TableRow) inflater.inflate(com.slensky.focussis.R.layout.view_absences_row, table, false);
+                final TableRow absenceRow = (TableRow) inflater.inflate(com.slensky.focussis.R.layout.view_absences_row, table, false);
                 TextView date = (TextView) absenceRow.findViewById(com.slensky.focussis.R.id.text_absence_date);
                 date.setText(DateUtil.dateTimeToShortString(d.getDate()));
                 TextView daily = (TextView) absenceRow.findViewById(com.slensky.focussis.R.id.text_absence_daily);
@@ -150,11 +153,60 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
                     }
                 });
 
-                View divider = inflater.inflate(R.layout.view_divider, table, false);
+                final View divider = inflater.inflate(R.layout.view_divider, table, false);
 
-                Animation animation = animationController.nextAnimation();
+                final Animation animation = animationController.nextAnimation();
                 //absenceRow.setAnimation(animation);
                 //divider.setAnimation(animation);
+
+                divider.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        Rect scrollBounds = new Rect();
+                        scrollView.getHitRect(scrollBounds);
+                        if (divider.getLocalVisibleRect(scrollBounds)) {
+                            divider.setAnimation(animation);
+                        }
+                        divider.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    }
+                });
+
+                absenceRow.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        Rect scrollBounds = new Rect();
+                        scrollView.getHitRect(scrollBounds);
+                        if (absenceRow.getLocalVisibleRect(scrollBounds)) {
+                            absenceRow.setAnimation(animation);
+                        }
+                        absenceRow.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    }
+                });
+
+                divider.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+                absenceRow.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
+                animation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        if (divider.getLayerType() != View.LAYER_TYPE_NONE) {
+                            divider.setLayerType(View.LAYER_TYPE_NONE, null);
+                        }
+                        if (absenceRow.getLayerType() != View.LAYER_TYPE_NONE) {
+                            absenceRow.setLayerType(View.LAYER_TYPE_NONE, null);
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
 
                 table.addView(divider);
                 table.addView(absenceRow);

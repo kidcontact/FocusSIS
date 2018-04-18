@@ -66,7 +66,7 @@ public class ScheduleFragment extends NetworkTabAwareFragment {
             List<ScheduleCourse> courses = schedule.getCourses();
             TableRowAnimationController animationController = new TableRowAnimationController(getContext());
             for (ScheduleCourse c : courses) {
-                TableRow courseRow = (TableRow) inflater.inflate(com.slensky.focussis.R.layout.view_schedule_course, table, false);
+                final TableRow courseRow = (TableRow) inflater.inflate(com.slensky.focussis.R.layout.view_schedule_course, table, false);
                 TextView name = (TextView) courseRow.findViewById(com.slensky.focussis.R.id.text_course_name);
                 name.setText(c.getName());
                 TextView period = (TextView) courseRow.findViewById(com.slensky.focussis.R.id.text_course_period);
@@ -87,11 +87,36 @@ public class ScheduleFragment extends NetworkTabAwareFragment {
                 TextView term = (TextView) courseRow.findViewById(com.slensky.focussis.R.id.text_course_term);
                 term.setText(TermUtil.termToString(c.getTerm()));
 
-                View divider = inflater.inflate(R.layout.view_divider, table, false);
+                final View divider = inflater.inflate(R.layout.view_divider, table, false);
 
                 Animation animation = animationController.nextAnimation();
                 courseRow.setAnimation(animation);
                 divider.setAnimation(animation);
+
+                divider.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+                courseRow.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
+                animation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        if (divider.getLayerType() != View.LAYER_TYPE_NONE) {
+                            divider.setLayerType(View.LAYER_TYPE_NONE, null);
+                        }
+                        if (courseRow.getLayerType() != View.LAYER_TYPE_NONE) {
+                            courseRow.setLayerType(View.LAYER_TYPE_NONE, null);
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
 
                 table.addView(divider);
                 table.addView(courseRow);

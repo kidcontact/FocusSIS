@@ -81,7 +81,7 @@ public class PortalFragment extends NetworkTabAwareFragment {
 
     @Override
     protected void makeRequest() {
-        if (tabFragments != null && tabFragments.get(0).isAdded()) {
+        if (selectedTab == 0 && tabFragments != null && tabFragments.get(0).isAdded()) {
             FragmentManager fm = tabFragments.get(0).getChildFragmentManager();
             Fragment fragment = fm.findFragmentById(com.slensky.focussis.R.id.fragment_container);
             if (fragment instanceof CourseFragment) {
@@ -105,7 +105,7 @@ public class PortalFragment extends NetworkTabAwareFragment {
 
     @Override
     public boolean hasNetworkError() {
-        if (tabFragments != null && tabFragments.get(0).isAdded()) {
+        if (selectedTab == 0 && tabFragments != null && tabFragments.get(0).isAdded()) {
             FragmentManager fm = tabFragments.get(0).getChildFragmentManager();
             Fragment fragment = fm.findFragmentById(com.slensky.focussis.R.id.fragment_container);
             if (fragment instanceof CourseFragment) {
@@ -117,7 +117,7 @@ public class PortalFragment extends NetworkTabAwareFragment {
 
     @Override
     public boolean isRequestFinished() {
-        if (tabFragments != null && tabFragments.get(0).isAdded()) {
+        if (selectedTab == 0 && tabFragments != null && tabFragments.get(0).isAdded()) {
             FragmentManager fm = tabFragments.get(0).getChildFragmentManager();
             Fragment fragment = fm.findFragmentById(com.slensky.focussis.R.id.fragment_container);
             if (fragment instanceof CourseFragment) {
@@ -144,7 +144,7 @@ public class PortalFragment extends NetworkTabAwareFragment {
 
     @Override
     public boolean isCurrentFragmentNested() {
-        if (tabFragments != null && tabFragments.get(0).isAdded()) {
+        if (selectedTab == 0 && tabFragments != null && tabFragments.get(0).isAdded()) {
             FragmentManager fm = tabFragments.get(0).getChildFragmentManager();
             Fragment fragment = fm.findFragmentById(com.slensky.focussis.R.id.fragment_container);
             if (fragment instanceof CourseFragment) {
@@ -155,7 +155,7 @@ public class PortalFragment extends NetworkTabAwareFragment {
     }
 
     public CourseFragment getCourseFragment() {
-        if (tabFragments != null && tabFragments.get(0).isAdded()) {
+        if (selectedTab == 0 && tabFragments != null && tabFragments.get(0).isAdded()) {
             FragmentManager fm = tabFragments.get(0).getChildFragmentManager();
             Fragment fragment = fm.findFragmentById(com.slensky.focussis.R.id.fragment_container);
             if (fragment instanceof CourseFragment) {

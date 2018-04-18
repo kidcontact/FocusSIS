@@ -156,6 +156,24 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "Configure viewpager + tab layout");
 
         viewPager = (ViewPager) findViewById(com.slensky.focussis.R.id.viewpager);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (currentFragment instanceof NetworkTabAwareFragment) {
+                    ((NetworkTabAwareFragment) currentFragment).setSelectedTab(position);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         fragmentContainer = (FrameLayout) findViewById(com.slensky.focussis.R.id.fragment_container);
 
         loadingLayout = (LinearLayout) findViewById(com.slensky.focussis.R.id.layout_loading);

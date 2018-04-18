@@ -1,5 +1,6 @@
 package com.slensky.focussis.fragments;
 
+import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
@@ -48,20 +49,27 @@ public abstract class NetworkFragment extends Fragment {
             @Override
             public void run() {
                 Log.d(TAG, "Waiting for API to be logged in before making request");
-                while (api.isSessionExpired() || !api.isLoggedIn()) {
+                Activity activity;
+                while ((activity = getActivity()) != null && (api.isSessionExpired() || !api.isLoggedIn())) {
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
-                Log.d(TAG, "Making request");
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        makeRequest();
-                    }
-                });
+                if (activity != null) {
+                    Log.d(TAG, "Making request");
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            makeRequest();
+                        }
+                    });
+
+                }
+                else {
+                    Log.d(TAG, "Not making request because fragment is detached");
+                }
             }
         });
         waitForLogin.start();

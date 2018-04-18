@@ -12,7 +12,7 @@ import com.slensky.focussis.R;
  */
 
 public class TableRowAnimationController {
-    public static final int initialAnimationStartOffset = 100;
+    public static final int initialAnimationStartOffset = 50;
     public static final int animationOffsetAdditiveFactor = 46;
     public static final double animationOffsetMultiplicativeFactor = 0.8;
     private Context context;

@@ -1,6 +1,7 @@
 package com.slensky.focussis.fragments;
 
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
 import java.util.List;
 
@@ -9,8 +10,10 @@ import java.util.List;
  */
 
 public abstract class NetworkTabAwareFragment extends NetworkFragment implements PageFragment {
+    private static final String TAG = "NetworkTabAwareFragment";
 
     protected List<Fragment> tabFragments = null;
+    protected int selectedTab;
     protected String title;
 
     public abstract boolean hasTabs();
@@ -22,6 +25,10 @@ public abstract class NetworkTabAwareFragment extends NetworkFragment implements
 
     public void setTabFragments(List<Fragment> tabFragments) {
         this.tabFragments = tabFragments;
+    }
+
+    public void setSelectedTab(int selectedTabIdx) {
+        selectedTab = selectedTabIdx;
     }
 
     public boolean isCurrentFragmentNested() {

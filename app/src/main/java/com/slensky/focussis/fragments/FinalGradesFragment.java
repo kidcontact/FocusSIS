@@ -3,6 +3,7 @@ package com.slensky.focussis.fragments;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.URLSpan;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -20,6 +22,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -157,6 +160,7 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
         finalGrades = new FinalGrades(response);
         View view = getView();
         if (view != null) {
+            final ScrollView scrollView = view.findViewById(R.id.scrollview_finalgrades);
             TextView header = view.findViewById(com.slensky.focussis.R.id.text_finalgrades_type);
             switch (selectedType) {
                 case COURSE_HISTORY:
@@ -245,7 +249,7 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
                     continue;
                 }
 
-                TableRow gradeRow = (TableRow) inflater.inflate(com.slensky.focussis.R.layout.view_finalgrades_row, table, false);
+                final TableRow gradeRow = (TableRow) inflater.inflate(com.slensky.focussis.R.layout.view_finalgrades_row, table, false);
 
                 TextView year = gradeRow.findViewById(com.slensky.focussis.R.id.text_finalgrade_year);
                 year.setText(fg.getYearTitle());
@@ -269,11 +273,60 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
                     }
                 });
 
-                View divider = inflater.inflate(R.layout.view_divider, table, false);
+                final View divider = inflater.inflate(R.layout.view_divider, table, false);
 
-                Animation animation = animationController.nextAnimation();
+                final Animation animation = animationController.nextAnimation();
                 //gradeRow.setAnimation(animation);
                 //divider.setAnimation(animation);
+
+                divider.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        Rect scrollBounds = new Rect();
+                        scrollView.getHitRect(scrollBounds);
+                        if (divider.getLocalVisibleRect(scrollBounds)) {
+                            divider.setAnimation(animation);
+                        }
+                        divider.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    }
+                });
+
+                gradeRow.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        Rect scrollBounds = new Rect();
+                        scrollView.getHitRect(scrollBounds);
+                        if (gradeRow.getLocalVisibleRect(scrollBounds)) {
+                            gradeRow.setAnimation(animation);
+                        }
+                        gradeRow.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    }
+                });
+
+                divider.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+                gradeRow.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
+                animation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        if (divider.getLayerType() != View.LAYER_TYPE_NONE) {
+                            divider.setLayerType(View.LAYER_TYPE_NONE, null);
+                        }
+                        if (gradeRow.getLayerType() != View.LAYER_TYPE_NONE) {
+                            gradeRow.setLayerType(View.LAYER_TYPE_NONE, null);
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
 
                 table.addView(divider);
                 table.addView(gradeRow);

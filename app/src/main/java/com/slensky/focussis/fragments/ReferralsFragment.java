@@ -1,6 +1,7 @@
 package com.slensky.focussis.fragments;
 
 import android.content.DialogInterface;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -9,7 +10,9 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
+import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -74,9 +77,11 @@ public class ReferralsFragment extends NetworkTabAwareFragment {
             TableRow headerRow = (TableRow) inflater.inflate(R.layout.view_referral_header, table, false);
             table.addView(headerRow);
 
+            final ScrollView scrollView = view.findViewById(R.id.scrollview_referrals);
+
             TableRowAnimationController animationController = new TableRowAnimationController(getContext());
             for (final Referral r : refList) {
-                TableRow referralRow = (TableRow) inflater.inflate(R.layout.view_referral, table, false);
+                final TableRow referralRow = (TableRow) inflater.inflate(R.layout.view_referral, table, false);
                 TextView reporter = (TextView) referralRow.findViewById(R.id.text_reporter_name);
                 reporter.setText(r.getTeacher().split(" ")[1] + ", " + r.getTeacher().split(" ")[0]);
                 TextView entryDate = (TextView) referralRow.findViewById(R.id.text_entry_date);
@@ -96,11 +101,60 @@ public class ReferralsFragment extends NetworkTabAwareFragment {
                     }
                 });
 
-                View divider = inflater.inflate(R.layout.view_divider, table, false);
+                final View divider = inflater.inflate(R.layout.view_divider, table, false);
 
-                Animation animation = animationController.nextAnimation();
-                referralRow.setAnimation(animation);
-                divider.setAnimation(animation);
+                final Animation animation = animationController.nextAnimation();
+                //referralRow.setAnimation(animation);
+                //divider.setAnimation(animation);
+
+                divider.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        Rect scrollBounds = new Rect();
+                        scrollView.getHitRect(scrollBounds);
+                        if (divider.getLocalVisibleRect(scrollBounds)) {
+                            divider.setAnimation(animation);
+                        }
+                        divider.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    }
+                });
+
+                referralRow.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        Rect scrollBounds = new Rect();
+                        scrollView.getHitRect(scrollBounds);
+                        if (referralRow.getLocalVisibleRect(scrollBounds)) {
+                            referralRow.setAnimation(animation);
+                        }
+                        referralRow.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    }
+                });
+
+                divider.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+                referralRow.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
+                animation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        if (divider.getLayerType() != View.LAYER_TYPE_NONE) {
+                            divider.setLayerType(View.LAYER_TYPE_NONE, null);
+                        }
+                        if (referralRow.getLayerType() != View.LAYER_TYPE_NONE) {
+                            referralRow.setLayerType(View.LAYER_TYPE_NONE, null);
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
 
                 table.addView(divider);
                 table.addView(referralRow);

@@ -1,7 +1,9 @@
 package com.slensky.focussis.data;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -74,7 +76,7 @@ public class PortalCourse implements Comparable<PortalCourse> {
     }
 
     public boolean hasAssignments() {
-        return assignments != null;
+        return assignments.size() > 0;
     }
 
     @Override

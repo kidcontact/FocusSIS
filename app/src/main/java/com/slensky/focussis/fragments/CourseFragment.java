@@ -1,12 +1,11 @@
 package com.slensky.focussis.fragments;
 
-import android.animation.AnimatorInflater;
-import android.animation.AnimatorSet;
 import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -32,9 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
@@ -86,7 +83,7 @@ public class CourseFragment extends NetworkFragment {
     private ConstraintLayout courseLayout;
     private NestedScrollView scrollView;
     private FloatingActionButton fab;
-    TableLayout assignmentTable;
+    private TableLayout assignmentTable;
     private Course course;
     private String id;
 
@@ -318,7 +315,7 @@ public class CourseFragment extends NetworkFragment {
 
             replacedAssignments = new ArrayList<>();
             try {
-                List<CourseAssignment> savedAssignments = CourseAssignmentFileHandler.getSavedAssignments(getContext(), course.getId());
+                List<CourseAssignment> savedAssignments = CourseAssignmentFileHandler.getSavedAssignmentsById(getContext(), course.getId());
                 for (int i = savedAssignments.size() - 1; i >= 0; i--) {
                     if (!savedAssignments.get(i).getMarkingPeriodId().equals(course.getCurrentMarkingPeriod().getId())) {
                         savedAssignments.remove(i);
@@ -343,12 +340,61 @@ public class CourseFragment extends NetworkFragment {
             if (course.hasAssignments()) {
                 TableRowAnimationController animationController = new TableRowAnimationController(getContext());
                 for (int i = 0; i < assignments.size(); i++) {
-                    TableRow row = createAssignmentRowFromAssignment(getContext(), inflater, assignments.get(i));
-                    View divider = inflater.inflate(R.layout.view_divider, assignmentTable, false);
+                    final TableRow row = createAssignmentRowFromAssignment(getContext(), inflater, assignments.get(i));
+                    final View divider = inflater.inflate(R.layout.view_divider, assignmentTable, false);
 
-                    Animation animation = animationController.nextAnimation();
-                    row.setAnimation(animation);
-                    divider.setAnimation(animation);
+                    final Animation animation = animationController.nextAnimation();
+                    //row.setAnimation(animation);
+                    //divider.setAnimation(animation);
+
+                    divider.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            Rect scrollBounds = new Rect();
+                            scrollView.getHitRect(scrollBounds);
+                            if (divider.getLocalVisibleRect(scrollBounds)) {
+                                divider.setAnimation(animation);
+                            }
+                            divider.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        }
+                    });
+
+                    row.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            Rect scrollBounds = new Rect();
+                            scrollView.getHitRect(scrollBounds);
+                            if (row.getLocalVisibleRect(scrollBounds)) {
+                                row.setAnimation(animation);
+                            }
+                            row.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        }
+                    });
+
+                    divider.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+                    row.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
+                    animation.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            if (divider.getLayerType() != View.LAYER_TYPE_NONE) {
+                                divider.setLayerType(View.LAYER_TYPE_NONE, null);
+                            }
+                            if (row.getLayerType() != View.LAYER_TYPE_NONE) {
+                                row.setLayerType(View.LAYER_TYPE_NONE, null);
+                            }
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
 
                     assignmentTable.addView(divider);
                     assignmentTable.addView(row);

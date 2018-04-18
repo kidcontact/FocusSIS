@@ -36,11 +36,9 @@ public class Portal extends MarkingPeriodPage {
             while (coursesIterator.hasNext()) {
                 JSONObject courseJSON = coursesJSON.getJSONObject(coursesIterator.next());
 
-                List<PortalAssignment> assignments = null;
+                List<PortalAssignment> assignments = new ArrayList<>();
                 if (courseJSON.has("assignments")) {
                     JSONArray assignmentsJSON = courseJSON.getJSONArray("assignments");
-                    assignments = new ArrayList<PortalAssignment>();
-
                     for (int i = 0; i < assignmentsJSON.length(); i++) {
                         JSONObject assignmentJSON = assignmentsJSON.getJSONObject(i);
                         assignments.add(new PortalAssignment(assignmentJSON.getString("name"), new DateTime(assignmentJSON.getString("due"))));

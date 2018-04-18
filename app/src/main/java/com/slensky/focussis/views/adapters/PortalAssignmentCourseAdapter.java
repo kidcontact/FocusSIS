@@ -8,10 +8,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.slensky.focussis.R;
+import com.slensky.focussis.data.CourseAssignment;
 import com.slensky.focussis.data.PortalCourse;
+import com.slensky.focussis.util.CourseAssignmentFileHandler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by slensky on 3/23/17.

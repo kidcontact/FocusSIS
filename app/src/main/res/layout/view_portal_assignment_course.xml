@@ -8,6 +8,7 @@
     android:paddingRight="16dp"
     android:paddingTop="10dp"
     android:paddingBottom="10dp"
+    android:clickable="true"
     android:background="?android:attr/selectableItemBackground">
 
     <TextView
@@ -22,7 +23,7 @@
         app:layout_constraintRight_toRightOf="parent"
         style="@style/primarySubheadingText" />
 
-    <android.support.v7.widget.RecyclerView
+    <com.slensky.focussis.views.DisabledRecyclerView
         android:id="@+id/assignment_recycler_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
