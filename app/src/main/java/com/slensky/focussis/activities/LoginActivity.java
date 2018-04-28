@@ -169,7 +169,7 @@ public class LoginActivity extends AppCompatActivity {
 
         final ProgressDialog progressDialog = ProgressDialog.show(LoginActivity.this, null, getString(com.slensky.focussis.R.string.auth_progress_dialog),true);
 
-        api = new FocusApi(username, password, this);
+        api = new FocusApi(username, password, getApplicationContext());
         api.login(new Response.Listener<Boolean>() {
             @Override
             public void onResponse(Boolean response) {

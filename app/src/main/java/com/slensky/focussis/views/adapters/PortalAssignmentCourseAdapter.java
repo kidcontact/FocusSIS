@@ -1,5 +1,6 @@
 package com.slensky.focussis.views.adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,7 +21,7 @@ import java.util.Map;
  * Created by slensky on 3/23/17.
  */
 
-public class PortalAssignmentCourseAdapter extends RecyclerView.Adapter<PortalAssignmentCourseAdapter.ViewHolder> {
+public class PortalAssignmentCourseAdapter extends SelectableItemAdapter<PortalAssignmentCourseAdapter.ViewHolder> {
     private List<PortalCourse> courses = new ArrayList<PortalCourse>();
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -59,7 +60,8 @@ public class PortalAssignmentCourseAdapter extends RecyclerView.Adapter<PortalAs
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        super.onBindViewHolder(holder, position);
         PortalCourse course = courses.get(position);
         holder.courseView.setText(course.getName());
         holder.adapter = new PortalAssignmentAdapter(course.getAssignments());
@@ -71,4 +73,16 @@ public class PortalAssignmentCourseAdapter extends RecyclerView.Adapter<PortalAs
         return courses.size();
     }
 
+    public List<PortalCourse> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(List<PortalCourse> courses) {
+        this.courses = new ArrayList<>();
+        for (PortalCourse c : courses) {
+            if (c.hasAssignments()) {
+                this.courses.add(c);
+            }
+        }
+    }
 }

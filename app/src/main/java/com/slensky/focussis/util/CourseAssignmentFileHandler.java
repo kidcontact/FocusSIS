@@ -107,26 +107,21 @@ public class CourseAssignmentFileHandler {
         }
     }
 
-    public static void clearAllSavedAssignments(Context context) {
+    public static void clearAllSavedAssignments(Context context) throws IOException {
         initializeFile(context);
         context.deleteFile(filename);
     }
 
-    private static void initializeFile(Context context) {
-        try {
-            File f = context.getFileStreamPath(filename);
-            File tmp = context.getFileStreamPath(filenameTemp);
-            if (f.length() == 0 && tmp.length() > 0) {
-                tmp.renameTo(f);
-            }
-            else if (f.length() == 0) {
-                FileOutputStream outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
-                outputStream.write("{}".getBytes());
-                outputStream.close();
-            }
-        } catch (IOException e) {
-            Log.e(TAG, "Unexpected IOException while initializing file");
-            e.printStackTrace();
+    private static void initializeFile(Context context) throws IOException {
+        File f = context.getFileStreamPath(filename);
+        File tmp = context.getFileStreamPath(filenameTemp);
+        if (f.length() == 0 && tmp.length() > 0) {
+            tmp.renameTo(f);
+        }
+        else if (f.length() == 0) {
+            FileOutputStream outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
+            outputStream.write("{}".getBytes());
+            outputStream.close();
         }
     }
 

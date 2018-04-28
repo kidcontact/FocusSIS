@@ -20,6 +20,7 @@ public class PortalCourse implements Comparable<PortalCourse> {
     private final int percentGrade;
     private final String period;
     private final String teacher;
+    private final String teacherEmail;
 
     public PortalCourse(List<PortalAssignment> assignments,
                         String days,
@@ -28,7 +29,8 @@ public class PortalCourse implements Comparable<PortalCourse> {
                         String name,
                         int percentGrade,
                         String period,
-                        String teacher) {
+                        String teacher,
+                        String teacherEmail) {
         this.assignments = assignments;
         this.days = days;
         this.id = id;
@@ -37,6 +39,7 @@ public class PortalCourse implements Comparable<PortalCourse> {
         this.percentGrade = percentGrade;
         this.period = period;
         this.teacher = teacher;
+        this.teacherEmail = teacherEmail;
     }
 
     public List<PortalAssignment> getAssignments() {
@@ -63,12 +66,20 @@ public class PortalCourse implements Comparable<PortalCourse> {
         return percentGrade;
     }
 
+    public boolean isAdvisory() {
+        return period.equals("0");
+    }
+
     public String getPeriod() {
         return period;
     }
 
     public String getTeacher() {
         return teacher;
+    }
+
+    public String getTeacherEmail() {
+        return teacherEmail;
     }
 
     public boolean isGraded() {

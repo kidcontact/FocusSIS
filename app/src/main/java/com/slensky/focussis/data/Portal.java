@@ -2,6 +2,8 @@ package com.slensky.focussis.data;
 
 import android.util.Log;
 
+import com.slensky.focussis.util.SchoolSingleton;
+
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,8 +18,8 @@ import java.util.List;
  */
 
 public class Portal extends MarkingPeriodPage {
+    private static final String TAG = "Portal";
 
-    private static final String TAG = Portal.class.getName();
     private final List<PortalCourse> courses;
     private final List<PortalEvent> events;
     private final PortalAlert[] alerts;
@@ -36,19 +38,18 @@ public class Portal extends MarkingPeriodPage {
             while (coursesIterator.hasNext()) {
                 JSONObject courseJSON = coursesJSON.getJSONObject(coursesIterator.next());
 
-                List<PortalAssignment> assignments = new ArrayList<>();
-                if (courseJSON.has("assignments")) {
-                    JSONArray assignmentsJSON = courseJSON.getJSONArray("assignments");
-                    for (int i = 0; i < assignmentsJSON.length(); i++) {
-                        JSONObject assignmentJSON = assignmentsJSON.getJSONObject(i);
-                        assignments.add(new PortalAssignment(assignmentJSON.getString("name"), new DateTime(assignmentJSON.getString("due"))));
-                    }
-                }
-
                 String days = courseJSON.getString("days");
                 String id = courseJSON.getString("id");
                 String name = courseJSON.getString("name");
                 String teacher = courseJSON.getString("teacher");
+                String teacherEmail;
+                if (courseJSON.has("teacher_email")) {
+                    teacherEmail = courseJSON.getString("teacher_email");
+                }
+                else {
+                    teacherEmail = SchoolSingleton.getInstance().getSchool().getTeacherEmailFromName(teacher);
+                    Log.e(TAG, "Portal course JSON does not have teacher email for " + name + ", falling back to " + teacherEmail);
+                }
                 String period = courseJSON.getString("period");
                 String letterGrade = null;
                 int percentGrade = -1;
@@ -57,7 +58,16 @@ public class Portal extends MarkingPeriodPage {
                     percentGrade = courseJSON.getInt("percent_grade");
                 }
 
-                courses.add(new PortalCourse(assignments, days, id, letterGrade, name, percentGrade, period, teacher));
+                List<PortalAssignment> assignments = new ArrayList<>();
+                if (courseJSON.has("assignments")) {
+                    JSONArray assignmentsJSON = courseJSON.getJSONArray("assignments");
+                    for (int i = 0; i < assignmentsJSON.length(); i++) {
+                        JSONObject assignmentJSON = assignmentsJSON.getJSONObject(i);
+                        assignments.add(new PortalAssignment(assignmentJSON.getString("name"), new DateTime(assignmentJSON.getString("due")), name, period, teacher, teacherEmail));
+                    }
+                }
+
+                courses.add(new PortalCourse(assignments, days, id, letterGrade, name, percentGrade, period, teacher, teacherEmail));
 
             }
 

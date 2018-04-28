@@ -1,5 +1,7 @@
 package com.slensky.focussis.parser;
 
+import android.util.Log;
+
 import com.joestelmach.natty.DateGroup;
 import com.slensky.focussis.util.JSONUtil;
 
@@ -50,6 +52,11 @@ public class PortalParser extends PageParser {
                 if (t.contains("%")) {
                     course.put("percent_grade", Integer.parseInt(t.substring(0, t.indexOf('%'))));
                     course.put("letter_grade", t.substring(t.indexOf(' ') + 1));
+
+                    Element input = a.parent().parent().selectFirst("input.EmailTeacher");
+                    if (input != null) {
+                        course.put("teacher_email", input.attr("value"));
+                    }
                 }
                 else if (t.contains("Period")) {
                     String[] data = t.split(" - ");
@@ -122,7 +129,7 @@ public class PortalParser extends PageParser {
                 Iterator<?> keys = courses.keys();
                 while(keys.hasNext()) {
                     String key = (String) keys.next();
-                    if (courses.get(key) instanceof JSONObject && ((JSONObject) courses.get(key)).getInt("period") == period) {
+                    if (courses.get(key) instanceof JSONObject && courses.getJSONObject(key).getInt("period") == period) {
                         course = (JSONObject) courses.get(key);
                         break;
                     }
@@ -147,7 +154,7 @@ public class PortalParser extends PageParser {
                 else {
                     // most likely an advisory assignment, so make an advisory course to place it in
                     JSONObject newCourse = new JSONObject();
-                    newCourse.put("period", -1);
+                    newCourse.put("period", 0);
                     newCourse.put("id", newCourseId);
                     newCourse.put("name", data[0]);
                     newCourse.put("days", data[1]);
@@ -158,7 +165,22 @@ public class PortalParser extends PageParser {
                         }
                     }
                     teacherName.deleteCharAt(teacherName.length() - 1);
-                    newCourse.put("teacher", teacherName.toString());
+                    String teacher = teacherName.toString();
+                    newCourse.put("teacher", teacher);
+
+                    JSONObject c = null;
+                    Iterator<?> k = courses.keys();
+                    while(k.hasNext()) {
+                        String key = (String) k.next();
+                        if (courses.get(key) instanceof JSONObject
+                                && courses.getJSONObject(key).getString("teacher").equals(teacher)
+                                && courses.getJSONObject(key).has("teacher_email")) {
+                            newCourse.put("teacher_email", courses.getJSONObject(key).getString("teacher_email"));
+                            break;
+                        }
+                    }
+
+
                     newCourse.put("assignments", assignments);
                     courses.put(newCourseId, newCourse);
                     newCourseId = Integer.toString(Integer.parseInt(newCourseId) - 1);

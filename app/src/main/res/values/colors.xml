@@ -9,4 +9,7 @@
     <color name="calendarOccasionDecorator">#2979ff</color>
     <color name="calendarAssignmentDecorator">#ff1744</color>
     <color name="calendarSelectBackground">#bdbdbd</color>
+    <color name="selectedItemBackground">#eeeeee</color>
+    <color name="actionModePrimary">#757575</color>
+    <color name="actionModeDark">#616161</color>
 </resources>

@@ -79,6 +79,8 @@ import java.util.List;
 public class CourseFragment extends NetworkFragment {
     private static final String TAG = "CourseFragment";
 
+    private PortalFragment portalFragment;
+
     private LinearLayout progressLayout;
     private ConstraintLayout courseLayout;
     private NestedScrollView scrollView;
@@ -106,6 +108,10 @@ public class CourseFragment extends NetworkFragment {
         if (course == null) {
             refresh();
         }
+
+        if (getActivity() != null && getActivity() instanceof MainActivity && ((MainActivity) getActivity()).getCurrentFragment() instanceof PortalFragment) {
+            portalFragment = (PortalFragment) ((MainActivity) getActivity()).getCurrentFragment();
+        }
     }
 
     protected void onSuccess(JSONObject response) {
@@ -129,18 +135,19 @@ public class CourseFragment extends NetworkFragment {
     protected void onError(VolleyError error) {
         super.onError(error);
         View view = getView();
+        if (view != null) {
+            progressLayout = (LinearLayout) view.findViewById(R.id.layout_loading);
+            progressLayout.setVisibility(View.GONE);
 
-        progressLayout = (LinearLayout) view.findViewById(R.id.layout_loading);
-        progressLayout.setVisibility(View.GONE);
-
-        if (error.networkResponse != null && error.networkResponse.statusCode == 403) {
-            courseLayout.setVisibility(View.GONE);
-            fab.setVisibility(View.GONE);
-            ((MainActivity) getActivity()).reauthenticate();
-        }
-        else {
-            View networkFailureLayout = view.findViewById(R.id.layout_network_failure);
-            networkFailureLayout.setVisibility(View.VISIBLE);
+            if (error.networkResponse != null && error.networkResponse.statusCode == 403) {
+                courseLayout.setVisibility(View.GONE);
+                fab.setVisibility(View.GONE);
+                ((MainActivity) getActivity()).reauthenticate();
+            }
+            else {
+                View networkFailureLayout = view.findViewById(R.id.layout_network_failure);
+                networkFailureLayout.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -1026,6 +1033,19 @@ public class CourseFragment extends NetworkFragment {
             assignmentTable.addView(divider, pos);
         }
         assignmentTable.setLayoutTransition(null);
+
+        // callbacks to update assignments on assignments tab
+        if (portalFragment != null) {
+            if (from != null && to != null) {
+                portalFragment.onAssignmentModified(course.getId(), from, to);
+            }
+            else if (from != null) {
+                portalFragment.onAssignmentDeleted(course.getId(), from);
+            }
+            else if (to != null) {
+                portalFragment.onAssignmentCreated(course.getId(), to);
+            }
+        }
     }
 
     public void resetCourse() {
@@ -1038,6 +1058,9 @@ public class CourseFragment extends NetworkFragment {
         if (course != null) {
             for (int i = course.getAssignments().size() - 1; i >= 0; i--) {
                 if (course.getAssignments().get(i).isCustomAssignment()) {
+                    if (portalFragment != null) {
+                        portalFragment.onAssignmentDeleted(course.getId(), course.getAssignments().get(i));
+                    }
                     course.getAssignments().remove(i);
                 }
                 else if (course.getAssignments().get(i).isEditedAssignment()) {

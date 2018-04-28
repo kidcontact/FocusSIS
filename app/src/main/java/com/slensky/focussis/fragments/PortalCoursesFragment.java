@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.gson.Gson;
+import com.slensky.focussis.activities.MainActivity;
 import com.slensky.focussis.util.GsonSingleton;
 import com.slensky.focussis.util.ItemClickSupport;
 import com.slensky.focussis.views.DividerItemDecoration;
@@ -66,6 +67,10 @@ public class PortalCoursesFragment extends Fragment {
         ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                if (getActivity() != null && getActivity() instanceof MainActivity && ((MainActivity) getActivity()).getCurrentFragment() instanceof PortalFragment) {
+                    ((PortalFragment) ((MainActivity) getActivity()).getCurrentFragment()).destroyActionMode();
+                }
+
                 CourseFragment courseFragment = new CourseFragment();
                 Bundle args = new Bundle();
                 args.putString(getString(com.slensky.focussis.R.string.EXTRA_COURSE_ID), ((PortalCourseAdapter.ViewHolder) recyclerView.getChildViewHolder(v)).courseId);

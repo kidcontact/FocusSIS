@@ -1,6 +1,9 @@
 package com.slensky.focussis.views.adapters;
 
+import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +18,7 @@ import java.util.List;
  * Created by slensky on 3/23/17.
  */
 
-public class PortalEventAdapter extends RecyclerView.Adapter<PortalEventAdapter.ViewHolder> {
+public class PortalEventAdapter extends SelectableItemAdapter<PortalEventAdapter.ViewHolder> {
     private List<PortalEvent> events;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -46,7 +49,8 @@ public class PortalEventAdapter extends RecyclerView.Adapter<PortalEventAdapter.
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        super.onBindViewHolder(holder, position);
         PortalEvent event = events.get(position);
         holder.eventName.setText(event.getDescription());
         holder.eventDate.setText(DateUtil.dateTimeToShortString(event.getDate()));
@@ -55,6 +59,10 @@ public class PortalEventAdapter extends RecyclerView.Adapter<PortalEventAdapter.
     @Override
     public int getItemCount() {
         return events.size();
+    }
+
+    public List<PortalEvent> getEvents() {
+        return events;
     }
 
 }

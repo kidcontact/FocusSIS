@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.slensky.focussis.data.PortalCourse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
  */
 
 public class PortalCourseAdapter extends RecyclerView.Adapter<PortalCourseAdapter.ViewHolder> {
-    private List<PortalCourse> courses;
+    private List<PortalCourse> courses = new ArrayList<>();
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView courseName;
@@ -32,7 +33,11 @@ public class PortalCourseAdapter extends RecyclerView.Adapter<PortalCourseAdapte
     }
 
     public PortalCourseAdapter(List<PortalCourse> courses) {
-        this.courses = courses;
+        for (PortalCourse c : courses) {
+            if (!c.isAdvisory()) {
+                this.courses.add(c);
+            }
+        }
     }
 
     @Override
@@ -51,7 +56,7 @@ public class PortalCourseAdapter extends RecyclerView.Adapter<PortalCourseAdapte
     public void onBindViewHolder(ViewHolder holder, int position) {
         PortalCourse course = courses.get(position);
         holder.courseName.setText(course.getName());
-        if (course.getPeriod().equals("advisory") || course.getPeriod().startsWith("-")) {
+        if (course.isAdvisory()) {
             holder.courseDetails.setText(course.getTeacher() + " - " + "Advisory");
         }
         else {

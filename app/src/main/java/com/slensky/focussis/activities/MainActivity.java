@@ -1,13 +1,19 @@
 package com.slensky.focussis.activities;
 
+import android.Manifest;
+import android.accounts.Account;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -16,6 +22,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,12 +31,46 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.DateTime;
+import com.google.api.client.util.ExponentialBackOff;
+import com.google.api.services.calendar.CalendarScopes;
+import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.Events;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.BasePermissionListener;
+import com.karumi.dexter.listener.single.CompositePermissionListener;
+import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener;
+import com.karumi.dexter.listener.single.PermissionListener;
 import com.slensky.focussis.R;
+import com.slensky.focussis.data.CalendarEvent;
+import com.slensky.focussis.data.GoogleCalendarEvent;
 import com.slensky.focussis.data.Portal;
+import com.slensky.focussis.data.PortalAssignment;
+import com.slensky.focussis.data.PortalEvent;
 import com.slensky.focussis.fragments.AboutFragment;
 import com.slensky.focussis.fragments.AbsencesFragment;
 import com.slensky.focussis.fragments.AddressFragment;
@@ -52,7 +93,10 @@ import com.slensky.focussis.fragments.LoadingFragment;
 import com.slensky.focussis.fragments.NetworkTabAwareFragment;
 import com.slensky.focussis.views.adapters.ViewPagerAdapter;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -88,6 +132,21 @@ public class MainActivity extends AppCompatActivity
     // used by session thread to avoid spamming reauthenticate() calls
     private boolean authenticating;
 
+    // save old status bar color when action bar is created, restore when action bar is finished
+    int statusBarColor;
+
+    // for exporting to calendar with google play services
+    static final int REQUEST_ACCOUNT_PICKER = 1000;
+    static final int REQUEST_AUTHORIZATION = 1001;
+    static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
+    private static final String[] SCOPES = { CalendarScopes.CALENDAR};
+    private GoogleSignInOptions googleSignInOptions;
+    private GoogleSignInClient googleSignInClient;
+    GoogleAccountCredential credential;
+    ProgressDialog calendarExportProgress;
+    private Collection<GoogleCalendarEvent> eventsToExport;
+    Runnable onExportTaskFinishedListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(com.slensky.focussis.R.style.AppTheme);
@@ -95,7 +154,7 @@ public class MainActivity extends AppCompatActivity
             Log.d(TAG, "Restoring saved instance state");
             username = savedInstanceState.getString(USERNAME_BUNDLE_KEY);
             password = savedInstanceState.getString(PASSWORD_BUNDLE_KEY);
-            api = new FocusApi(username, password, this);
+            api = new FocusApi(username, password, getApplicationContext());
             FocusApiSingleton.setApi(api);
             super.onCreate(savedInstanceState);
             setContentView(com.slensky.focussis.R.layout.activity_main);
@@ -156,6 +215,7 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "Configure viewpager + tab layout");
 
         viewPager = (ViewPager) findViewById(com.slensky.focussis.R.id.viewpager);
+        viewPager.setSaveEnabled(false);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -207,6 +267,23 @@ public class MainActivity extends AppCompatActivity
             }
         });
         sessionKeepAliveThread.start();
+
+        // Initialize progress dialog for event export, credentials, and service object.
+        calendarExportProgress = new ProgressDialog(this);
+        calendarExportProgress.setMessage(getString(R.string.export_progress_dialog));
+
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        // Build a GoogleSignInClient with the options specified by gso.
+        googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
+
+        credential = GoogleAccountCredential.usingOAuth2(
+                getApplicationContext(), Arrays.asList(SCOPES))
+                .setBackOff(new ExponentialBackOff());
 
         if (savedInstanceState == null) {
             currentFragment = new PortalFragment();
@@ -428,12 +505,20 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem refreshItem = findMenuItem(menu, getString(R.string.toolbar_menu_refresh));
+        MenuItem syncItem = findMenuItem(menu, getString(R.string.toolbar_menu_sync_to_calendar));
         MenuItem resetCourseItem = findMenuItem(menu, getString(R.string.toolbar_menu_delete_saved_assignments));
         if (currentFragment instanceof NetworkFragment) {
             refreshItem.setVisible(true);
         }
         else {
             refreshItem.setVisible(false);
+        }
+
+        if (currentFragment instanceof PortalFragment) {
+            syncItem.setVisible(true);
+        }
+        else {
+            syncItem.setVisible(false);
         }
 
         if (currentFragment instanceof PortalFragment && ((PortalFragment) currentFragment).isCurrentFragmentNested()) {
@@ -475,6 +560,12 @@ public class MainActivity extends AppCompatActivity
         }
         else if (id == com.slensky.focussis.R.id.action_logout) {
             logout();
+            return true;
+        }
+        else if (id == R.id.action_sync_to_calendar) {
+            if (currentFragment instanceof PortalFragment) {
+                ((PortalFragment) currentFragment).exportAll();
+            }
             return true;
         }
         else if (id == R.id.action_delete_saved_assignments) {
@@ -771,10 +862,24 @@ public class MainActivity extends AppCompatActivity
         savedInstanceState.putString(USERNAME_BUNDLE_KEY, username);
         savedInstanceState.putString(PASSWORD_BUNDLE_KEY, password);
         savedInstanceState.putLong(SESSION_TIMEOUT_BUNDLE_KEY, api.getSessionTimeout());
-
         savedInstanceState.putInt(FRAGMENT_ID_BUNDLE_KEY, currentFragmentId);
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onSupportActionModeStarted(@NonNull android.support.v7.view.ActionMode mode) {
+        super.onSupportActionModeStarted(mode);
+        // save old status bar color
+        statusBarColor = getWindow().getStatusBarColor();
+        //set gray color
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.actionModeDark));
+    }
+
+    @Override
+    public void onSupportActionModeFinished(@NonNull android.support.v7.view.ActionMode mode) {
+        super.onSupportActionModeFinished(mode);
+        getWindow().setStatusBarColor(statusBarColor);
     }
 
     @Override
@@ -803,6 +908,372 @@ public class MainActivity extends AppCompatActivity
 
     public String getUsername() {
         return username;
+    }
+
+    public PageFragment getCurrentFragment() {
+        return currentFragment;
+    }
+
+    // Google play services
+
+    public GoogleSignInClient getGoogleSignInClient() {
+        return googleSignInClient;
+    }
+
+    public void exportEventsToCalendar(final Collection<GoogleCalendarEvent> events, final Runnable onExportTaskFinishedListener) {
+        PermissionListener dialogOnDeniedListener = DialogOnDeniedPermissionListener.Builder
+                .withContext(this)
+                .withMessage(R.string.contacts_permission_request_on_denied_message)
+                .withButtonText(R.string.ok)
+                .build();
+        PermissionListener basePermissionListener = new BasePermissionListener() {
+            @Override
+            public void onPermissionGranted(PermissionGrantedResponse response) {
+                GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(MainActivity.this);
+                if (account != null) {
+                    credential.setSelectedAccountName(account.getEmail());
+                }
+                eventsToExport = events;
+                MainActivity.this.onExportTaskFinishedListener = onExportTaskFinishedListener;
+                getResultsFromApi();
+            }
+
+            @Override
+            public void onPermissionDenied(PermissionDeniedResponse response) {
+                if (onExportTaskFinishedListener != null) {
+                    onExportTaskFinishedListener.run();
+                }
+            }
+        };
+
+        Dexter.withActivity(this)
+                .withPermission(Manifest.permission.GET_ACCOUNTS)
+                .withListener(new CompositePermissionListener(basePermissionListener, dialogOnDeniedListener))
+                .check();
+    }
+
+    /**
+     * Attempt to call the API, after verifying that all the preconditions are
+     * satisfied. The preconditions are: Google Play Services installed, an
+     * account was selected and the device currently has online access. If any
+     * of the preconditions are not satisfied, the app will prompt the user as
+     * appropriate.
+     */
+    private void getResultsFromApi() {
+        if (! isGooglePlayServicesAvailable()) {
+            acquireGooglePlayServices();
+        } else if (credential.getSelectedAccountName() == null) {
+            chooseAccount();
+        } else {
+            new MakeRequestTask(credential, eventsToExport).execute();
+        }
+    }
+
+    /**
+     * Attempts to set the account used with the API credentials. If an account
+     * name was previously saved it will use that one; otherwise an account
+     * picker dialog will be shown to the user.
+     */
+    public void chooseAccount() {
+        Intent signInIntent = googleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, REQUEST_ACCOUNT_PICKER);
+    }
+
+    /**
+     * Called when an activity launched here (specifically, AccountPicker
+     * and authorization) exits, giving you the requestCode you started it with,
+     * the resultCode it returned, and any additional data from it.
+     * @param requestCode code indicating which activity result is incoming.
+     * @param resultCode code indicating the result of the incoming
+     *     activity result.
+     * @param data Intent (containing result data) returned by incoming
+     *     activity result.
+     */
+    @Override
+    protected void onActivityResult(
+            int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case REQUEST_GOOGLE_PLAY_SERVICES:
+                if (resultCode != RESULT_OK) {
+                    new MaterialDialog.Builder(this)
+                            .content(R.string.needs_play_services)
+                            .positiveText(R.string.ok)
+                            .show();
+                } else {
+                    getResultsFromApi();
+                }
+                break;
+            case REQUEST_ACCOUNT_PICKER:
+                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+                try {
+                    GoogleSignInAccount account = task.getResult(ApiException.class);
+                    credential.setSelectedAccount(new Account(account.getEmail(), getPackageName()));
+                    // if the settings fragment is selected, update the description of the preference
+                    if (currentFragment instanceof SettingsFragment) {
+                        ((SettingsFragment) currentFragment).updateAccountPreference();
+                    }
+                    else {
+                        getResultsFromApi();
+                    }
+                    Log.i(TAG, account.getEmail());
+                } catch (ApiException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case REQUEST_AUTHORIZATION:
+                if (resultCode == RESULT_OK) {
+                    getResultsFromApi();
+                }
+                break;
+        }
+    }
+
+    /**
+     * Check that Google Play services APK is installed and up to date.
+     * @return true if Google Play Services is available and up to
+     *     date on this device; false otherwise.
+     */
+    private boolean isGooglePlayServicesAvailable() {
+        GoogleApiAvailability apiAvailability =
+                GoogleApiAvailability.getInstance();
+        final int connectionStatusCode =
+                apiAvailability.isGooglePlayServicesAvailable(this);
+        return connectionStatusCode == ConnectionResult.SUCCESS;
+    }
+
+    /**
+     * Attempt to resolve a missing, out-of-date, invalid or disabled Google
+     * Play Services installation via a user dialog, if possible.
+     */
+    private void acquireGooglePlayServices() {
+        GoogleApiAvailability apiAvailability =
+                GoogleApiAvailability.getInstance();
+        final int connectionStatusCode =
+                apiAvailability.isGooglePlayServicesAvailable(this);
+        if (apiAvailability.isUserResolvableError(connectionStatusCode)) {
+            showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode);
+        }
+    }
+
+
+    /**
+     * Display an error dialog showing that Google Play Services is missing
+     * or out of date.
+     * @param connectionStatusCode code describing the presence (or lack of)
+     *     Google Play Services on this device.
+     */
+    void showGooglePlayServicesAvailabilityErrorDialog(
+            final int connectionStatusCode) {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        Dialog dialog = apiAvailability.getErrorDialog(
+                MainActivity.this,
+                connectionStatusCode,
+                REQUEST_GOOGLE_PLAY_SERVICES);
+        dialog.show();
+    }
+
+    /**
+     * An asynchronous task that handles the Google Calendar API call.
+     * Placing the API calls in their own task ensures the UI stays responsive.
+     */
+    private class MakeRequestTask extends AsyncTask<Void, Void, Void> {
+        private com.google.api.services.calendar.Calendar mService = null;
+        private Collection<GoogleCalendarEvent> events;
+        private Exception mLastError = null;
+        private int eventCount = 0;
+        private int assignmentCount = 0;
+        private int eventSkippedCount = 0;
+        private int assignmentSkippedCount = 0;
+
+        private String calendarId = "primary";
+
+        MakeRequestTask(GoogleAccountCredential credential, @NonNull Collection<GoogleCalendarEvent> events) {
+            HttpTransport transport = AndroidHttp.newCompatibleTransport();
+            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+            mService = new com.google.api.services.calendar.Calendar.Builder(
+                    transport, jsonFactory, credential)
+                    .setApplicationName(getString(R.string.play_servces_app_name))
+                    .build();
+            this.events = events;
+        }
+
+        /**
+         * Background task to call Google Calendar API.
+         * @param params no parameters needed for this task.
+         */
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                if (events.size() > 0) {
+                    getDataFromApi();
+                }
+            } catch (Exception e) {
+                mLastError = e;
+                cancel(true);
+            }
+            return null;
+        }
+
+        /**
+         * Fetch a list of the next 10 events from the primary calendar.
+         * @return List of Strings describing returned events.
+         * @throws IOException
+         */
+        private Void getDataFromApi() throws IOException {
+            // first get already existing events in the correct time range
+            // to ensure no duplicates are added
+            org.joda.time.DateTime timeMin = null;
+            org.joda.time.DateTime timeMax = null;
+            for (GoogleCalendarEvent e : events) {
+                if (timeMin == null) {
+                    timeMin = e.getStart();
+                }
+                else if (e.getStart().isBefore(timeMin)) {
+                    timeMin = e.getStart();
+                }
+
+                if (timeMax == null) {
+                    timeMax = e.getEnd();
+                }
+                else if (e.getEnd().isAfter(timeMax)) {
+                    timeMax = e.getEnd();
+                }
+            }
+
+            List<Event> existingEvents = mService.events().list(calendarId)
+                    .setTimeMin(new DateTime(timeMin.toDate()))
+                    .setTimeMax(new DateTime(timeMax.toDate()))
+                    .setSingleEvents(true)
+                    .execute()
+                    .getItems();
+
+            // only add non-duplicate events
+            List<Event> eventsToInsert = new ArrayList<>();
+            outer:
+            for (GoogleCalendarEvent e : events) {
+                boolean isEvent = false;
+                boolean isAssignment = false;
+                if (e instanceof PortalEvent || (e instanceof CalendarEvent && ((CalendarEvent) e).getType().equals(CalendarEvent.EventType.OCCASION))) {
+                    eventCount += 1;
+                    isEvent = true;
+                }
+                else if (e instanceof PortalAssignment || (e instanceof CalendarEvent && ((CalendarEvent) e).getType().equals(CalendarEvent.EventType.ASSIGNMENT))) {
+                    assignmentCount += 1;
+                    isAssignment = true;
+                }
+                Event event = e.toGoogleCalendarEvent();
+                for (Event existingEvent : existingEvents) {
+                    if (event.getSummary().equals(existingEvent.getSummary())
+                            && (event.getDescription() != null ? event.getDescription().equals(existingEvent.getDescription()) : existingEvent.getDescription() == null)
+                            && (event.getLocation() != null ? event.getLocation().equals(existingEvent.getLocation()) : existingEvent.getLocation() == null)
+                            && event.getStart().equals(existingEvent.getStart())
+                            && event.getEnd().equals(existingEvent.getEnd())) {
+                        Log.d(TAG, "Skipping duplicate event " + event.getSummary());
+                        if (isEvent) {
+                            eventSkippedCount += 1;
+                        }
+                        else if (isAssignment) {
+                            assignmentSkippedCount += 1;
+                        }
+                        continue outer;
+                    }
+                }
+                eventsToInsert.add(event);
+            }
+
+            for (Event e : eventsToInsert) {
+                Log.d(TAG, "Inserting event " + e.getSummary());
+                e.setReminders(new Event.Reminders().setUseDefault(false));
+                mService.events().insert(calendarId, e).execute();
+            }
+            return null;
+        }
+
+
+        @Override
+        protected void onPreExecute() {
+            calendarExportProgress.show();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            calendarExportProgress.dismiss();
+
+            String exportSummaryContent = "";
+            boolean none = false;
+            if (eventCount - eventSkippedCount == 0 && assignmentCount - assignmentSkippedCount == 0) {
+                none = true;
+                if (eventCount == 0) {
+                    exportSummaryContent = getString(R.string.export_summary_dialog_summary_nothing_exported_assignments_only);
+                }
+                else if (assignmentCount == 0) {
+                    exportSummaryContent = getString(R.string.export_summary_dialog_summary_nothing_exported_events_only);
+                }
+                else {
+                    exportSummaryContent = getString(R.string.export_summary_dialog_summary_nothing_exported);
+                }
+            }
+            else {
+                if (eventCount > 0) {
+                    exportSummaryContent += "<b>" + getString(R.string.export_summary_dialog_summary_events_exported) + "</b> "
+                            + getString(R.string.export_summary_dialog_summary_number_exported, eventCount, eventCount - eventSkippedCount);
+                }
+                if (assignmentCount > 0) {
+                    if (!exportSummaryContent.isEmpty()) {
+                        exportSummaryContent += "<br>";
+                    }
+                    exportSummaryContent += "<b>" + getString(R.string.export_summary_dialog_summary_assignments_exported) + "</b> " +
+                            getString(R.string.export_summary_dialog_summary_number_exported, assignmentCount, assignmentCount - assignmentSkippedCount);
+                }
+            }
+
+            MaterialDialog.Builder builder = new MaterialDialog.Builder(MainActivity.this)
+                    .title(R.string.export_summary_dialog_title)
+                    .content(Html.fromHtml(exportSummaryContent))
+                    .positiveText(R.string.ok)
+                    .dismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialogInterface) {
+                            if (onExportTaskFinishedListener != null) {
+                                onExportTaskFinishedListener.run();
+                            }
+                        }
+                    }).cancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialogInterface) {
+                            if (onExportTaskFinishedListener != null) {
+                                onExportTaskFinishedListener.run();
+                            }
+                        }
+                    });
+            if (!none) {
+                builder.contentColorRes(R.color.textPrimary);
+            }
+
+            builder.show();
+        }
+
+        @Override
+        protected void onCancelled() {
+            calendarExportProgress.dismiss();
+            if (mLastError != null) {
+                if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
+                    showGooglePlayServicesAvailabilityErrorDialog(
+                            ((GooglePlayServicesAvailabilityIOException) mLastError)
+                                    .getConnectionStatusCode());
+                } else if (mLastError instanceof UserRecoverableAuthIOException) {
+                    startActivityForResult(
+                            ((UserRecoverableAuthIOException) mLastError).getIntent(),
+                            MainActivity.REQUEST_AUTHORIZATION);
+                } else {
+                    new MaterialDialog.Builder(MainActivity.this)
+                            .content(mLastError.getMessage())
+                            .positiveText(R.string.ok)
+                            .show();
+                }
+            }
+        }
     }
 
 }

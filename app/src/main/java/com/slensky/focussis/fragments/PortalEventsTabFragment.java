@@ -7,22 +7,28 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.gson.Gson;
 
+import com.slensky.focussis.activities.MainActivity;
 import com.slensky.focussis.util.GsonSingleton;
 import com.slensky.focussis.data.Portal;
+import com.slensky.focussis.util.RecyclerClickListener;
+import com.slensky.focussis.util.RecyclerTouchListener;
 import com.slensky.focussis.views.DividerItemDecoration;
 import com.slensky.focussis.views.adapters.PortalEventAdapter;
 import com.slensky.focussis.R;
 
-public class PortalEventsTabFragment extends Fragment{
+public class PortalEventsTabFragment extends Fragment {
+    private static final String TAG = "PortalEventsTabFragment";
 
+    private PortalFragment portalFragment;
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
+    private PortalEventAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private Portal portal;
 
@@ -35,7 +41,9 @@ public class PortalEventsTabFragment extends Fragment{
         super.onCreate(savedInstanceState);
         Gson gson = GsonSingleton.getInstance();
         portal = gson.fromJson(getArguments().getString(getString(R.string.EXTRA_PORTAL)), Portal.class);
-
+        if (getActivity() != null && getActivity() instanceof MainActivity && ((MainActivity) getActivity()).getCurrentFragment() instanceof PortalFragment) {
+            portalFragment = (PortalFragment) ((MainActivity) getActivity()).getCurrentFragment();
+        }
     }
 
     @Override
@@ -50,8 +58,30 @@ public class PortalEventsTabFragment extends Fragment{
             recyclerView.setLayoutManager(layoutManager);
             adapter = new PortalEventAdapter(portal.getEvents());
             recyclerView.setAdapter(adapter);
+
+            recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recyclerView, new RecyclerClickListener() {
+                @Override
+                public void onClick(View view, int position) {
+                    if (portalFragment != null) {
+                        portalFragment.onItemSelected(adapter, false, position);
+                    }
+                }
+
+                @Override
+                public void onLongClick(View view, int position) {
+                    //Select item on long click
+                    if (portalFragment != null) {
+                        view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                        portalFragment.onItemSelected(adapter, true, position);
+                    }
+                }
+            }));
         }
         return view;
+    }
+
+    public PortalEventAdapter getAdapter() {
+        return adapter;
     }
 
     public void setPortal(Portal portal) {

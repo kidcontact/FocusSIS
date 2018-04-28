@@ -24,6 +24,28 @@
             android:summary="@string/settings_always_check_preferences_summary"
             android:defaultValue="true"/>
 
+        <Preference
+            android:key="change_google_account"
+            android:title="@string/settings_change_google_account_title"
+            android:summary="@string/settings_change_google_account_summary_no_account"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/settings_title_portal">
+
+        <CheckBoxPreference
+            android:key="show_custom_assignments_in_portal"
+            android:title="@string/settings_show_custom_assignments_in_portal_title"
+            android:summary="@string/settings_show_custom_assignments_in_portal_summary"
+            android:defaultValue="true"/>
+
+        <!--<CheckBoxPreference-->
+            <!--android:key="get_assignment_descriptions_on_export_from_portal"-->
+            <!--android:title="@string/settings_get_assignment_descriptions_on_export_from_portal_title"-->
+            <!--android:summary="@string/settings_get_assignment_descriptions_on_export_from_portal_summary"-->
+            <!--android:defaultValue="false" />-->
+
     </PreferenceCategory>
 
     <PreferenceCategory

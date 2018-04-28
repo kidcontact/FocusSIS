@@ -18,4 +18,6 @@
         </attr>
     </declare-styleable>
 
+    <attr name="selectedItemBackground" format="reference"/>
+
 </resources>

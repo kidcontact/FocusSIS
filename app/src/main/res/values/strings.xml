@@ -5,6 +5,7 @@
     <!-- Toolbar -->
     <string name="toolbar_menu_refresh">Refresh</string>
     <string name="toolbar_menu_logout">Log out</string>
+    <string name="toolbar_menu_sync_to_calendar">Sync</string> <!-- For only some pages -->
     <string name="toolbar_menu_delete_saved_assignments">Reset course</string> <!-- For course page only -->
     <string name="portal_label">Portal</string>
     <string name="schedule_label">Schedule</string>
@@ -47,6 +48,14 @@
 
     <!-- Portal page -->
     <string name="portal_empty_fragment">Whoops, looks like there isn\'t anything here!</string>
+    <string name="portal_action_export">Export</string>
+    <string name="portal_sync_dialog_title">Sync to Google Calendar</string>
+    <string-array name="portal_sync_dialog_options">
+        <item>Events</item>
+        <item>Assignments</item>
+    </string-array>
+    <string name="portal_sync_dialog_min_select_error">You must select at least 1 item!</string>
+    <string name="portal_sync_dialog_positive">Sync</string>
 
     <!-- Course page -->
     <string name="assignment_name_header">Assignment</string>
@@ -95,6 +104,7 @@
     <string name="calendar_event_section">Section</string>
     <string name="calendar_event_school">School</string>
     <string name="calendar_event_notes">Notes</string>
+    <string name="calendar_show_all">View all</string>
 
     <!-- Demographic -->
     <string name="demographic_name_hint">Name</string>
@@ -190,15 +200,24 @@
 
     <!-- Preferences page -->
     <string name="settings_title_general">General</string>
+    <string name="settings_title_portal">Portal</string>
     <string name="settings_title_course">Courses</string>
     <string name="settings_title_account">Account</string>
     <string name="settings_automatic_login_title">Sign in automatically</string>
     <string name="settings_automatic_login_summary">Automatically log in when the app starts</string>
     <string name="settings_always_check_preferences_title">Always check language on login</string>
     <string name="settings_always_check_preferences_summary">Prevents crashes if your language is set incorrectly on Focus, but can make logging in slightly slower</string>
+    <string name="settings_change_google_account_title">Change selected Google account</string>
+    <string name="settings_change_google_account_summary_no_account">Used for exporting events to calendar. No account has been selected yet</string>
+    <string name="settings_change_google_account_summary">Used for exporting events to calendar. Currently selected account is %1$s</string>
+    <string name="settings_show_custom_assignments_in_portal_title">Show custom assignments</string>
+    <string name="settings_show_custom_assignments_in_portal_summary">Custom assignments will be visible in the assignments tab</string>
+    <string name="settings_get_assignment_descriptions_on_export_from_portal_title">Export descriptions for assignments</string>
+    <string name="settings_get_assignment_descriptions_on_export_from_portal_summary">When exporting to Google Calendar, downloads each course page to get assignment descriptions</string>
     <string name="settings_clear_all_saved_assignments">Clear all saved assignments</string>
     <string name="settings_clear_all_saved_assignments_warning">Are you sure you want to clear your saved assignments? This will delete all custom and edited assignments from all of your courses.</string>
-    <string name="settings_clear_all_saved_assignemnts_positive">Clear assignments</string>
+    <string name="settings_clear_all_saved_assignments_positive">Clear assignments</string>
+    <string name="settings_clear_all_saved_assignments_error">Error clearing saved assignments</string>
     <string name="settings_username_title">Username</string>
     <string name="settings_change_password_title">Change password</string>
     <string name="settings_current_password_hint">Current password</string>
@@ -225,11 +244,24 @@
     <string name="auth_progress_dialog">Authenticating…</string>
     <string name="timeout_progress_dialog_title">Session timed out</string>
     <string name="timeout_progress_dialog_message">Reauthenticating…</string>
+    <string name="contacts_permission_request_on_denied_message">Focus needs to access your Google account (via Contacts) in order to export to Google Calendar.</string>
+    <string name="export_progress_dialog">Exporting…</string>
+    <string name="export_summary_dialog_title">Export summary</string>
+    <string name="export_summary_dialog_summary_nothing_exported">No new events or assignments found, your calendar is already up-to-date.</string>
+    <string name="export_summary_dialog_summary_nothing_exported_events_only">No new events found, your calendar is already up-to-date.</string>
+    <string name="export_summary_dialog_summary_nothing_exported_assignments_only">No new assignments found, your calendar is already up-to-date.</string>
+    <string name="export_summary_dialog_summary_events_exported">Events:</string>
+    <string name="export_summary_dialog_summary_assignments_exported">Assignments:</string>
+    <string name="export_summary_dialog_summary_number_exported">%1$d (%2$d new)</string>
     <string name="retry_dialog_message_general">Network error (%d)</string>
     <string name="retry_dialog_message_timeout">Network timed out</string>
     <string name="retry_dialog_button">Retry</string>
     <string name="retry_dialog_cancel">Cancel</string>
     <string name="logout_progress_dialog_message">Logging out…</string>
+
+    <!-- Play services -->
+    <string name="play_servces_app_name">Focus App</string>
+    <string name="needs_play_services">This app requires Google Play Services. Please install Google Play Services on your device and relaunch this app.</string>
 
     <!-- ACRA -->
     <string name="acra_dialog_title">Focus has crashed</string>
