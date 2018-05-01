@@ -1066,8 +1066,12 @@ public class CourseFragment extends NetworkFragment {
                 else if (course.getAssignments().get(i).isEditedAssignment()) {
                     for (int j = 0; j < replacedAssignments.size(); j++) {
                         if (course.getAssignments().get(i).overrides(replacedAssignments.get(j))) {
-                            course.getAssignments().remove(i);
-                            course.getAssignments().add(i, replacedAssignments.remove(j));
+                            CourseAssignment from = course.getAssignments().remove(i);
+                            CourseAssignment to = replacedAssignments.remove(j);
+                            course.getAssignments().add(i, to);
+                            if (portalFragment != null) {
+                                portalFragment.onAssignmentModified(course.getId(), from, to);
+                            }
                             break;
                         }
                     }

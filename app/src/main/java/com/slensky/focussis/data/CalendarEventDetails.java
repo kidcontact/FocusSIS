@@ -2,9 +2,13 @@ package com.slensky.focussis.data;
 
 import android.util.Log;
 
+import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventDateTime;
+import com.slensky.focussis.util.SchoolSingleton;
 import com.slensky.focussis.util.TermUtil;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,7 +16,7 @@ import org.json.JSONObject;
  * Created by slensky on 5/12/17.
  */
 
-public class CalendarEventDetails {
+public class CalendarEventDetails implements GoogleCalendarEvent {
 
     private static final String TAG = "CalendarEventDetails";
     private final DateTime date;
@@ -23,7 +27,7 @@ public class CalendarEventDetails {
     private final String notes;
     private final String courseDays;
     private final String courseName;
-    private final int coursePeriod;
+    private final String coursePeriod;
     private final String courseSection; // alternative to period, if the section is not numbered (e.g. advisory)
     private final String courseTeacher;
     private final ScheduleCourse.Term courseTerm;
@@ -37,7 +41,7 @@ public class CalendarEventDetails {
         String notes;
         String courseDays;
         String courseName;
-        int coursePeriod;
+        String coursePeriod;
         String courseSection = null;
         String courseTeacher;
         ScheduleCourse.Term courseTerm;
@@ -89,12 +93,12 @@ public class CalendarEventDetails {
                 courseDays = courseJSON.getString("days");
                 courseName = courseJSON.getString("name");
                 if (courseJSON.has("period")) {
-                    coursePeriod = courseJSON.getInt("period");
+                    coursePeriod = courseJSON.getString("period");
                     courseSection = null;
                 }
                 else {
                     courseSection = courseJSON.getString("section");
-                    coursePeriod = 0;
+                    coursePeriod = "0";
                 }
 
                 courseTeacher = courseJSON.getString("teacher");
@@ -109,7 +113,7 @@ public class CalendarEventDetails {
                 Log.e(TAG, "Error getting/parsing course object from assignment");
                 courseDays = null;
                 courseName = null;
-                coursePeriod = 0;
+                coursePeriod = "0";
                 courseSection = null;
                 courseTeacher = null;
                 courseTerm = null;
@@ -119,7 +123,7 @@ public class CalendarEventDetails {
             notes = null;
             courseDays = null;
             courseName = null;
-            coursePeriod = 0;
+            coursePeriod = null;
             courseTeacher = null;
             courseTerm = null;
         }
@@ -178,7 +182,7 @@ public class CalendarEventDetails {
         return courseSection == null;
     }
 
-    public int getCoursePeriod() {
+    public String getCoursePeriod() {
         return coursePeriod;
     }
 
@@ -193,4 +197,84 @@ public class CalendarEventDetails {
     public ScheduleCourse.Term getCourseTerm() {
         return courseTerm;
     }
+
+    @Override
+    public DateTime getStart() {
+        if (type == CalendarEvent.EventType.ASSIGNMENT) {
+            LocalTime periodStart = SchoolSingleton.getInstance().getSchool().getStartTimeOfPeriodOnDay(coursePeriod, date);
+            return date.withTime(periodStart.getHourOfDay(), periodStart.getMinuteOfHour(), periodStart.getSecondOfMinute(), periodStart.getMillisOfSecond());
+        }
+        else {
+            LocalTime schoolStart = SchoolSingleton.getInstance().getSchool().getStartTimeOfSchooldayOnDay(date);
+            return date.withTime(schoolStart.getHourOfDay(), schoolStart.getMinuteOfHour(), schoolStart.getSecondOfMinute(), schoolStart.getMillisOfSecond());
+        }
+    }
+
+    @Override
+    public DateTime getEnd() {
+        if (type == CalendarEvent.EventType.ASSIGNMENT) {
+            LocalTime periodEnd = SchoolSingleton.getInstance().getSchool().getStopTimeOfPeriodOnDay(coursePeriod, date);
+            return date.withTime(periodEnd.getHourOfDay(), periodEnd.getMinuteOfHour(), periodEnd.getSecondOfMinute(), periodEnd.getMillisOfSecond());
+        }
+        else {
+            LocalTime schoolEnd = SchoolSingleton.getInstance().getSchool().getStopTimeOfSchooldayOnDay(date);
+            return date.withTime(schoolEnd.getHourOfDay(), schoolEnd.getMinuteOfHour(), schoolEnd.getSecondOfMinute(), schoolEnd.getMillisOfSecond());
+        }
+    }
+
+    @Override
+    public Event toGoogleCalendarEvent() {
+        if (type == CalendarEvent.EventType.ASSIGNMENT) {
+            Event.Creator creator = new Event.Creator()
+                    .setDisplayName(courseTeacher);
+            Event event = new Event()
+                    .setSummary(title)
+                    .setCreator(creator)
+                    .setLocation(SchoolSingleton.getInstance().getSchool().getFullName());
+
+            String description = courseName;
+            if (courseSection == null) {
+                description += " - Period " + coursePeriod;
+            }
+            else {
+                description += " - " + courseSection;
+            }
+            if (notes != null) {
+                description += "\n" + notes;
+            }
+            event.setDescription(description);
+
+            DateTime startDateTime = getStart();
+            DateTime endDateTime = getEnd();
+
+            EventDateTime start = new EventDateTime()
+                    .setDateTime(new com.google.api.client.util.DateTime(startDateTime.toDate()));
+            event.setStart(start);
+
+            EventDateTime end = new EventDateTime()
+                    .setDateTime(new com.google.api.client.util.DateTime(endDateTime.toDate()));
+            event.setEnd(end);
+
+            return event;
+        }
+        else {
+            Event event = new Event()
+                    .setSummary(title)
+                    .setLocation(SchoolSingleton.getInstance().getSchool().getFullName());
+
+            DateTime startDateTime = getStart();
+            DateTime endDateTime = getEnd();
+
+            EventDateTime start = new EventDateTime()
+                    .setDateTime(new com.google.api.client.util.DateTime(startDateTime.toDate()));
+            event.setStart(start);
+
+            EventDateTime end = new EventDateTime()
+                    .setDateTime(new com.google.api.client.util.DateTime(endDateTime.toDate()));
+            event.setEnd(end);
+
+            return event;
+        }
+    }
+
 }

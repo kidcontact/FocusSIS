@@ -1,22 +1,13 @@
 package com.slensky.focussis.fragments;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.ContentResolver;
-import android.content.ContentValues;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.util.Log;
@@ -26,18 +17,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.google.api.services.calendar.model.Event;
 import com.google.gson.Gson;
 import com.slensky.focussis.R;
 import com.slensky.focussis.activities.MainActivity;
+import com.slensky.focussis.data.Course;
 import com.slensky.focussis.data.CourseAssignment;
 import com.slensky.focussis.data.GoogleCalendarEvent;
 import com.slensky.focussis.data.PortalAssignment;
@@ -49,21 +39,21 @@ import org.json.JSONObject;
 
 import com.slensky.focussis.data.Portal;
 import com.slensky.focussis.network.FocusApiSingleton;
+import com.slensky.focussis.util.Syncable;
 import com.slensky.focussis.views.adapters.PortalAssignmentCourseAdapter;
 import com.slensky.focussis.views.adapters.PortalEventAdapter;
 import com.slensky.focussis.views.adapters.SelectableItemAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
-import java.util.TimeZone;
 
 /**
  * Created by slensky on 4/19/17.
  */
 
-public class PortalFragment extends NetworkTabAwareFragment implements ActionMode.Callback {
+public class PortalFragment extends NetworkTabAwareFragment implements ActionMode.Callback, Syncable {
     private static final String TAG = "PortalFragment";
     private static final int CALENDAR_PERMISSION_REQUEST = 0;
 
@@ -303,6 +293,18 @@ public class PortalFragment extends NetworkTabAwareFragment implements ActionMod
             for (int i = 0; i < selectedItems.size(); i++) {
                 int key = selectedItems.keyAt(i);
                 if (selectedItems.get(key)) {
+                    for (PortalAssignment assignment : portalCourses.get(key).getAssignments()) {
+                        if (!assignment.isDescriptionSet()) {
+                            Log.d(TAG, "Assignment does not have set description, running getAssignmentDescriptions");
+                            getAssignmentDescriptions(getContext(), portalCourses, new Runnable() {
+                                @Override
+                                public void run() {
+                                    exportSelection();
+                                }
+                            });
+                            return;
+                        }
+                    }
                     events.addAll(portalCourses.get(key).getAssignments());
                 }
             }
@@ -310,7 +312,7 @@ public class PortalFragment extends NetworkTabAwareFragment implements ActionMod
 
         if (events.size() > 0) {
             Log.d(TAG, "Exporting " + events.size() + " events to calendar");
-            ((MainActivity) getActivity()).exportEventsToCalendar(events, new Runnable() {
+            ((MainActivity) getActivity()).exportEventsToCalendar(events, true, new Runnable() {
                 @Override
                 public void run() {
                     destroyActionMode();
@@ -323,15 +325,15 @@ public class PortalFragment extends NetworkTabAwareFragment implements ActionMod
 
     }
 
-    public void exportAll() {
+    public void sync() {
         if (!(getActivity() instanceof MainActivity) || getContext() == null) {
             Log.e(TAG, "Could not export events because activity was null or not MainActivity or context was null");
             return;
         }
 
         new MaterialDialog.Builder(getContext())
-                .title(R.string.portal_sync_dialog_title)
-                .items(R.array.portal_sync_dialog_options)
+                .title(R.string.sync_to_google_calendar)
+                .items(R.array.sync_dialog_options)
                 .itemsCallbackMultiChoice(
                         new Integer[]{0, 1},
                         new MaterialDialog.ListCallbackMultiChoice() {
@@ -342,35 +344,17 @@ public class PortalFragment extends NetworkTabAwareFragment implements ActionMod
                                                 >= 1; // selection count must stay above 1, the new (un)selection is included
                                 // in the which array
                                 if (!allowSelectionChange) {
-                                    Toast.makeText(getContext(), R.string.portal_sync_dialog_min_select_error, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), R.string.sync_dialog_min_select_error, Toast.LENGTH_SHORT).show();
                                 }
                                 return allowSelectionChange;
                             }
                         })
-                .positiveText(R.string.portal_sync_dialog_positive)
+                .positiveText(R.string.sync_to_google_calendar_positive)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        PortalEventsTabFragment eventsTabFragment = getEventsTabFragment();
-                        PortalAssignmentsTabFragment assignmentsTabFragment = getAssignmentsTabFragment();
-                        List<GoogleCalendarEvent> events = new ArrayList<>();
-
                         List<Integer> selected = Arrays.asList(dialog.getSelectedIndices());
-                        if (selected.contains(0) && eventsTabFragment != null && eventsTabFragment.getAdapter() != null) {
-                            Log.d(TAG, "Exporting all events");
-                            events.addAll(eventsTabFragment.getAdapter().getEvents());
-                        }
-                        if (selected.contains(1) && assignmentsTabFragment != null && assignmentsTabFragment.getAdapter() != null) {
-                            Log.d(TAG, "Exporting all assignments");
-                            for (PortalCourse portalCourse : assignmentsTabFragment.getAdapter().getCourses()) {
-                                events.addAll(portalCourse.getAssignments());
-                            }
-                        }
-
-                        if (events.size() > 0) {
-                            Log.d(TAG, "Exporting " + events.size() + " events to calendar");
-                            ((MainActivity) getActivity()).exportEventsToCalendar(events, null);
-                        }
+                        performSync(selected.contains(0), selected.contains(1));
                     }
                 })
                 .negativeText(R.string.cancel)
@@ -378,6 +362,172 @@ public class PortalFragment extends NetworkTabAwareFragment implements ActionMod
                 // (un)selection is still allowed
                 .show();
 
+    }
+
+    private void performSync(final boolean exportEvents, final boolean exportAssignments) {
+        if (!(getActivity() instanceof MainActivity) || getContext() == null) {
+            Log.e(TAG, "Could not export events because activity was null or not MainActivity or context was null");
+            return;
+        }
+
+        PortalEventsTabFragment eventsTabFragment = getEventsTabFragment();
+        PortalAssignmentsTabFragment assignmentsTabFragment = getAssignmentsTabFragment();
+        List<GoogleCalendarEvent> events = new ArrayList<>();
+
+
+        if (exportEvents && eventsTabFragment != null && eventsTabFragment.getAdapter() != null) {
+            Log.d(TAG, "Exporting all events");
+            events.addAll(eventsTabFragment.getAdapter().getEvents());
+        }
+        if (exportAssignments && assignmentsTabFragment != null && assignmentsTabFragment.getAdapter() != null) {
+            Log.d(TAG, "Exporting all assignments");
+            for (PortalCourse portalCourse : assignmentsTabFragment.getAdapter().getCourses()) {
+                for (PortalAssignment assignment : portalCourse.getAssignments()) {
+                    if (!assignment.isDescriptionSet()) {
+                        Log.d(TAG, "Assignment does not have set description, running getAssignmentDescriptions");
+                        getAssignmentDescriptions(getContext(), assignmentsTabFragment.getAdapter().getCourses(), new Runnable() {
+                            @Override
+                            public void run() {
+                                performSync(exportEvents, exportAssignments);
+                            }
+                        });
+                        return;
+                    }
+                }
+                events.addAll(portalCourse.getAssignments());
+            }
+        }
+
+        if (events.size() > 0) {
+            Log.d(TAG, "Exporting " + events.size() + " events to calendar");
+            ((MainActivity) getActivity()).exportEventsToCalendar(events, true, null);
+        }
+    }
+
+    private void getAssignmentDescriptions(@NonNull final Context context, Collection<PortalCourse> courses, final Runnable callback) {
+        final List<PortalCourse> coursesToDownload = new ArrayList<>();
+        for (PortalCourse course : courses) {
+            boolean isRealCourse = true;
+            try {
+                isRealCourse = Integer.parseInt(course.getId()) >= 0;
+            } catch (NumberFormatException e) {
+                // do nothing
+            }
+            if (!isRealCourse) {
+                // this is a course that has been added by the parser, likely an advisory course
+                // no descriptions exist for any of the assignments
+                for (PortalAssignment assignment : course.getAssignments()) {
+                    assignment.setDescription(null);
+                }
+                continue;
+            }
+
+            for (PortalAssignment assignment : course.getAssignments()) {
+                if (!assignment.isDescriptionSet()) {
+                    coursesToDownload.add(course);
+                    break;
+                }
+            }
+        }
+
+        if (coursesToDownload.size() == 0) {
+            callback.run();
+            return;
+        }
+
+        final List<Request> requests = new ArrayList<>();
+        final boolean[] hasError = new boolean[]{false};
+        final MaterialDialog progress = new MaterialDialog.Builder(context)
+                .content(R.string.portal_get_assignment_descriptions_progress)
+                .progress(false, coursesToDownload.size(), true)
+                .negativeText(R.string.cancel)
+                .canceledOnTouchOutside(false)
+                .cancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface) {
+                        for (Request request : requests) {
+                            Log.i(TAG, "Cancelling request");
+                            request.cancel();
+                        }
+                    }
+                })
+                .build();
+        progress.show();
+
+        for (final PortalCourse portalCourse : coursesToDownload) {
+            Request request = api.getCourse(portalCourse.getId(), new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Course course = new Course(response);
+                    for (PortalAssignment portalAssignment : portalCourse.getAssignments()) {
+                        if (!portalAssignment.isCustomAssignment() && course.hasAssignments()) {
+                            for (CourseAssignment courseAssignment : course.getAssignments()) {
+                                if (courseAssignment.getName().equals(portalAssignment.getName()) && courseAssignment.getDue().equals(portalAssignment.getDue()) && courseAssignment.hasDescription()) {
+                                    Log.d(TAG, "Adding description " + courseAssignment.getDescription());
+                                    portalAssignment.setDescription(courseAssignment.getDescription());
+                                }
+                            }
+                        }
+                        if (!portalAssignment.isDescriptionSet()) {
+                            portalAssignment.setDescription(null);
+                        }
+                    }
+                    progress.incrementProgress(1);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    hasError[0] = true;
+                }
+            });
+            requests.add(request);
+        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!progress.isCancelled() && progress.getCurrentProgress() != progress.getMaxProgress()) {
+                    if (!(getActivity() instanceof MainActivity) || getContext() == null) {
+                        Log.e(TAG, "Could not export events because activity was null or not MainActivity or context was null");
+                        return;
+                    }
+
+                    if (hasError[0]) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progress.dismiss();
+                                for (Request request : requests) {
+                                    request.cancel();
+                                }
+                                new MaterialDialog.Builder(context)
+                                        .content(R.string.export_network_error)
+                                        .positiveText(R.string.ok)
+                                        .show();
+                            }
+                        });
+                        return;
+                    }
+                }
+
+                if (!progress.isCancelled()) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progress.dismiss();
+                            callback.run();
+                        }
+                    });
+                }
+                Log.d(TAG, "Exiting assignment descriptions thread");
+
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     /* callbacks for when custom assignments are modified on the course page */

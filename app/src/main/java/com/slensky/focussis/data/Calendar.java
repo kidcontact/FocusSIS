@@ -43,22 +43,25 @@ public class Calendar extends MarkingPeriodPage {
 
         List<CalendarEvent> events = new ArrayList<>();
         try {
-            JSONObject eventsJSON = calendar.getJSONObject("events");
-            Iterator<?> keys = eventsJSON.keys();
-            events = new ArrayList<>();
+            if (calendar.has("events")) {
+                JSONObject eventsJSON = calendar.getJSONObject("events");
+                Iterator<?> keys = eventsJSON.keys();
 
-            while(keys.hasNext()) {
-                String key = (String) keys.next();
-                JSONObject eventJSON = eventsJSON.getJSONObject(key);
+                while(keys.hasNext()) {
+                    String key = (String) keys.next();
+                    JSONObject eventJSON = eventsJSON.getJSONObject(key);
 
-                DateTime date = new DateTime(eventJSON.getString("date"));
-                String id = eventJSON.getString("id");
-                String name = eventJSON.getString("name");
-                String stype = eventJSON.getString("type");
-                CalendarEvent.EventType type = CalendarEvent.stringToEventType(stype);
-                events.add(new CalendarEvent(date, id, name, type));
+                    DateTime date = new DateTime(eventJSON.getString("date"));
+                    String id = eventJSON.getString("id");
+                    String name = eventJSON.getString("name");
+                    String stype = eventJSON.getString("type");
+                    CalendarEvent.EventType type = CalendarEvent.stringToEventType(stype);
+                    events.add(new CalendarEvent(date, id, name, type));
+                }
             }
-
+            else {
+                Log.w(TAG, "Calendar for year " + year + " and month " + month + " appears to have no events");
+            }
         } catch (JSONException e) {
             events = null;
             Log.e(TAG, "Error parsing calendar events");

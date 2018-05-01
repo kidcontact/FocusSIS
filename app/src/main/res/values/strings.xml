@@ -49,13 +49,7 @@
     <!-- Portal page -->
     <string name="portal_empty_fragment">Whoops, looks like there isn\'t anything here!</string>
     <string name="portal_action_export">Export</string>
-    <string name="portal_sync_dialog_title">Sync to Google Calendar</string>
-    <string-array name="portal_sync_dialog_options">
-        <item>Events</item>
-        <item>Assignments</item>
-    </string-array>
-    <string name="portal_sync_dialog_min_select_error">You must select at least 1 item!</string>
-    <string name="portal_sync_dialog_positive">Sync</string>
+    <string name="portal_get_assignment_descriptions_progress">Downloading courses to find assignment descriptions…</string>
 
     <!-- Course page -->
     <string name="assignment_name_header">Assignment</string>
@@ -104,7 +98,13 @@
     <string name="calendar_event_section">Section</string>
     <string name="calendar_event_school">School</string>
     <string name="calendar_event_notes">Notes</string>
-    <string name="calendar_show_all">View all</string>
+    <string name="calendar_event_dialog_export">Export</string>
+    <string name="calendar_event_dialog_export_wait">Please wait for the event details to load before exporting</string>
+    <string name="calendar_sync_dialog_from">From:</string>
+    <string name="calendar_sync_dialog_to">To:</string>
+    <string name="calendar_sync_dialog_date_error">From date must be before to date</string>
+    <string name="calendar_sync_calendars_progress">Downloading calendars…</string>
+    <string name="calendar_sync_assignments_progress">Downloading assignment details…</string>
 
     <!-- Demographic -->
     <string name="demographic_name_hint">Name</string>
@@ -178,6 +178,7 @@
     <string name="network_error_timeout">Network error</string>
     <string name="network_error_auth">Invalid username or password</string>
     <string name="network_error_server">Server error. Please try again later</string>
+    <string name="network_error_unknown">Error. Please try again later</string>
 
     <!-- Network failure view -->
     <string name="network_failure_message">Please check your network connection</string>
@@ -245,7 +246,8 @@
     <string name="timeout_progress_dialog_title">Session timed out</string>
     <string name="timeout_progress_dialog_message">Reauthenticating…</string>
     <string name="contacts_permission_request_on_denied_message">Focus needs to access your Google account (via Contacts) in order to export to Google Calendar.</string>
-    <string name="export_progress_dialog">Exporting…</string>
+    <string name="export_progress_dialog">Exporting events…</string>
+    <string name="export_network_error">Network timed out. Please check your internet connection and try again.</string>
     <string name="export_summary_dialog_title">Export summary</string>
     <string name="export_summary_dialog_summary_nothing_exported">No new events or assignments found, your calendar is already up-to-date.</string>
     <string name="export_summary_dialog_summary_nothing_exported_events_only">No new events found, your calendar is already up-to-date.</string>
@@ -253,11 +255,25 @@
     <string name="export_summary_dialog_summary_events_exported">Events:</string>
     <string name="export_summary_dialog_summary_assignments_exported">Assignments:</string>
     <string name="export_summary_dialog_summary_number_exported">%1$d (%2$d new)</string>
+    <string name="sync_to_google_calendar">Sync to Google Calendar</string>
+    <string-array name="sync_dialog_options">
+        <item>Events</item>
+        <item>Assignments</item>
+    </string-array>
+    <string name="sync_dialog_events">Events</string>
+    <string name="sync_dialog_assignments">Assignments</string>
+    <string name="sync_dialog_min_select_error">You must select at least 1 item!</string>
+    <string name="sync_to_google_calendar_positive">Sync</string>
     <string name="retry_dialog_message_general">Network error (%d)</string>
     <string name="retry_dialog_message_timeout">Network timed out</string>
     <string name="retry_dialog_button">Retry</string>
     <string name="retry_dialog_cancel">Cancel</string>
     <string name="logout_progress_dialog_message">Logging out…</string>
+
+    <!-- Google Calendar -->
+    <string name="google_calendar_summary">Focus %1$s</string>
+    <string name="google_calendar_prefs">gCalendarPrefs</string>
+    <string name="google_calendar_prefs_id_for_account">%1$s_googleCalendarId</string>
 
     <!-- Play services -->
     <string name="play_servces_app_name">Focus App</string>

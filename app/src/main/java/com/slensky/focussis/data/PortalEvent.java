@@ -31,14 +31,14 @@ public class PortalEvent implements GoogleCalendarEvent {
 
     @Override
     public DateTime getStart() {
-        LocalTime periodStart = SchoolSingleton.getInstance().getSchool().getStartTimeOfSchooldayOnDay(date);
-        return date.withTime(periodStart.getHourOfDay(), periodStart.getMinuteOfHour(), periodStart.getSecondOfMinute(), periodStart.getMillisOfSecond());
+        LocalTime schoolStart = SchoolSingleton.getInstance().getSchool().getStartTimeOfSchooldayOnDay(date);
+        return date.withTime(schoolStart.getHourOfDay(), schoolStart.getMinuteOfHour(), schoolStart.getSecondOfMinute(), schoolStart.getMillisOfSecond());
     }
 
     @Override
     public DateTime getEnd() {
-        LocalTime periodEnd = SchoolSingleton.getInstance().getSchool().getStopTimeOfSchooldayOnDay(date);
-        return date.withTime(periodEnd.getHourOfDay(), periodEnd.getMinuteOfHour(), periodEnd.getSecondOfMinute(), periodEnd.getMillisOfSecond());
+        LocalTime schoolEnd = SchoolSingleton.getInstance().getSchool().getStopTimeOfSchooldayOnDay(date);
+        return date.withTime(schoolEnd.getHourOfDay(), schoolEnd.getMinuteOfHour(), schoolEnd.getSecondOfMinute(), schoolEnd.getMillisOfSecond());
     }
 
     @Override

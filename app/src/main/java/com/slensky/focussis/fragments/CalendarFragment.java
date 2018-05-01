@@ -21,18 +21,29 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.internal.MDRootLayout;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.slensky.focussis.R;
+import com.slensky.focussis.activities.MainActivity;
+import com.slensky.focussis.data.GoogleCalendarEvent;
 import com.slensky.focussis.network.FocusApiSingleton;
 import com.slensky.focussis.util.LayoutUtil;
+import com.slensky.focussis.util.Syncable;
 import com.slensky.focussis.util.TermUtil;
 import com.slensky.focussis.views.CalendarDayDisableAllDecorator;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -42,6 +53,7 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.json.JSONObject;
 
 import com.slensky.focussis.data.Calendar;
@@ -53,15 +65,19 @@ import com.slensky.focussis.util.DateUtil;
 import com.slensky.focussis.views.CalendarDayDecorator;
 import com.slensky.focussis.views.CalendarDayEnableAllDecorator;
 
+import java.text.DateFormatSymbols;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by slensky on 5/8/17.
  */
 
-public class CalendarFragment extends NetworkTabAwareFragment {
+public class CalendarFragment extends NetworkTabAwareFragment implements Syncable {
 
     private static final String TAG = "CalendarFragment";
     private int year;
@@ -78,6 +94,9 @@ public class CalendarFragment extends NetworkTabAwareFragment {
     private TextView eventHeader;
     private LinearLayout assignmentLayout;
     private LinearLayout eventLayout;
+    Calendar calendar;
+
+    private CalendarEventDetails eventDetailsForCurrentDialog;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,6 +119,7 @@ public class CalendarFragment extends NetworkTabAwareFragment {
         loading = (ProgressBar) view.findViewById(com.slensky.focussis.R.id.progress_calendar);
         eventHint = (TextView) view.findViewById(com.slensky.focussis.R.id.text_calendar_hint);
         dateHeader = (TextView) view.findViewById(com.slensky.focussis.R.id.text_calendar_date_header);
+        dateHeader.setVisibility(View.GONE);
         assignmentHeader = (TextView) view.findViewById(com.slensky.focussis.R.id.text_calendar_assignments_header);
         assignmentHeader.setVisibility(View.GONE);
         eventHeader = (TextView) view.findViewById(com.slensky.focussis.R.id.text_calendar_events_header);
@@ -147,7 +167,7 @@ public class CalendarFragment extends NetworkTabAwareFragment {
 
     @Override
     protected void onSuccess(JSONObject response) {
-        final Calendar calendar = new Calendar(response);
+        calendar = new Calendar(response);
         final View view = getView();
         if (view != null) {
             calendarView.removeDecorator(enableDecorator);
@@ -284,7 +304,7 @@ public class CalendarFragment extends NetworkTabAwareFragment {
                                                         }
                                                     });
                                                     changeColorBack.start();
-                                                    final Dialog dialog = createEventDetailDialog(e);
+                                                    final MaterialDialog dialog = createEventDetailDialog(e);
                                                     dialog.show();
                                                     api.getCalendarEvent(e.getId(), e.getType(), new Response.Listener<JSONObject>() {
                                                         @Override
@@ -356,7 +376,7 @@ public class CalendarFragment extends NetworkTabAwareFragment {
                                                     });
                                                     changeColorBack.start();
 
-                                                    final Dialog dialog = createEventDetailDialog(e);
+                                                    final MaterialDialog dialog = createEventDetailDialog(e);
                                                     dialog.show();
                                                     api.getCalendarEvent(e.getId(), e.getType(), new Response.Listener<JSONObject>() {
                                                         @Override
@@ -426,6 +446,7 @@ public class CalendarFragment extends NetworkTabAwareFragment {
 
     @Override
     protected void makeRequest() {
+        calendar = null;
         api.getCalendar(year, month + 1, new Response.Listener<JSONObject>() {  // month is 0 indexed in java calendar
             @Override
             public void onResponse(JSONObject response) {
@@ -439,10 +460,11 @@ public class CalendarFragment extends NetworkTabAwareFragment {
         });
     }
 
-    private Dialog createEventDetailDialog(CalendarEvent e) {
+    private MaterialDialog createEventDetailDialog(CalendarEvent e) {
         Log.d(TAG, "Creating event details dialog");
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(e.getName());
+        eventDetailsForCurrentDialog = null;
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(getContext());
+        builder.title(e.getName());
         RelativeLayout dialogLayout = (RelativeLayout) LayoutInflater.from(getContext()).inflate(com.slensky.focussis.R.layout.view_event_dialog, null, false);
         if (e.getType() == CalendarEvent.EventType.OCCASION) {
             LinearLayout details = (LinearLayout) LayoutInflater.from(getContext()).inflate(com.slensky.focussis.R.layout.view_occasion_details, null, false);
@@ -454,19 +476,41 @@ public class CalendarFragment extends NetworkTabAwareFragment {
             details.setVisibility(View.INVISIBLE);
             dialogLayout.addView(details);
         }
-        builder.setView(dialogLayout)
-                .setPositiveButton(getString(com.slensky.focussis.R.string.calendar_event_dialog_button), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
+        builder.customView(dialogLayout, true)
+                .positiveText(getString(com.slensky.focussis.R.string.calendar_event_dialog_button))
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
                     }
-                });
+                })
+                .negativeText(R.string.calendar_event_dialog_export)
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        if (eventDetailsForCurrentDialog == null) {
+                            Toast.makeText(getContext(), R.string.calendar_event_dialog_export_wait, Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            if (!(getActivity() instanceof MainActivity) || getContext() == null) {
+                                Log.e(TAG, "Could not export events because activity was null or not MainActivity or context was null");
+                                return;
+                            }
+                            List<GoogleCalendarEvent> events = new ArrayList<>();
+                            events.add(eventDetailsForCurrentDialog);
+                            ((MainActivity) getActivity()).exportEventsToCalendar(events, false, null);
+                            dialog.dismiss();
+                        }
+                    }
+                }).autoDismiss(false);
 
-        return builder.create();
+        return builder.build();
     }
 
-    private void onEventRequestSuccess(JSONObject response, Dialog dialog) {
+    private void onEventRequestSuccess(JSONObject response, MaterialDialog dialog) {
         Log.d(TAG, "Calendar event request success");
         CalendarEventDetails eventDetails = new CalendarEventDetails(response);
+        eventDetailsForCurrentDialog = eventDetails;
         TextView date = (TextView) dialog.findViewById(com.slensky.focussis.R.id.text_event_date);
         date.setText(Html.fromHtml("<b>" + getString(com.slensky.focussis.R.string.calendar_event_date) + ": </b>"
                 + DateUtil.dateTimeToShortString(eventDetails.getDate())));
@@ -519,6 +563,7 @@ public class CalendarFragment extends NetworkTabAwareFragment {
         loading.setVisibility(View.GONE);
         LinearLayout eventDetailsLayout = (LinearLayout) dialog.findViewById(com.slensky.focussis.R.id.ll_event_details);
         eventDetailsLayout.setVisibility(View.VISIBLE);
+
     }
 
     private void onEventRequestError(VolleyError error, Dialog dialog) {
@@ -535,6 +580,398 @@ public class CalendarFragment extends NetworkTabAwareFragment {
     @Override
     public List<String> getTabNames() {
         return null;
+    }
+
+    @Override
+    public void sync() {
+        if (!(getActivity() instanceof MainActivity) || getContext() == null) {
+            Log.e(TAG, "Could not export events because activity was null or not MainActivity or context was null");
+            return;
+        }
+
+        View view = View.inflate(getContext(), R.layout.view_calendar_sync_dialog, null);
+        final Spinner spinnerFromMonth = view.findViewById(R.id.spinner_from_month);
+        final Spinner spinnerFromYear = view.findViewById(R.id.spinner_from_year);
+        final Spinner spinnerToMonth = view.findViewById(R.id.spinner_to_month);
+        final Spinner spinnerToYear = view.findViewById(R.id.spinner_to_year);
+        final LinearLayout eventsLayout = view.findViewById(R.id.ll_checkbox_events);
+        final LinearLayout assignmentsLayout = view.findViewById(R.id.ll_checkbox_assignments);
+        final CheckBox eventsCheckbox = view.findViewById(R.id.checkbox_events);
+        final CheckBox assignmentsCheckbox = view.findViewById(R.id.checkbox_assignments);
+
+        String[] months = new DateFormatSymbols().getMonths();
+        Integer[] years = new Integer[5];
+        for (int i = 0; i < years.length; i++) {
+            years[i] = year + i - 2;
+        }
+
+        ArrayAdapter<String> fromMonthAdapter = new ArrayAdapter<>(getContext(),
+                android.R.layout.simple_spinner_item, months);
+        fromMonthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFromMonth.setAdapter(fromMonthAdapter);
+        spinnerFromMonth.setSelection(month);
+        ArrayAdapter<Integer> fromYearAdapter = new ArrayAdapter<>(getContext(),
+                android.R.layout.simple_spinner_item, years);
+        fromYearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFromYear.setAdapter(fromYearAdapter);
+        spinnerFromYear.setSelection(2);
+        ArrayAdapter<String> toMonthAdapter = new ArrayAdapter<>(getContext(),
+                android.R.layout.simple_spinner_item, months);
+        toMonthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerToMonth.setAdapter(toMonthAdapter);
+        spinnerToMonth.setSelection(month);
+        ArrayAdapter<Integer> toYearAdapter = new ArrayAdapter<>(getContext(),
+                android.R.layout.simple_spinner_item, years);
+        toYearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerToYear.setAdapter(toYearAdapter);
+        spinnerToYear.setSelection(2);
+
+        final Spinner.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                int fromMonth = spinnerFromMonth.getSelectedItemPosition();
+                int fromYear = (Integer) spinnerFromYear.getSelectedItem();
+                int toMonth = spinnerToMonth.getSelectedItemPosition();
+                int toYear = (Integer) spinnerToYear.getSelectedItem();
+                LocalDate from = new LocalDate(fromYear, fromMonth, 1);
+                LocalDate to = new LocalDate(toYear, toMonth, 1);
+                if (from.isAfter(to)) {
+                    Toast.makeText(view.getContext(), R.string.calendar_sync_dialog_date_error, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                // do nothing
+            }
+        };
+
+        spinnerFromMonth.post(new Runnable() {
+            @Override
+            public void run() {
+                spinnerFromMonth.setOnItemSelectedListener(onItemSelectedListener);
+            }
+        });
+        spinnerFromYear.post(new Runnable() {
+            @Override
+            public void run() {
+                spinnerFromYear.setOnItemSelectedListener(onItemSelectedListener);
+            }
+        });
+        spinnerToYear.post(new Runnable() {
+            @Override
+            public void run() {
+                spinnerToYear.setOnItemSelectedListener(onItemSelectedListener);
+            }
+        });
+        spinnerToMonth.post(new Runnable() {
+            @Override
+            public void run() {
+                spinnerToMonth.setOnItemSelectedListener(onItemSelectedListener);
+            }
+        });
+
+        eventsLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (eventsCheckbox.isChecked() && !assignmentsCheckbox.isChecked()) {
+                    Toast.makeText(getContext(), R.string.sync_dialog_min_select_error, Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    eventsCheckbox.toggle();
+                }
+            }
+        });
+        assignmentsLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (assignmentsCheckbox.isChecked() && !eventsCheckbox.isChecked()) {
+                    Toast.makeText(getContext(), R.string.sync_dialog_min_select_error, Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    assignmentsCheckbox.toggle();
+                }
+            }
+        });
+
+        MaterialDialog dialog = new MaterialDialog.Builder(getContext())
+                .title(R.string.sync_to_google_calendar)
+                .customView(view, false)
+                .autoDismiss(false)
+                .positiveText(R.string.sync_to_google_calendar_positive)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        int fromMonth = spinnerFromMonth.getSelectedItemPosition();
+                        int fromYear = (Integer) spinnerFromYear.getSelectedItem();
+                        int toMonth = spinnerToMonth.getSelectedItemPosition();
+                        int toYear = (Integer) spinnerToYear.getSelectedItem();
+                        LocalDate from = new LocalDate(fromYear, fromMonth, 1);
+                        LocalDate to = new LocalDate(toYear, toMonth, 1);
+                        if (from.isAfter(to)) {
+                            Toast.makeText(getContext(), R.string.calendar_sync_dialog_date_error, Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            boolean exportEvents = eventsCheckbox.isChecked();
+                            boolean exportAssignments = assignmentsCheckbox.isChecked();
+                            performSync(fromYear, fromMonth, toYear, toMonth, exportEvents, exportAssignments, null, null);
+                            dialog.dismiss();
+                        }
+                    }
+                }).negativeText(R.string.cancel)
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                })
+                .build();
+
+        dialog.show();
+    }
+
+    private void performSync(int fromYear, int fromMonth, int toYear, int toMonth, boolean exportEvents, boolean exportAssignments, @Nullable List<Calendar> calendars, @Nullable List<CalendarEventDetails> assignmentDetails) {
+        if (!(getActivity() instanceof MainActivity) || getContext() == null) {
+            Log.e(TAG, "Could not export events because activity was null or not MainActivity or context was null");
+            return;
+        }
+
+        if (calendars == null) {
+            getCalendarsToExport(fromYear, fromMonth, toYear, toMonth, exportEvents, exportAssignments);
+            return;
+        }
+        if (exportAssignments && assignmentDetails == null) {
+            getAssignmentDetailsForCalendarsToExport(exportEvents, calendars);
+            return;
+        }
+
+        List<GoogleCalendarEvent> events = new ArrayList<>();
+        if (exportEvents) {
+            for (Calendar c : calendars) {
+                for (CalendarEvent e : c.getEvents()) {
+                    if (e.getType().equals(CalendarEvent.EventType.OCCASION)) {
+                        events.add(e);
+                    }
+                }
+            }
+        }
+        if (exportAssignments) {
+            events.addAll(assignmentDetails);
+        }
+
+        if (events.size() > 0) {
+            Log.d(TAG, "Exporting " + events.size() + " events to calendar");
+            ((MainActivity) getActivity()).exportEventsToCalendar(events, false, null);
+        }
+
+//        Log.i(TAG, "CALENDARS LENGTH: " + calendars.size());
+//        Log.i(TAG, "ASSIGNMENT DETAILS LENGTH: " + assignmentDetails.size());
+    }
+
+    private void getCalendarsToExport(final int fromYear, final int fromMonth, final int toYear, final int toMonth, final boolean exportEvents, final boolean exportAssignments) {
+        if (!(getActivity() instanceof MainActivity) || getContext() == null) {
+            Log.e(TAG, "Could not export events because activity was null or not MainActivity or context was null");
+            return;
+        }
+
+        java.util.Calendar current = java.util.Calendar.getInstance();
+        current.set(fromYear, fromMonth, 1);
+        java.util.Calendar end = java.util.Calendar.getInstance();
+        end.set(toYear, toMonth, 2);
+
+        int yearDiff = toYear - fromYear;
+        final int monthDiff = yearDiff * 12 + toMonth - fromMonth;
+        Log.i(TAG, "monthdiff " + monthDiff);
+
+        final List<Calendar> calendars = new ArrayList<>();
+        final List<Request> requests = new ArrayList<>();
+        final boolean[] hasError = new boolean[]{false};
+        final MaterialDialog progress = new MaterialDialog.Builder(getContext())
+                .content(R.string.calendar_sync_calendars_progress)
+                .progress(false, monthDiff + 1, true)
+                .negativeText(R.string.cancel)
+                .canceledOnTouchOutside(false)
+                .cancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface) {
+                        for (Request request : requests) {
+                            Log.i(TAG, "Cancelling request");
+                            request.cancel();
+                        }
+                    }
+                })
+                .build();
+        progress.show();
+
+        for (; current.before(end); current.add(java.util.Calendar.MONTH, 1)) {
+            int month = current.get(java.util.Calendar.MONTH);
+            int year = current.get(java.util.Calendar.YEAR);
+            if (CalendarFragment.this.calendar != null
+                    && year == CalendarFragment.this.year && month == CalendarFragment.this.month) {
+                calendars.add(CalendarFragment.this.calendar);
+            }
+            else {
+                requests.add(api.getCalendar(year, month, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        progress.incrementProgress(1);
+                        Calendar calendar = new Calendar(response);
+                        calendars.add(calendar);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        hasError[0] = true;
+                    }
+                }));
+            }
+        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!progress.isCancelled() && calendars.size() < monthDiff + 1) {
+                    if (!(getActivity() instanceof MainActivity) || getContext() == null) {
+                        Log.e(TAG, "Could not export events because activity was null or not MainActivity or context was null");
+                        return;
+                    }
+
+                    if (hasError[0]) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progress.dismiss();
+                                for (Request request : requests) {
+                                    request.cancel();
+                                }
+                                new MaterialDialog.Builder(getContext())
+                                        .content(R.string.export_network_error)
+                                        .positiveText(R.string.ok)
+                                        .show();
+                            }
+                        });
+                        return;
+                    }
+                }
+
+                if (!progress.isCancelled()) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progress.dismiss();
+                            performSync(fromYear, fromMonth, toYear, toMonth, exportEvents, exportAssignments, calendars, null);
+                        }
+                    });
+                }
+                Log.d(TAG, "Exiting get calendars thread");
+
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+    }
+
+    private void getAssignmentDetailsForCalendarsToExport(final boolean exportEvents, @NonNull final List<Calendar> calendars) {
+        if (!(getActivity() instanceof MainActivity) || getContext() == null) {
+            Log.e(TAG, "Could not export events because activity was null or not MainActivity or context was null");
+            return;
+        }
+
+        final List<CalendarEvent> assignments = new ArrayList<>();
+        for (Calendar c : calendars) {
+            for (CalendarEvent e : c.getEvents()) {
+                if (e.getType().equals(CalendarEvent.EventType.ASSIGNMENT)) {
+                    assignments.add(e);
+                }
+            }
+        }
+
+        final List<CalendarEventDetails> assignmentDetails = new ArrayList<>();
+        final List<Request> requests = new ArrayList<>();
+        final boolean[] hasError = new boolean[]{false};
+        final MaterialDialog progress = new MaterialDialog.Builder(getContext())
+                .content(R.string.calendar_sync_assignments_progress)
+                .progress(false, assignments.size(), true)
+                .negativeText(R.string.cancel)
+                .canceledOnTouchOutside(false)
+                .cancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface) {
+                        for (Request request : requests) {
+                            Log.i(TAG, "Cancelling request");
+                            request.cancel();
+                        }
+                    }
+                })
+                .build();
+        progress.show();
+
+        for (final CalendarEvent e : assignments) {
+            requests.add(api.getCalendarEvent(e.getId(), CalendarEvent.EventType.ASSIGNMENT, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    progress.incrementProgress(1);
+                    CalendarEventDetails details = new CalendarEventDetails(response);
+                    assignmentDetails.add(details);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    hasError[0] = true;
+                }
+            }));
+        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!progress.isCancelled() && assignmentDetails.size() < assignments.size()) {
+                    if (!(getActivity() instanceof MainActivity) || getContext() == null) {
+                        Log.e(TAG, "Could not export events because activity was null or not MainActivity or context was null");
+                        return;
+                    }
+
+                    if (hasError[0]) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progress.dismiss();
+                                for (Request request : requests) {
+                                    request.cancel();
+                                }
+                                new MaterialDialog.Builder(getContext())
+                                        .content(R.string.export_network_error)
+                                        .positiveText(R.string.ok)
+                                        .show();
+                            }
+                        });
+                        return;
+                    }
+                }
+
+                if (!progress.isCancelled()) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progress.dismiss();
+                            performSync(-1, -1, -1, -1, exportEvents, true, calendars, assignmentDetails);
+                        }
+                    });
+                }
+                Log.d(TAG, "Exiting get assignment details thread");
+
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
     }
 
 }

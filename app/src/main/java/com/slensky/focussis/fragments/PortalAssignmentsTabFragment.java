@@ -30,6 +30,7 @@ import com.slensky.focussis.data.PortalCourse;
 import com.slensky.focussis.views.DividerItemDecoration;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ public class PortalAssignmentsTabFragment extends Fragment{
     private PortalAssignmentCourseAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private Portal portal;
+    private List<PortalAssignment> replacedAssignments = new ArrayList<>();
 
     private boolean showCustomAssignments;
 
@@ -101,7 +103,7 @@ public class PortalAssignmentsTabFragment extends Fragment{
                             if (savedAssignment.getName().equals(assignment.getName()) && savedAssignment.getDue().equals(assignment.getDue())) {
                                 Log.d(TAG, "Overriding assignment " + assignment.getName());
                                 PortalAssignment newAssignment = courseAssignmentToPortalAssignment(course, savedAssignment);
-                                course.getAssignments().remove(i);
+                                replacedAssignments.add(course.getAssignments().remove(i));
                                 course.getAssignments().add(i, newAssignment);
                             }
                         }
@@ -156,7 +158,7 @@ public class PortalAssignmentsTabFragment extends Fragment{
     }
 
     private PortalAssignment courseAssignmentToPortalAssignment(PortalCourse course, CourseAssignment assignment) {
-        PortalAssignment newAssignment = new PortalAssignment(assignment.getName(), assignment.getDue(), course.getName(), course.getPeriod(), course.getTeacher(), course.getTeacherEmail());
+        PortalAssignment newAssignment = new PortalAssignment(assignment.getName(), assignment.getDue(), course.getName(), course.getPeriod(), course.isAdvisory(), course.getTeacher(), course.getTeacherEmail());
         newAssignment.setCustomAssignment(true);
         if (assignment.hasDescription()) {
             newAssignment.setDescription(assignment.getDescription());
@@ -234,11 +236,36 @@ public class PortalAssignmentsTabFragment extends Fragment{
                     for (int i = 0; i < course.getAssignments().size(); i++) {
                         PortalAssignment assignment = course.getAssignments().get(i);
                         if (to.getName().equals(assignment.getName()) && to.getDue().equals(assignment.getDue())) {
-                            course.getAssignments().remove(i);
+                            replacedAssignments.add(course.getAssignments().remove(i));
                             course.getAssignments().add(courseAssignmentToPortalAssignment(course, to));
                             Collections.sort(course.getAssignments());
                             adapter.setCourses(portal.getCourses());
                             adapter.notifyDataSetChanged();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // restores original assignment
+        if (!to.isCustomAssignment() && !to.isEditedAssignment()) {
+            for (PortalCourse course : portal.getCourses()) {
+                if (course.getId().equals(courseId)) {
+                    for (int i = 0; i < course.getAssignments().size(); i++) {
+                        PortalAssignment assignment = course.getAssignments().get(i);
+                        if (to.getName().equals(assignment.getName()) && to.getDue().equals(assignment.getDue())) {
+                            course.getAssignments().remove(i);
+                            for (int j = 0; j < replacedAssignments.size(); j++) {
+                                PortalAssignment replacedAssignment = replacedAssignments.get(j);
+                                if (to.getName().equals(replacedAssignment.getName()) && to.getDue().equals(replacedAssignment.getDue())) {
+                                    course.getAssignments().add(replacedAssignments.remove(j));
+                                    Collections.sort(course.getAssignments());
+                                    adapter.setCourses(portal.getCourses());
+                                    adapter.notifyDataSetChanged();
+                                    break;
+                                }
+                            }
                             break;
                         }
                     }

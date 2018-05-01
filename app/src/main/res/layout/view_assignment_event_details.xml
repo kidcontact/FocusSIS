@@ -10,41 +10,41 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textIsSelectable="true"
-        style="@style/primaryBodyText"/>
+        style="@style/primarySubheadingText"/>
 
     <TextView
         android:id="@+id/text_event_course"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textIsSelectable="true"
-        style="@style/primaryBodyText" />
+        style="@style/primarySubheadingText" />
 
     <TextView
         android:id="@+id/text_event_teacher"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textIsSelectable="true"
-        style="@style/primaryBodyText" />
+        style="@style/primarySubheadingText" />
 
     <TextView
         android:id="@+id/text_event_section"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textIsSelectable="true"
-        style="@style/primaryBodyText" />
+        style="@style/primarySubheadingText" />
 
     <TextView
         android:id="@+id/text_event_school"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textIsSelectable="true"
-        style="@style/primaryBodyText" />
+        style="@style/primarySubheadingText" />
 
     <TextView
         android:id="@+id/text_event_notes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textIsSelectable="true"
-        style="@style/primaryBodyText" />
+        style="@style/primarySubheadingText" />
 
 </LinearLayout>

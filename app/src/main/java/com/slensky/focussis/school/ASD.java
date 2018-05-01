@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class ASD extends School {
     private static final String FOCUS_TLD = "https://focus.asdnh.org";
-    private static final String NAME_SHORT = "ASD";
+    private static final String NAME_SHORT = "ASDNH";
     private static final String NAME_FULL = "Academy for Science and Design";
     private static final String DOMAIN_NAME = "asdnh.org";
 

@@ -63,7 +63,13 @@ public class Portal extends MarkingPeriodPage {
                     JSONArray assignmentsJSON = courseJSON.getJSONArray("assignments");
                     for (int i = 0; i < assignmentsJSON.length(); i++) {
                         JSONObject assignmentJSON = assignmentsJSON.getJSONObject(i);
-                        assignments.add(new PortalAssignment(assignmentJSON.getString("name"), new DateTime(assignmentJSON.getString("due")), name, period, teacher, teacherEmail));
+                        boolean isAdvisory = false;
+                        try {
+                            isAdvisory = Integer.parseInt(period) == 0;
+                        } catch (NumberFormatException e) {
+                            // do nothing
+                        }
+                        assignments.add(new PortalAssignment(assignmentJSON.getString("name"), new DateTime(assignmentJSON.getString("due")), name, period, isAdvisory, teacher, teacherEmail));
                     }
                 }
 

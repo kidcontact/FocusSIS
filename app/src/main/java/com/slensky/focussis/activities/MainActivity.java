@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -30,6 +31,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
@@ -43,32 +45,36 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.tasks.Task;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.BackOff;
 import com.google.api.client.util.DateTime;
 import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.calendar.CalendarScopes;
+import com.google.api.services.calendar.model.Calendar;
+import com.google.api.services.calendar.model.CalendarList;
+import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.Events;
 import com.karumi.dexter.Dexter;
-import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
-import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.BasePermissionListener;
 import com.karumi.dexter.listener.single.CompositePermissionListener;
 import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.slensky.focussis.R;
 import com.slensky.focussis.data.CalendarEvent;
+import com.slensky.focussis.data.CalendarEventDetails;
+import com.slensky.focussis.data.CourseAssignment;
 import com.slensky.focussis.data.GoogleCalendarEvent;
-import com.slensky.focussis.data.Portal;
 import com.slensky.focussis.data.PortalAssignment;
 import com.slensky.focussis.data.PortalEvent;
 import com.slensky.focussis.fragments.AboutFragment;
@@ -91,6 +97,8 @@ import com.slensky.focussis.network.RequestSingleton;
 import com.slensky.focussis.fragments.EmptyFragment;
 import com.slensky.focussis.fragments.LoadingFragment;
 import com.slensky.focussis.fragments.NetworkTabAwareFragment;
+import com.slensky.focussis.util.SchoolSingleton;
+import com.slensky.focussis.util.Syncable;
 import com.slensky.focussis.views.adapters.ViewPagerAdapter;
 
 import java.io.IOException;
@@ -143,8 +151,9 @@ public class MainActivity extends AppCompatActivity
     private GoogleSignInOptions googleSignInOptions;
     private GoogleSignInClient googleSignInClient;
     GoogleAccountCredential credential;
-    ProgressDialog calendarExportProgress;
+    MaterialDialog calendarExportProgress;
     private Collection<GoogleCalendarEvent> eventsToExport;
+    private boolean updateEvents;
     Runnable onExportTaskFinishedListener;
 
     @Override
@@ -269,8 +278,14 @@ public class MainActivity extends AppCompatActivity
         sessionKeepAliveThread.start();
 
         // Initialize progress dialog for event export, credentials, and service object.
-        calendarExportProgress = new ProgressDialog(this);
-        calendarExportProgress.setMessage(getString(R.string.export_progress_dialog));
+//        calendarExportProgress = new ProgressDialog(this);
+//        calendarExportProgress.setMessage(getString(R.string.export_progress_dialog));
+        calendarExportProgress = new MaterialDialog.Builder(this)
+                .content(R.string.export_progress_dialog)
+                .progress(false, 0, true)
+                .negativeText(R.string.cancel)
+                .canceledOnTouchOutside(false)
+                .build();
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -283,7 +298,19 @@ public class MainActivity extends AppCompatActivity
 
         credential = GoogleAccountCredential.usingOAuth2(
                 getApplicationContext(), Arrays.asList(SCOPES))
-                .setBackOff(new ExponentialBackOff());
+                .setBackOff(new ExponentialBackOff() {
+                    int tries = 0;
+                    @Override
+                    public long nextBackOffMillis() throws IOException {
+                        tries += 1;
+                        if (tries < 3) {
+                            return super.nextBackOffMillis();
+                        }
+                        else {
+                            return BackOff.STOP;
+                        }
+                    }
+                });
 
         if (savedInstanceState == null) {
             currentFragment = new PortalFragment();
@@ -514,7 +541,10 @@ public class MainActivity extends AppCompatActivity
             refreshItem.setVisible(false);
         }
 
-        if (currentFragment instanceof PortalFragment) {
+        if (currentFragment instanceof NetworkFragment
+                && currentFragment instanceof Syncable
+                && ((NetworkFragment) currentFragment).isRequestFinished()
+                && !((NetworkFragment) currentFragment).hasNetworkError()) {
             syncItem.setVisible(true);
         }
         else {
@@ -563,8 +593,8 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
         else if (id == R.id.action_sync_to_calendar) {
-            if (currentFragment instanceof PortalFragment) {
-                ((PortalFragment) currentFragment).exportAll();
+            if (currentFragment instanceof Syncable) {
+                ((Syncable) currentFragment).sync();
             }
             return true;
         }
@@ -920,7 +950,7 @@ public class MainActivity extends AppCompatActivity
         return googleSignInClient;
     }
 
-    public void exportEventsToCalendar(final Collection<GoogleCalendarEvent> events, final Runnable onExportTaskFinishedListener) {
+    public void exportEventsToCalendar(final Collection<GoogleCalendarEvent> events, final boolean updateEvents, final Runnable onExportTaskFinishedListener) {
         PermissionListener dialogOnDeniedListener = DialogOnDeniedPermissionListener.Builder
                 .withContext(this)
                 .withMessage(R.string.contacts_permission_request_on_denied_message)
@@ -934,6 +964,7 @@ public class MainActivity extends AppCompatActivity
                     credential.setSelectedAccountName(account.getEmail());
                 }
                 eventsToExport = events;
+                MainActivity.this.updateEvents = updateEvents;
                 MainActivity.this.onExportTaskFinishedListener = onExportTaskFinishedListener;
                 getResultsFromApi();
             }
@@ -965,7 +996,7 @@ public class MainActivity extends AppCompatActivity
         } else if (credential.getSelectedAccountName() == null) {
             chooseAccount();
         } else {
-            new MakeRequestTask(credential, eventsToExport).execute();
+            new MakeCalendarRequestTask(credential, eventsToExport, updateEvents).execute();
         }
     }
 
@@ -1018,7 +1049,14 @@ public class MainActivity extends AppCompatActivity
                     }
                     Log.i(TAG, account.getEmail());
                 } catch (ApiException e) {
-                    e.printStackTrace();
+                    if (e.getStatusCode() == CommonStatusCodes.NETWORK_ERROR || e.getStatusCode() == CommonStatusCodes.TIMEOUT) {
+                        Toast.makeText(this, R.string.network_error_timeout, Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        Log.e(TAG, "Unexpected APIException while choosing account!");
+                        e.printStackTrace();
+                        Toast.makeText(this, R.string.network_error_unknown, Toast.LENGTH_LONG).show();
+                    }
                 }
                 break;
             case REQUEST_AUTHORIZATION:
@@ -1077,18 +1115,22 @@ public class MainActivity extends AppCompatActivity
      * An asynchronous task that handles the Google Calendar API call.
      * Placing the API calls in their own task ensures the UI stays responsive.
      */
-    private class MakeRequestTask extends AsyncTask<Void, Void, Void> {
+    private class MakeCalendarRequestTask extends AsyncTask<Void, Void, Void> {
+        private final static String TAG = "MakeCalendarRequestTask";
         private com.google.api.services.calendar.Calendar mService = null;
         private Collection<GoogleCalendarEvent> events;
         private Exception mLastError = null;
+        private boolean updateEvents;
         private int eventCount = 0;
         private int assignmentCount = 0;
         private int eventSkippedCount = 0;
         private int assignmentSkippedCount = 0;
 
-        private String calendarId = "primary";
+        private boolean cancelledByUser = false;
 
-        MakeRequestTask(GoogleAccountCredential credential, @NonNull Collection<GoogleCalendarEvent> events) {
+        private String defaultCalendarSummary = getString(R.string.google_calendar_summary, SchoolSingleton.getInstance().getSchool().getShortName());
+
+        MakeCalendarRequestTask(GoogleAccountCredential credential, @NonNull Collection<GoogleCalendarEvent> events, boolean updateEvents) {
             HttpTransport transport = AndroidHttp.newCompatibleTransport();
             JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
             mService = new com.google.api.services.calendar.Calendar.Builder(
@@ -1096,6 +1138,7 @@ public class MainActivity extends AppCompatActivity
                     .setApplicationName(getString(R.string.play_servces_app_name))
                     .build();
             this.events = events;
+            this.updateEvents = updateEvents;
         }
 
         /**
@@ -1121,6 +1164,49 @@ public class MainActivity extends AppCompatActivity
          * @throws IOException
          */
         private Void getDataFromApi() throws IOException {
+            String calendarId = getSharedPreferences(getString(R.string.google_calendar_prefs), MODE_PRIVATE)
+                    .getString(getString(R.string.google_calendar_prefs_id_for_account, credential.getSelectedAccountName()), null);
+
+            if (calendarId != null) {
+                Log.d(MakeCalendarRequestTask.TAG, "Loaded saved calendar ID");
+                Log.d(MakeCalendarRequestTask.TAG, "Checking to make sure calendar still exists");
+                try {
+                    mService.calendarList().get(calendarId).execute();
+                    Log.d(MakeCalendarRequestTask.TAG, "Calendar still exists");
+                } catch (GoogleJsonResponseException e) {
+                    Log.d(MakeCalendarRequestTask.TAG, "Calendar no longer exists");
+                    calendarId = null;
+                }
+            }
+
+            if (calendarId == null) {
+                // attempt to reacquire id by looking for a calendar with the default name
+                String pageToken = null;
+                outer: do {
+                    CalendarList calendarList = mService.calendarList().list().setMinAccessRole("owner").setPageToken(pageToken).execute();
+                    List<CalendarListEntry> items = calendarList.getItems();
+
+                    for (CalendarListEntry calendarListEntry : items) {
+//                        System.out.println(calendarListEntry.getSummary());
+//                        System.out.println(calendarListEntry.getId());
+                        if (calendarListEntry.getSummary().equals(defaultCalendarSummary)) {
+                            Log.d(MakeCalendarRequestTask.TAG, "Found existing calendar by name");
+                            calendarId = calendarListEntry.getId();
+                            saveGoogleCalendarId(calendarId);
+                            break outer;
+                        }
+                    }
+                    pageToken = calendarList.getNextPageToken();
+                } while (pageToken != null);
+            }
+
+            if (calendarId == null) {
+                Log.d(MakeCalendarRequestTask.TAG, "Could not find existing calendar, creating calendar " + defaultCalendarSummary);
+                Calendar newCalendar = mService.calendars().insert(new Calendar().setSummary(defaultCalendarSummary)).execute();
+                calendarId = newCalendar.getId();
+                saveGoogleCalendarId(calendarId);
+            }
+
             // first get already existing events in the correct time range
             // to ensure no duplicates are added
             org.joda.time.DateTime timeMin = null;
@@ -1150,18 +1236,12 @@ public class MainActivity extends AppCompatActivity
 
             // only add non-duplicate events
             List<Event> eventsToInsert = new ArrayList<>();
+            List<Event> eventsToUpdate = new ArrayList<>(); // old event id -> updated event
+
             outer:
             for (GoogleCalendarEvent e : events) {
-                boolean isEvent = false;
-                boolean isAssignment = false;
-                if (e instanceof PortalEvent || (e instanceof CalendarEvent && ((CalendarEvent) e).getType().equals(CalendarEvent.EventType.OCCASION))) {
-                    eventCount += 1;
-                    isEvent = true;
-                }
-                else if (e instanceof PortalAssignment || (e instanceof CalendarEvent && ((CalendarEvent) e).getType().equals(CalendarEvent.EventType.ASSIGNMENT))) {
-                    assignmentCount += 1;
-                    isAssignment = true;
-                }
+                boolean isEvent = isEvent(e);
+                boolean isAssignment = isAssignment(e) && !isEvent; // can't be both an assignment and an event
                 Event event = e.toGoogleCalendarEvent();
                 for (Event existingEvent : existingEvents) {
                     if (event.getSummary().equals(existingEvent.getSummary())
@@ -1169,7 +1249,8 @@ public class MainActivity extends AppCompatActivity
                             && (event.getLocation() != null ? event.getLocation().equals(existingEvent.getLocation()) : existingEvent.getLocation() == null)
                             && event.getStart().equals(existingEvent.getStart())
                             && event.getEnd().equals(existingEvent.getEnd())) {
-                        Log.d(TAG, "Skipping duplicate event " + event.getSummary());
+                        Log.d(MakeCalendarRequestTask.TAG, "Skipping duplicate event " + event.getSummary());
+                        calendarExportProgress.incrementProgress(1);
                         if (isEvent) {
                             eventSkippedCount += 1;
                         }
@@ -1178,14 +1259,42 @@ public class MainActivity extends AppCompatActivity
                         }
                         continue outer;
                     }
+                    else if (event.getSummary().equals(existingEvent.getSummary())
+                            && (event.getLocation() != null ? event.getLocation().equals(existingEvent.getLocation()) : existingEvent.getLocation() == null)
+                            && event.getStart().equals(existingEvent.getStart())
+                            && event.getEnd().equals(existingEvent.getEnd())) {
+                        if (updateEvents) {
+                            // only description has changed, just update the event
+                            eventsToUpdate.add(existingEvent.setDescription(event.getDescription()));
+                        }
+                        else {
+                            Log.d(TAG, "Skipping duplicate event instead of updating " + event.getSummary());
+                            calendarExportProgress.incrementProgress(1);
+                            if (isEvent) {
+                                eventSkippedCount += 1;
+                            }
+                            else if (isAssignment) {
+                                assignmentSkippedCount += 1;
+                            }
+                        }
+                        continue outer;
+                    }
                 }
                 eventsToInsert.add(event);
             }
 
             for (Event e : eventsToInsert) {
-                Log.d(TAG, "Inserting event " + e.getSummary());
+                Log.d(MakeCalendarRequestTask.TAG, "Inserting event " + e.getSummary());
+                calendarExportProgress.incrementProgress(1);
                 e.setReminders(new Event.Reminders().setUseDefault(false));
                 mService.events().insert(calendarId, e).execute();
+            }
+            if (updateEvents) {
+                for (Event e : eventsToUpdate) {
+                    Log.d(MakeCalendarRequestTask.TAG, "Updating event " + e.getSummary());
+                    calendarExportProgress.incrementProgress(1);
+                    mService.events().update(calendarId, e.getId(), e).execute();
+                }
             }
             return null;
         }
@@ -1193,6 +1302,25 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected void onPreExecute() {
+            for (GoogleCalendarEvent e : events) {
+                boolean isEvent = isEvent(e);
+                boolean isAssignment = isAssignment(e) && !isEvent; // can't be both an assignment and an event
+                if (isEvent) {
+                    eventCount += 1;
+                }
+                else if (isAssignment) {
+                    assignmentCount += 1;
+                }
+            }
+            calendarExportProgress.setProgress(0);
+            calendarExportProgress.setMaxProgress(eventCount + assignmentCount);
+            calendarExportProgress.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialogInterface) {
+                    cancelledByUser = true;
+                    cancel(true);
+                }
+            });
             calendarExportProgress.show();
         }
 
@@ -1231,33 +1359,21 @@ public class MainActivity extends AppCompatActivity
             MaterialDialog.Builder builder = new MaterialDialog.Builder(MainActivity.this)
                     .title(R.string.export_summary_dialog_title)
                     .content(Html.fromHtml(exportSummaryContent))
-                    .positiveText(R.string.ok)
-                    .dismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialogInterface) {
-                            if (onExportTaskFinishedListener != null) {
-                                onExportTaskFinishedListener.run();
-                            }
-                        }
-                    }).cancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialogInterface) {
-                            if (onExportTaskFinishedListener != null) {
-                                onExportTaskFinishedListener.run();
-                            }
-                        }
-                    });
+                    .positiveText(R.string.ok);
             if (!none) {
                 builder.contentColorRes(R.color.textPrimary);
             }
 
+            if (onExportTaskFinishedListener != null) {
+                onExportTaskFinishedListener.run();
+            }
             builder.show();
         }
 
         @Override
         protected void onCancelled() {
             calendarExportProgress.dismiss();
-            if (mLastError != null) {
+            if (mLastError != null && !cancelledByUser) {
                 if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
                     showGooglePlayServicesAvailabilityErrorDialog(
                             ((GooglePlayServicesAvailabilityIOException) mLastError)
@@ -1266,7 +1382,14 @@ public class MainActivity extends AppCompatActivity
                     startActivityForResult(
                             ((UserRecoverableAuthIOException) mLastError).getIntent(),
                             MainActivity.REQUEST_AUTHORIZATION);
+                } else if (mLastError instanceof IOException) {
+                    mLastError.printStackTrace();
+                    new MaterialDialog.Builder(MainActivity.this)
+                            .content(getString(R.string.export_network_error))
+                            .positiveText(R.string.ok)
+                            .show();
                 } else {
+                    mLastError.printStackTrace();
                     new MaterialDialog.Builder(MainActivity.this)
                             .content(mLastError.getMessage())
                             .positiveText(R.string.ok)
@@ -1274,6 +1397,26 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
+
+        private boolean isEvent(Object o) {
+            return o instanceof PortalEvent
+                    || (o instanceof CalendarEvent && ((CalendarEvent) o).getType().equals(CalendarEvent.EventType.OCCASION))
+                    || (o instanceof CalendarEventDetails && ((CalendarEventDetails) o).getType().equals(CalendarEvent.EventType.OCCASION));
+        }
+
+        private boolean isAssignment(Object o) {
+            return o instanceof PortalAssignment
+                    || o instanceof CourseAssignment
+                    || (o instanceof CalendarEvent && ((CalendarEvent) o).getType().equals(CalendarEvent.EventType.ASSIGNMENT))
+                    || (o instanceof CalendarEventDetails && ((CalendarEventDetails) o).getType().equals(CalendarEvent.EventType.ASSIGNMENT));
+        }
+    }
+
+    private void saveGoogleCalendarId(String id) {
+        Log.d(MakeCalendarRequestTask.TAG, "Saving calendar id " + id);
+        SharedPreferences.Editor googleCalendarPrefsEditor = getSharedPreferences(getString(R.string.google_calendar_prefs), MODE_PRIVATE).edit();
+        googleCalendarPrefsEditor.putString(getString(R.string.google_calendar_prefs_id_for_account, credential.getSelectedAccountName()), id);
+        googleCalendarPrefsEditor.apply();
     }
 
 }

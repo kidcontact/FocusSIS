@@ -38,7 +38,7 @@ public class CalendarEventParser extends PageParser {
                 course.put("name", tr.get(3).getElementsByTag("td").get(1).text());
                 String[] data = tr.get(4).getElementsByTag("td").get(1).text().split(" - ");
                 if (data[0].startsWith("Period ")) {
-                    course.put("period", Integer.parseInt(data[0].substring("Period ".length())));
+                    course.put("period", data[0].substring("Period ".length()));
                 }
                 else {
                     course.put("section", data[0]);

@@ -1,7 +1,6 @@
 package com.slensky.focussis.data;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
@@ -9,8 +8,6 @@ import com.slensky.focussis.util.SchoolSingleton;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
-
-import java.util.TimeZone;
 
 /**
  * Created by slensky on 4/14/17.
@@ -24,19 +21,22 @@ public class PortalAssignment implements Comparable<PortalAssignment>, GoogleCal
     // used for creating google calendar event
     private final String courseName;
     private final String coursePeriod;
+    private final boolean isAdvisory;
     private final String courseTeacher;
     private final String courseTeacherEmail;
 
     // only applies to saved custom assignments
     // this information is not normally present on assignments in the portal
     private String description;
+    private boolean descriptionSet;
     private boolean customAssignment;
 
-    public PortalAssignment(String name, DateTime due, String courseName, String coursePeriod, String courseTeacher, String courseTeacherEmail) {
+    public PortalAssignment(String name, DateTime due, String courseName, String coursePeriod, boolean isAdvisory, String courseTeacher, String courseTeacherEmail) {
         this.name = name;
         this.due = due;
         this.courseName = courseName;
         this.coursePeriod = coursePeriod;
+        this.isAdvisory = isAdvisory;
         this.courseTeacher = courseTeacher;
         this.courseTeacherEmail = courseTeacherEmail;
     }
@@ -63,6 +63,11 @@ public class PortalAssignment implements Comparable<PortalAssignment>, GoogleCal
 
     public void setDescription(String description) {
         this.description = description;
+        this.descriptionSet = true;
+    }
+
+    public boolean isDescriptionSet() {
+        return descriptionSet;
     }
 
     public boolean isCustomAssignment() {
@@ -95,9 +100,14 @@ public class PortalAssignment implements Comparable<PortalAssignment>, GoogleCal
                 .setCreator(creator)
                 .setLocation(SchoolSingleton.getInstance().getSchool().getFullName());
 
-        if (description != null) {
-            event.setDescription(description);
+        String description = courseName;
+        if (!isAdvisory) {
+            description += " - Period " + coursePeriod;
         }
+        if (this.description != null) {
+            description += "\n" + this.description;
+        }
+        event.setDescription(description);
 
         DateTime startDateTime = getStart();
         DateTime endDateTime = getEnd();

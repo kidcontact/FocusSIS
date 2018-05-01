@@ -128,7 +128,7 @@ public class CourseParser extends PageParser {
                 int descEnd = div.attr("onmouseover").indexOf("\"],[\"");
                 String description = div.attr("onmouseover").substring(descStart, descEnd);
                 description = description.replace("\\r\\n", "\n");
-                assignment.put("description", StringEscapeUtils.unescapeJava(description));
+                assignment.put("description", StringEscapeUtils.unescapeJava(description).trim());
             }
 
             String status;
