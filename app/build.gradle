@@ -1,0 +1,96 @@
+apply plugin: 'com.android.application'
+
+// Create a variable called keystorePropertiesFile, and initialize it to your
+// keystore.properties file, in the rootProject folder.
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+
+// Initialize a new Properties() object called keystoreProperties.
+def keystoreProperties = new Properties()
+
+// Load your keystore.properties file into the keystoreProperties object.
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+android {
+    signingConfigs {
+        config {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+    compileSdkVersion 27
+    buildToolsVersion '26.0.2'
+    defaultConfig {
+        applicationId "com.slensky.focussis"
+        minSdkVersion 21
+        targetSdkVersion 27
+        versionCode 17
+        versionName "1.1.8"
+        multiDexEnabled true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+    }
+}
+
+android.applicationVariants.all { variant ->
+    variant.outputs.all {
+        outputFileName = "Focus"
+        outputFileName += "-v" + android.defaultConfig.versionName
+        if (variant.buildType.name == "release") {
+            outputFileName += ".apk"
+        } else {
+            outputFileName += "-SNAPSHOT.apk"
+        }
+    }
+}
+
+dependencies {
+    compile 'ch.acra:acra:4.9.1'
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.google.code.findbugs'
+    })
+    compile 'joda-time:joda-time:2.6'
+    compile 'com.fatboyindustrial.gson-jodatime-serialisers:gson-jodatime-serialisers:1.6.0'
+    compile 'com.android.support:appcompat-v7:27.1.1'
+    compile 'com.android.support:design:27.1.1'
+    compile 'com.android.support.constraint:constraint-layout:1.1.0'
+    compile 'com.android.support:cardview-v7:27.1.1'
+    compile 'com.android.support:recyclerview-v7:27.1.1'
+    compile 'com.android.support:support-v4:27.1.1'
+    compile 'com.android.volley:volley:1.0.0'
+    compile 'com.jakewharton:butterknife:8.5.1'
+    compile 'com.google.code.gson:gson:2.8.0'
+    compile 'com.android.support:support-v4:27.1.1'
+    compile 'com.takisoft.fix:preference-v7:27.1.1.0'
+    compile 'com.github.medyo:android-about-page:1.2.1'
+    compile 'org.jsoup:jsoup:1.11.2'
+    compile 'com.joestelmach:natty:0.11'
+    implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
+    implementation 'com.karumi:dexter:4.2.0'
+    compile 'com.google.android.gms:play-services-auth:15.0.0'
+    compile('com.google.api-client:google-api-client-android:1.23.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+    compile('com.google.apis:google-api-services-calendar:v3-rev315-1.23.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+    testCompile 'junit:junit:4.12'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    compile project(':MaterialCalendarView')
+}
+
+configurations {
+    all {
+        exclude module: 'httpclient'
+        exclude module: 'commons-logging'
+    }
+}
