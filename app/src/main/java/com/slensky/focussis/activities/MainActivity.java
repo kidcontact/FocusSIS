@@ -860,8 +860,11 @@ public class MainActivity extends AppCompatActivity
                 fragmentContainer.setVisibility(View.GONE);
                 networkErrorLayout.setVisibility(View.VISIBLE);
                 tabLayout.setVisibility(View.GONE);
-                ((ViewPagerAdapter) viewPager.getAdapter()).clear();
-                viewPager.getAdapter().notifyDataSetChanged();
+                if (viewPager != null && viewPager.getAdapter() != null) {
+                    ((ViewPagerAdapter) viewPager.getAdapter()).clear();
+                    viewPager.getAdapter().notifyDataSetChanged();
+                }
+
             }
         }
     }

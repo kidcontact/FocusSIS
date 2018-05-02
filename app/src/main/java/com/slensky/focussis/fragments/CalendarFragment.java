@@ -633,8 +633,8 @@ public class CalendarFragment extends NetworkTabAwareFragment implements Syncabl
                 int fromYear = (Integer) spinnerFromYear.getSelectedItem();
                 int toMonth = spinnerToMonth.getSelectedItemPosition();
                 int toYear = (Integer) spinnerToYear.getSelectedItem();
-                LocalDate from = new LocalDate(fromYear, fromMonth, 1);
-                LocalDate to = new LocalDate(toYear, toMonth, 1);
+                LocalDate from = new LocalDate(fromYear, fromMonth + 1, 1);
+                LocalDate to = new LocalDate(toYear, toMonth + 1, 1);
                 if (from.isAfter(to)) {
                     Toast.makeText(view.getContext(), R.string.calendar_sync_dialog_date_error, Toast.LENGTH_SHORT).show();
                 }
@@ -706,8 +706,8 @@ public class CalendarFragment extends NetworkTabAwareFragment implements Syncabl
                         int fromYear = (Integer) spinnerFromYear.getSelectedItem();
                         int toMonth = spinnerToMonth.getSelectedItemPosition();
                         int toYear = (Integer) spinnerToYear.getSelectedItem();
-                        LocalDate from = new LocalDate(fromYear, fromMonth, 1);
-                        LocalDate to = new LocalDate(toYear, toMonth, 1);
+                        LocalDate from = new LocalDate(fromYear, fromMonth + 1, 1);
+                        LocalDate to = new LocalDate(toYear, toMonth + 1, 1);
                         if (from.isAfter(to)) {
                             Toast.makeText(getContext(), R.string.calendar_sync_dialog_date_error, Toast.LENGTH_SHORT).show();
                         }
@@ -811,7 +811,7 @@ public class CalendarFragment extends NetworkTabAwareFragment implements Syncabl
                 calendars.add(CalendarFragment.this.calendar);
             }
             else {
-                requests.add(api.getCalendar(year, month, new Response.Listener<JSONObject>() {
+                requests.add(api.getCalendar(year, month + 1, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         progress.incrementProgress(1);

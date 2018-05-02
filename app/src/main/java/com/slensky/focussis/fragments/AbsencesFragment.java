@@ -260,7 +260,7 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
         }
         builder.setView(fl)
                 .setTitle(DateUtil.dateTimeToShortString(d.getDate()))
-                .setNeutralButton("OK",
+                .setPositiveButton("OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();

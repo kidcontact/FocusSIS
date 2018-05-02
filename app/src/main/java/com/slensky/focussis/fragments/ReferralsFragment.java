@@ -212,7 +212,7 @@ public class ReferralsFragment extends NetworkTabAwareFragment {
         messageView.setPadding(16, 0, 16, 0);
 
         alertDialog.setView(messageView, (int)(19*dpi), (int)(19*dpi), (int)(14*dpi), (int)(5*dpi) );
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
