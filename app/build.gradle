@@ -25,8 +25,8 @@ android {
         applicationId "com.slensky.focussis"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 17
-        versionName "1.1.8"
+        versionCode 18
+        versionName "1.1.9"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
