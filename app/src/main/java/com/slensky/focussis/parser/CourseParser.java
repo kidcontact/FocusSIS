@@ -53,6 +53,7 @@ public class CourseParser extends PageParser {
         teacherName.deleteCharAt(teacherName.length() - 1);
         json.put("teacher", teacherName.toString());
 
+        boolean hasCategories = false;
         Element categoryTable = course.selectFirst("td.DarkGradientBG");
         if (categoryTable != null) {
             String currGrade = course.getElementById("currentStudentGrade[]").text();
@@ -108,6 +109,7 @@ public class CourseParser extends PageParser {
                     categories.put(category);
                 }
 
+                hasCategories = true;
                 json.put("categories", categories);
 
             }
@@ -186,7 +188,7 @@ public class CourseParser extends PageParser {
                 assignment.put("comment", td.get(3).text().trim());
             }
 
-            if (!td.get(6).text().trim().isEmpty()) {
+            if (hasCategories && !td.get(6).text().trim().isEmpty()) {
                 assignment.put("category", td.get(6).text().trim());
             }
 
@@ -195,9 +197,10 @@ public class CourseParser extends PageParser {
             groups = DateUtil.nattyDateParser.parse(td.get(5).text());
             String due = DateUtil.ISO_DATE_FORMATTER.format(groups.get(0).getDates().get(0));
 
+            int lastModifiedIdx = hasCategories ? 9 : 8;
             String lastModified = assigned;
-            if (!td.get(9).text().trim().isEmpty()) {
-                groups = DateUtil.nattyDateParser.parse(td.get(9).text());
+            if (!td.get(lastModifiedIdx).text().trim().isEmpty()) {
+                groups = DateUtil.nattyDateParser.parse(td.get(lastModifiedIdx).text());
                 lastModified = DateUtil.ISO_DATE_FORMATTER.format(groups.get(0).getDates().get(0));
             }
 

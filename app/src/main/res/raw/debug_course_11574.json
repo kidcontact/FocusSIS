@@ -1,0 +1,181 @@
+{
+  "id": "11574",
+  "name": "Senior Writing Seminar",
+  "period": 6,
+  "teacher": "Patricia Ann Sockey",
+  "percent_grade": 56,
+  "letter_grade": "F",
+  "categories": [
+    {
+      "name": "Formative: Classwork\/Homework\/Writing Process",
+      "percent_weight": 20,
+      "percent_grade": 96,
+      "letter_grade": "A"
+    },
+    {
+      "name": "Summative: Tests\/Projects\/Essays",
+      "percent_weight": 80,
+      "percent_grade": 46,
+      "letter_grade": "F"
+    }
+  ],
+  "assignments": [
+    {
+      "description": "expect a reading quiz",
+      "category": "Formative: Classwork\/Homework\/Writing Process",
+      "name": "Finish White Noise",
+      "status": "fail",
+      "assigned": "2018-05-01T00:00",
+      "due": "2018-05-07T00:00",
+      "last_modified": "2018-05-01T00:00"
+    },
+    {
+      "category": "Formative: Classwork\/Homework\/Writing Process",
+      "name": "Read White Noise Ch 22-31",
+      "status": "fail",
+      "assigned": "2018-05-01T00:00",
+      "due": "2018-05-04T00:00",
+      "last_modified": "2018-05-01T00:00"
+    },
+    {
+      "max_grade": 10,
+      "category": "Summative: Tests\/Projects\/Essays",
+      "name": "Don DeLillo documentary response paper",
+      "status": "ng",
+      "assigned": "2018-05-01T00:00",
+      "due": "2018-05-02T00:00",
+      "last_modified": "2018-05-01T00:00"
+    },
+    {
+      "description": "be prepared for an interactive group discussion\/seminar (and possibly a quiz....)",
+      "category": "Formative: Classwork\/Homework\/Writing Process",
+      "name": "Read through chapter 21 of White Noise",
+      "status": "fail",
+      "assigned": "2018-04-16T00:00",
+      "due": "2018-04-19T00:00",
+      "last_modified": "2018-04-16T00:00"
+    },
+    {
+      "max_grade": 10,
+      "category": "Formative: Classwork\/Homework\/Writing Process",
+      "name": "Chapter 1-5 White Noise discussion questions",
+      "status": "ng",
+      "assigned": "2018-04-11T00:00",
+      "due": "2018-04-13T00:00",
+      "last_modified": "2018-04-11T00:00"
+    },
+    {
+      "category": "Formative: Classwork\/Homework\/Writing Process",
+      "name": "Read Chapters 6-9 in White Noise",
+      "status": "pass",
+      "assigned": "2018-04-10T00:00",
+      "due": "2018-04-11T00:00",
+      "last_modified": "2018-04-16T12:43"
+    },
+    {
+      "description": "chapter presentations from Amusing Ourselves to Death",
+      "max_grade": 100,
+      "student_grade": 95,
+      "percent_overall_grade": 95,
+      "letter_overall_grade": "A",
+      "category": "Formative: Classwork\/Homework\/Writing Process",
+      "name": "Chapter presentations",
+      "status": "graded",
+      "assigned": "2018-04-03T00:00",
+      "due": "2018-04-03T00:00",
+      "last_modified": "2018-04-04T09:20"
+    },
+    {
+      "max_grade": 22,
+      "student_grade_string": "X \/ 22",
+      "overall_grade_string": "exempt",
+      "category": "Formative: Classwork\/Homework\/Writing Process",
+      "name": "VocWk9",
+      "status": "graded",
+      "assigned": "2018-03-07T00:00",
+      "due": "2018-03-07T00:00",
+      "last_modified": "2018-04-16T13:15"
+    },
+    {
+      "category": "Formative: Classwork\/Homework\/Writing Process",
+      "name": "Read Part 1 od Amusing Ourselves to Death",
+      "status": "pass",
+      "assigned": "2018-02-22T00:00",
+      "due": "2018-03-07T00:00",
+      "last_modified": "2018-03-29T11:30"
+    },
+    {
+      "max_grade": 23,
+      "student_grade": 22,
+      "percent_overall_grade": 96,
+      "letter_overall_grade": "A",
+      "category": "Summative: Tests\/Projects\/Essays",
+      "name": "VocQz8",
+      "status": "graded",
+      "assigned": "2018-02-14T00:00",
+      "due": "2018-02-21T00:00",
+      "last_modified": "2018-03-29T11:33"
+    },
+    {
+      "description": "poetry out loud scavenger hunt and poetry readings",
+      "category": "Formative: Classwork\/Homework\/Writing Process",
+      "name": "PoetryOutLoud",
+      "status": "pass",
+      "assigned": "2018-01-31T00:00",
+      "due": "2018-01-31T00:00",
+      "last_modified": "2018-02-12T10:57"
+    },
+    {
+      "category": "Formative: Classwork\/Homework\/Writing Process",
+      "name": "VocWk8HW",
+      "status": "pass",
+      "assigned": "2018-01-24T00:00",
+      "due": "2018-01-24T00:00",
+      "last_modified": "2018-03-29T11:31"
+    },
+    {
+      "max_grade": 25,
+      "category": "Summative: Tests\/Projects\/Essays",
+      "name": "VozQz7",
+      "status": "missing",
+      "assigned": "2018-01-24T00:00",
+      "due": "2018-01-24T00:00",
+      "last_modified": "2018-02-12T11:33"
+    },
+    {
+      "max_grade": 22,
+      "student_grade": 22,
+      "percent_overall_grade": 100,
+      "letter_overall_grade": "A+",
+      "category": "Formative: Classwork\/Homework\/Writing Process",
+      "name": "Voc7HW",
+      "status": "graded",
+      "assigned": "2018-01-24T00:00",
+      "due": "2018-01-24T00:00",
+      "last_modified": "2018-02-12T10:48"
+    }
+  ],
+  "mps": {
+    "349": {
+      "id": "349",
+      "name": "Sem1GradeBook",
+      "year": 2012
+    },
+    "350": {
+      "id": "350",
+      "name": "Sem2Gradebook",
+      "year": 2012,
+      "selected": true
+    }
+  },
+  "mp_years": [
+    2012,
+    2012,
+    2012,
+    2012,
+    2012,
+    2012,
+    2012,
+    2012
+  ]
+}

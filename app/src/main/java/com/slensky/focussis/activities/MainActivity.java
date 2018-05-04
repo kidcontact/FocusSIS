@@ -70,6 +70,7 @@ import com.karumi.dexter.listener.single.BasePermissionListener;
 import com.karumi.dexter.listener.single.CompositePermissionListener;
 import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.slensky.focussis.FocusApplication;
 import com.slensky.focussis.R;
 import com.slensky.focussis.data.CalendarEvent;
 import com.slensky.focussis.data.CalendarEventDetails;
@@ -92,6 +93,7 @@ import com.slensky.focussis.fragments.ScheduleFragment;
 import com.slensky.focussis.fragments.SettingsFragment;
 import com.slensky.focussis.network.FocusApi;
 import com.slensky.focussis.network.FocusApiSingleton;
+import com.slensky.focussis.network.FocusDebugApi;
 import com.slensky.focussis.network.RequestSingleton;
 
 import com.slensky.focussis.fragments.EmptyFragment;
@@ -163,7 +165,12 @@ public class MainActivity extends AppCompatActivity
             Log.d(TAG, "Restoring saved instance state");
             username = savedInstanceState.getString(USERNAME_BUNDLE_KEY);
             password = savedInstanceState.getString(PASSWORD_BUNDLE_KEY);
-            api = new FocusApi(username, password, getApplicationContext());
+            if (FocusApplication.USE_DEBUG_API) {
+                api = new FocusDebugApi(username, password, getApplicationContext());
+            }
+            else {
+                api = new FocusApi(username, password, getApplicationContext());
+            }
             FocusApiSingleton.setApi(api);
             super.onCreate(savedInstanceState);
             setContentView(com.slensky.focussis.R.layout.activity_main);

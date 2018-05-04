@@ -106,7 +106,7 @@ public class FocusApi {
         }, errorListener){
             @Override
             protected Map<String,String> getParams(){
-                Map<String,String> params = new HashMap<String, String>();
+                Map<String,String> params = new HashMap<>();
                 params.put("login" , "true");
                 params.put("data", "username=" + username + "&password=" + password);
                 return params;
@@ -181,6 +181,15 @@ public class FocusApi {
             public void onResponse(String response) {
                 PageParser scheduleParser = new ScheduleParser();
                 try {
+                    String veryLongString = scheduleParser.parse(response).toString(2);
+                    int maxLogSize = 1000;
+                    for(int i = 0; i <= veryLongString.length() / maxLogSize; i++) {
+                        int start = i * maxLogSize;
+                        int end = (i+1) * maxLogSize;
+                        end = end > veryLongString.length() ? veryLongString.length() : end;
+                        Log.d(TAG, veryLongString.substring(start, end));
+                    }
+                    Log.i(TAG, scheduleParser.parse(response).toString(2));
                     listener.onResponse(scheduleParser.parse(response));
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing schedule");
@@ -202,6 +211,15 @@ public class FocusApi {
             public void onResponse(String response) {
                 PageParser calendarParser = new CalendarParser();
                 try {
+                    String veryLongString = calendarParser.parse(response).toString(2);
+                    int maxLogSize = 1000;
+                    for(int i = 0; i <= veryLongString.length() / maxLogSize; i++) {
+                        int start = i * maxLogSize;
+                        int end = (i+1) * maxLogSize;
+                        end = end > veryLongString.length() ? veryLongString.length() : end;
+                        Log.d(TAG, veryLongString.substring(start, end));
+                    }
+                    Log.i(TAG, calendarParser.parse(response).toString(2));
                     listener.onResponse(calendarParser.parse(response));
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing calendar");
@@ -559,7 +577,7 @@ public class FocusApi {
         }, errorListener) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String> params = new HashMap<String, String>();
+                Map<String,String> params = new HashMap<>();
                 if (preferences.isEnglishLanguage()) {
                     params.put("values[Preferences][LANGUAGE]", "en_US");
                     params.put("btn_save", "Save");
@@ -590,7 +608,7 @@ public class FocusApi {
         }, errorListener) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String> params = new HashMap<String, String>();
+                Map<String,String> params = new HashMap<>();
                 params.put("values[current]", currentPassword);
                 params.put("values[verify]", verifyNewPassword);
                 params.put("values[new]", newPassword);

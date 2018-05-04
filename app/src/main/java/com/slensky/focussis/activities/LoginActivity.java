@@ -20,11 +20,14 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.slensky.focussis.FocusApplication;
+import com.slensky.focussis.R;
 import com.slensky.focussis.network.FocusApi;
 import com.slensky.focussis.network.FocusApiSingleton;
 
 import org.json.JSONObject;
 import com.slensky.focussis.data.FocusPreferences;
+import com.slensky.focussis.network.FocusDebugApi;
 
 import butterknife.ButterKnife;
 import butterknife.BindView;
@@ -145,6 +148,10 @@ public class LoginActivity extends AppCompatActivity {
         final String username = tempUsername;
         final String password = _passwordText.getText().toString();
 
+        if (username.equals(getString(R.string.debug_username)) && password.equals(R.string.debug_password)) {
+            FocusApplication.USE_DEBUG_API = true;
+        }
+
         boolean attemptLogin = true;
         if (username.isEmpty()) {
             _usernameLayout.setError(getString(com.slensky.focussis.R.string.login_blank_username_error));
@@ -169,7 +176,12 @@ public class LoginActivity extends AppCompatActivity {
 
         final ProgressDialog progressDialog = ProgressDialog.show(LoginActivity.this, null, getString(com.slensky.focussis.R.string.auth_progress_dialog),true);
 
-        api = new FocusApi(username, password, getApplicationContext());
+        if (FocusApplication.USE_DEBUG_API) {
+            api = new FocusDebugApi(username, password, getApplicationContext());
+        }
+        else {
+            api = new FocusApi(username, password, getApplicationContext());
+        }
         api.login(new Response.Listener<Boolean>() {
             @Override
             public void onResponse(Boolean response) {

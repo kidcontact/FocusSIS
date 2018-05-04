@@ -1,0 +1,121 @@
+{
+  "alerts": [
+    {
+      "message": "2 unpaid fee(s).",
+      "url": "Modules.php?modname=Billing\/Billing.php"
+    },
+    {
+      "message": "You are not set to receive email notifications.",
+      "url": "Modules.php?modname=Users\/Preferences.php&system_tab=&tab=notifications"
+    }
+  ],
+  "courses": {
+    "11458": {
+      "id": "11458",
+      "percent_grade": 96,
+      "letter_grade": "A",
+      "teacher_email": "stephanie.dumoski@asdnh.org",
+      "name": "Advanced Calculus BC",
+      "period": 2,
+      "days": "TWF",
+      "teacher": "Stephanie Dumoski"
+    },
+    "11401": {
+      "id": "11401",
+      "percent_grade": 93,
+      "letter_grade": "A",
+      "teacher_email": "abbas.farazdel@asdnh.org",
+      "name": "Advanced Physics",
+      "period": 3,
+      "days": "MWH",
+      "teacher": "Abbas Farazdel"
+    },
+    "11574": {
+      "id": "11574",
+      "percent_grade": 56,
+      "letter_grade": "F",
+      "teacher_email": "patricia.sockey@asdnh.org",
+      "name": "Senior Writing Seminar",
+      "period": 6,
+      "days": "TWF",
+      "teacher": "Patricia Ann Sockey",
+      "assignments": [
+        {
+          "name": "Read White Noise Ch 22-31",
+          "due": "2018-05-04T00:00"
+        },
+        {
+          "name": "Finish White Noise",
+          "due": "2018-05-07T00:00"
+        }
+      ]
+    },
+    "-1": {
+      "period": 0,
+      "id": "-1",
+      "name": "Advisory",
+      "days": "W",
+      "teacher": "Patricia Ann Sockey",
+      "teacher_email": "patricia.sockey@asdnh.org",
+      "assignments": [
+        {
+          "name": "Complete Rough Draft",
+          "due": "2018-05-09T00:00"
+        }
+      ]
+    }
+  },
+  "events": [
+    {
+      "description": "Teacher Workday - No School",
+      "date": "2018-05-16T00:00:00"
+    },
+    {
+      "description": "SPARK Conference",
+      "date": "2018-05-23T00:00:00"
+    },
+    {
+      "description": "Memorial Day - No School",
+      "date": "2018-05-28T00:00:00"
+    },
+    {
+      "description": "Final Exams",
+      "date": "2018-06-11T00:00:00"
+    },
+    {
+      "description": "Final Exams",
+      "date": "2018-06-12T00:00:00"
+    },
+    {
+      "description": "Final Exams",
+      "date": "2018-06-13T00:00:00"
+    },
+    {
+      "description": "Final Exams",
+      "date": "2018-06-14T00:00:00"
+    }
+  ],
+  "mps": {
+    "349": {
+      "id": "349",
+      "name": "Sem1GradeBook",
+      "year": 2012
+    },
+    "350": {
+      "id": "350",
+      "name": "Sem2Gradebook",
+      "year": 2012,
+      "selected": true
+    }
+  },
+  "mp_years": [
+    2012,
+    2012,
+    2012,
+    2012,
+    2012,
+    2012,
+    2012,
+    2012
+  ]
+}
