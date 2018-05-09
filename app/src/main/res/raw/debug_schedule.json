@@ -1,0 +1,105 @@
+{
+  "courses": [
+    {
+      "name": "Study Period",
+      "period": 1,
+      "teacher": "Jennifer Cava",
+      "days": "MWH",
+      "room": "Jr\/Sr Area",
+      "term": "year"
+    },
+    {
+      "name": "Advanced Calculus BC",
+      "period": 2,
+      "teacher": "Stephanie Dumoski",
+      "days": "TWF",
+      "room": "111",
+      "term": "year"
+    },
+    {
+      "name": "Advanced Physics",
+      "period": 3,
+      "teacher": "Abbas Farazdel",
+      "days": "MWH",
+      "room": "129",
+      "term": "year"
+    },
+    {
+      "name": "Study Period",
+      "period": 4,
+      "teacher": "Jennifer Cava",
+      "days": "TWF",
+      "room": "Jr\/Sr Area",
+      "term": "year"
+    },
+    {
+      "name": "Senior Project",
+      "teacher": "Patricia Ann Sockey",
+      "days": "W",
+      "room": "Jr\/Sr Area",
+      "term": "year"
+    },
+    {
+      "name": "Silver Advisory",
+      "teacher": "Douglass Adam Belley",
+      "days": "MTWHF",
+      "room": "Jr\/Sr Area",
+      "term": "year"
+    },
+    {
+      "name": "Study Period",
+      "period": 5,
+      "teacher": "Jennifer Cava",
+      "days": "MWH",
+      "room": "Jr\/Sr Area",
+      "term": "year"
+    },
+    {
+      "name": "Senior Writing Seminar",
+      "period": 6,
+      "teacher": "Patricia Ann Sockey",
+      "days": "TWF",
+      "room": "150",
+      "term": "year"
+    },
+    {
+      "name": "Study Period",
+      "period": 7,
+      "teacher": "Jennifer Cava",
+      "days": "MWH",
+      "room": "Jr\/Sr Area",
+      "term": "year"
+    },
+    {
+      "name": "Study Period",
+      "period": 8,
+      "teacher": "Jennifer Cava",
+      "days": "TWF",
+      "room": "Jr\/Sr Area",
+      "term": "year"
+    }
+  ],
+  "mps": {
+    "349": {
+      "id": "349",
+      "name": "Sem1GradeBook",
+      "year": 2017
+    },
+    "350": {
+      "id": "350",
+      "name": "Sem2Gradebook",
+      "year": 2017,
+      "selected": true
+    }
+  },
+  "mp_years": [
+    2012,
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019
+  ]
+}

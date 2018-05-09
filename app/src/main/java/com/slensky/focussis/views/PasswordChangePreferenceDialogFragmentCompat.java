@@ -161,6 +161,8 @@ public class PasswordChangePreferenceDialogFragmentCompat extends PreferenceDial
                 return ctx.getString(com.slensky.focussis.R.string.settings_change_password_incorrect_password);
             case PASSWORDS_DONT_MATCH:
                 return ctx.getString(com.slensky.focussis.R.string.settings_change_password_passwords_dont_match);
+            case IS_DEBUG_API:
+                return "Password cannot be changed for debug user";
             case OTHER:
                 return ctx.getString(com.slensky.focussis.R.string.settings_change_password_other_error);
         }

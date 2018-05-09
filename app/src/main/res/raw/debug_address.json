@@ -1,0 +1,65 @@
+{
+  "address": "22 Sims St.",
+  "city": "Nashua",
+  "state": "NH",
+  "zip": "03063",
+  "phone": "5555555555",
+  "contacts": [
+    {
+      "name": "Alana Ross",
+      "emergency": false,
+      "relationship": "Mother",
+      "custody": true,
+      "email": "alana.ross@asdnh.org",
+      "details": [
+        {
+          "title": "Home Phone",
+          "type": "phone",
+          "value": "5555555555"
+        },
+        {
+          "title": "Private Email",
+          "type": "email",
+          "value": "alana.r@gmail.com"
+        },
+        {
+          "title": "Cell Phone",
+          "type": "phone",
+          "value": "5555555555"
+        }
+      ],
+      "address": "486 Amherst St.",
+      "city": "Nashua",
+      "state": "NH",
+      "zip": "03063",
+      "phone": "5555555555",
+      "has_address": true
+    },
+    {
+      "name": "Chris Ross",
+      "emergency": false,
+      "relationship": "Father",
+      "custody": false,
+      "email": "chris.ross@asdnh.org",
+      "address": "486 Amherst St.",
+      "city": "Nashua",
+      "state": "NH",
+      "zip": "03063",
+      "phone": "5555555555",
+      "has_address": true
+    },
+    {
+      "name": "Jennifer McCallum",
+      "emergency": true,
+      "custody": false,
+      "details": [
+        {
+          "title": "OTHER_PHONE",
+          "type": "phone",
+          "value": "5555555555"
+        }
+      ],
+      "has_address": false
+    }
+  ]
+}

@@ -3,8 +3,8 @@
   "name": "Senior Writing Seminar",
   "period": 6,
   "teacher": "Patricia Ann Sockey",
-  "percent_grade": 56,
-  "letter_grade": "F",
+  "percent_grade": 97,
+  "letter_grade": "A+",
   "categories": [
     {
       "name": "Formative: Classwork\/Homework\/Writing Process",
@@ -15,8 +15,8 @@
     {
       "name": "Summative: Tests\/Projects\/Essays",
       "percent_weight": 80,
-      "percent_grade": 46,
-      "letter_grade": "F"
+      "percent_grade": 98,
+      "letter_grade": "A+"
     }
   ],
   "assignments": [
@@ -87,11 +87,11 @@
     },
     {
       "max_grade": 22,
-      "student_grade_string": "X \/ 22",
+      "student_grade_string": "X",
       "overall_grade_string": "exempt",
       "category": "Formative: Classwork\/Homework\/Writing Process",
       "name": "VocWk9",
-      "status": "graded",
+      "status": "other",
       "assigned": "2018-03-07T00:00",
       "due": "2018-03-07T00:00",
       "last_modified": "2018-04-16T13:15"
@@ -135,9 +135,12 @@
     },
     {
       "max_grade": 25,
+      "student_grade": 25,
+      "percent_overall_grade": 100,
+      "letter_overall_grade": "A+",
       "category": "Summative: Tests\/Projects\/Essays",
       "name": "VozQz7",
-      "status": "missing",
+      "status": "graded",
       "assigned": "2018-01-24T00:00",
       "due": "2018-01-24T00:00",
       "last_modified": "2018-02-12T11:33"
@@ -159,23 +162,23 @@
     "349": {
       "id": "349",
       "name": "Sem1GradeBook",
-      "year": 2012
+      "year": 2017
     },
     "350": {
       "id": "350",
       "name": "Sem2Gradebook",
-      "year": 2012,
+      "year": 2017,
       "selected": true
     }
   },
   "mp_years": [
     2012,
-    2012,
-    2012,
-    2012,
-    2012,
-    2012,
-    2012,
-    2012
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019
   ]
 }

@@ -1,0 +1,45 @@
+{
+  "referrals": {
+    "3709": {
+      "violation": "Skipping class",
+      "other_violation": "Slept through the first part of class (a fellow student went to wake him up at my request). ",
+      "id": "3709",
+      "creation_date": "2017-10-04",
+      "display": true,
+      "entry_date": "2017-10-04",
+      "last_updated": "2017-10-04",
+      "notification_sent": false,
+      "processed": true,
+      "suspension_begin": "null",
+      "suspension_end": "null",
+      "school_year": 2017,
+      "school": "Academy for Science and Design",
+      "teacher": "Stephanie Dumoski",
+      "name": "Debug",
+      "grade": 12
+    }
+  },
+  "mps": {
+    "349": {
+      "id": "349",
+      "name": "Sem1GradeBook",
+      "year": 2017
+    },
+    "350": {
+      "id": "350",
+      "name": "Sem2Gradebook",
+      "year": 2017,
+      "selected": true
+    }
+  },
+  "mp_years": [
+    2012,
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019
+  ]
+}

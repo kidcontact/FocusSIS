@@ -30,10 +30,20 @@
       "days": "MWH",
       "teacher": "Abbas Farazdel"
     },
+    "1": {
+      "id": "1",
+      "percent_grade": 100,
+      "letter_grade": "A+",
+      "teacher_email": "samina.iqbal@asdnh.org",
+      "name": "Web Design II",
+      "period": 5,
+      "days": "MWH",
+      "teacher": "Samina Iqbal"
+    },
     "11574": {
       "id": "11574",
-      "percent_grade": 56,
-      "letter_grade": "F",
+      "percent_grade": 97,
+      "letter_grade": "A+",
       "teacher_email": "patricia.sockey@asdnh.org",
       "name": "Senior Writing Seminar",
       "period": 6,
@@ -99,23 +109,23 @@
     "349": {
       "id": "349",
       "name": "Sem1GradeBook",
-      "year": 2012
+      "year": 2017
     },
     "350": {
       "id": "350",
       "name": "Sem2Gradebook",
-      "year": 2012,
+      "year": 2017,
       "selected": true
     }
   },
   "mp_years": [
     2012,
-    2012,
-    2012,
-    2012,
-    2012,
-    2012,
-    2012,
-    2012
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019
   ]
 }

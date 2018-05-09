@@ -16,6 +16,7 @@ public class PasswordResponse {
     public enum Error {
         CURRENT_PASSWORD_INCORRECT,
         PASSWORDS_DONT_MATCH,
+        IS_DEBUG_API,
         OTHER
     }
     private final Error error;
@@ -53,6 +54,9 @@ public class PasswordResponse {
                     break;
                 case "passwords_dont_match":
                     this.error = Error.PASSWORDS_DONT_MATCH;
+                    break;
+                case "is_debug_api":
+                    this.error = Error.IS_DEBUG_API;
                     break;
                 default:
                     this.error = Error.OTHER;

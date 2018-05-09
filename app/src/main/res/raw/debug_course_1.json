@@ -1,0 +1,143 @@
+{
+  "id": "1",
+  "name": "Web Design II",
+  "period": 5,
+  "teacher": "Samina Iqbal",
+  "percent_grade": 100,
+  "letter_grade": "A+",
+  "assignments": [
+    {
+      "max_grade": 100,
+      "student_grade": 100,
+      "percent_overall_grade": 100,
+      "letter_overall_grade": "A+",
+      "name": "Drop Down Menu",
+      "status": "graded",
+      "assigned": "2018-01-26T00:00",
+      "due": "2018-01-29T00:00",
+      "last_modified": "2018-01-29T12:50"
+    },
+    {
+      "max_grade": 100,
+      "student_grade": 100,
+      "percent_overall_grade": 100,
+      "letter_overall_grade": "A+",
+      "name": "Chapter 6 - Tutorial",
+      "status": "graded",
+      "assigned": "2018-01-29T00:00",
+      "due": "2018-02-21T00:00",
+      "last_modified": "2018-03-04T11:56"
+    },
+    {
+      "max_grade": 100,
+      "student_grade": 100,
+      "percent_overall_grade": 100,
+      "letter_overall_grade": "A+",
+      "name": "Tutorial 7.1",
+      "status": "graded",
+      "assigned": "2018-03-02T00:00",
+      "due": "2018-03-04T00:00",
+      "last_modified": "2018-03-05T11:30"
+    },
+    {
+      "max_grade": 100,
+      "student_grade": 100,
+      "percent_overall_grade": 100,
+      "letter_overall_grade": "A+",
+      "name": "Tutorial 7.2",
+      "status": "graded",
+      "assigned": "2018-03-05T00:00",
+      "due": "2018-03-06T00:00",
+      "last_modified": "2018-03-09T12:30"
+    },
+    {
+      "max_grade": 100,
+      "student_grade": 100,
+      "percent_overall_grade": 100,
+      "letter_overall_grade": "A+",
+      "name": "Tutorial 7.3",
+      "status": "graded",
+      "assigned": "2018-03-05T00:00",
+      "due": "2018-03-09T00:00",
+      "last_modified": "2018-03-11T12:02"
+    },
+    {
+      "max_grade": 100,
+      "student_grade": 100,
+      "percent_overall_grade": 100,
+      "letter_overall_grade": "A+",
+      "name": "Tutorial 8",
+      "status": "graded",
+      "assigned": "2018-03-09T00:00",
+      "due": "2018-03-21T00:00",
+      "last_modified": "2018-03-30T13:35"
+    },
+    {
+      "max_grade": 100,
+      "student_grade": 100,
+      "percent_overall_grade": 100,
+      "letter_overall_grade": "A+",
+      "name": "Tutorial 9",
+      "status": "graded",
+      "assigned": "2018-03-23T00:00",
+      "due": "2018-04-03T00:00",
+      "last_modified": "2018-04-20T10:34"
+    },
+    {
+      "max_grade": 100,
+      "student_grade": 100,
+      "percent_overall_grade": 100,
+      "letter_overall_grade": "A+",
+      "name": "Tutorial 10",
+      "status": "graded",
+      "assigned": "2018-04-06T00:00",
+      "due": "2018-04-17T00:00",
+      "last_modified": "2018-04-20T10:36"
+    },
+    {
+      "max_grade": 100,
+      "student_grade": 95,
+      "percent_overall_grade": 95,
+      "letter_overall_grade": "A",
+      "name": "Final Project ! Planning",
+      "status": "graded",
+      "assigned": "2018-04-20T00:00",
+      "due": "2018-05-10T00:00",
+      "last_modified": "2018-05-27T12:01"
+    },
+    {
+      "max_grade": 100,
+      "student_grade": 100,
+      "percent_overall_grade": 100,
+      "letter_overall_grade": "A+",
+      "name": "Final Website",
+      "status": "graded",
+      "assigned": "2018-05-04T00:00",
+      "due": "2018-06-01T00:00",
+      "last_modified": "2018-06-02T08:22"
+    }
+  ],
+  "mps": {
+    "349": {
+      "id": "349",
+      "name": "Sem1GradeBook",
+      "year": 2017
+    },
+    "350": {
+      "id": "350",
+      "name": "Sem2Gradebook",
+      "year": 2017,
+      "selected": true
+    }
+  },
+  "mp_years": [
+    2012,
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019
+  ]
+}

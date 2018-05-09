@@ -148,8 +148,12 @@ public class LoginActivity extends AppCompatActivity {
         final String username = tempUsername;
         final String password = _passwordText.getText().toString();
 
-        if (username.equals(getString(R.string.debug_username)) && password.equals(R.string.debug_password)) {
+        if (username.equals(getString(R.string.debug_username)) && password.equals(getString(R.string.debug_password))) {
+            Log.d(TAG, "Using debug API");
             FocusApplication.USE_DEBUG_API = true;
+        }
+        else {
+            FocusApplication.USE_DEBUG_API = false;
         }
 
         boolean attemptLogin = true;

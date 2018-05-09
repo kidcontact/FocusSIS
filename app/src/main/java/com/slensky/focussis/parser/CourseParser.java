@@ -133,52 +133,61 @@ public class CourseParser extends PageParser {
                 assignment.put("description", StringEscapeUtils.unescapeJava(description).trim());
             }
 
-            String status;
+            String status = null;
             Element gradeImg = tr.selectFirst("img");
             if (gradeImg != null) {
                 status = gradeImg.attr("src").equals("assets/check.png") ? "pass" : "fail";
             }
             else {
                 String[] gradeRatio = td.get(1).text().split(" / ");
-                try {
-                    assignment.put("max_grade", Integer.parseInt(gradeRatio[1]));
-                } catch (NumberFormatException e) {
-                    Log.w(TAG, "Error parsing max_grade as int, max_grade: " + gradeRatio[1]);
-                    assignment.put("max_grade_string", td.get(1).text());
-                }
-                gradeRatio[0] = gradeRatio[0].toLowerCase();
-                if (gradeRatio[0].equals("*") || gradeRatio[0].equals("e") || gradeRatio[0].equals("excluded")) {
-                    status = "excluded";
-                }
-                else if (gradeRatio[0].equals("ng")) {
-                    status = "ng";
-                }
-                else if (gradeRatio[0].equals("m") || gradeRatio[0].equals("missing")) {
-                    status = "missing";
-                }
-                else if (gradeRatio[1].equals("0") || gradeRatio[0].equals("extra credit") || gradeRatio[0].equals("extra") || gradeRatio[0].equals("ec")) {
-                    status = "extra";
-                    try {
-                        assignment.put("student_grade", Float.parseFloat(gradeRatio[0]));
-                    } catch (NumberFormatException e) {
-                        Log.w(TAG, "Error parsing student_grade as int, student_grade: " + gradeRatio[0]);
-                        assignment.put("student_grade_string", td.get(1).text());
-                    }
+                if (gradeRatio.length < 2) {
+                    Log.w(TAG, "Error parsing grade ratio string, using full string " + td.get(1).text());
+                    assignment.put("full_grade_ratio_string", td.get(1).text());
                 }
                 else {
-                    status = "graded";
                     try {
-                        assignment.put("student_grade", Float.parseFloat(gradeRatio[0]));
+                        assignment.put("max_grade", Integer.parseInt(gradeRatio[1]));
                     } catch (NumberFormatException e) {
-                        Log.w(TAG, "Error parsing student_grade as int, student_grade: " + gradeRatio[0]);
-                        assignment.put("student_grade_string", td.get(1).text());
+                        Log.w(TAG, "Error parsing max_grade as int, max_grade: " + gradeRatio[1]);
+                        assignment.put("max_grade_string", td.get(1).text().split(" / ")[1]);
                     }
-
+                    gradeRatio[0] = gradeRatio[0].toLowerCase();
+                    if (gradeRatio[0].equals("*") || gradeRatio[0].equals("e") || gradeRatio[0].equals("excluded")) {
+                        status = "excluded";
+                    }
+                    else if (gradeRatio[0].equals("ng")) {
+                        status = "ng";
+                    }
+                    else if (gradeRatio[0].equals("m") || gradeRatio[0].equals("missing")) {
+                        status = "missing";
+                    }
+                    else if (gradeRatio[1].equals("0") || gradeRatio[0].equals("extra credit") || gradeRatio[0].equals("extra") || gradeRatio[0].equals("ec")) {
+                        status = "extra";
+                        try {
+                            assignment.put("student_grade", Float.parseFloat(gradeRatio[0]));
+                        } catch (NumberFormatException e) {
+                            Log.w(TAG, "Error parsing student_grade as int, student_grade: " + gradeRatio[0]);
+                            assignment.put("student_grade_string", td.get(1).text().split(" / ")[0]);
+                        }
+                    }
+                    else {
+                        status = "graded";
+                        try {
+                            assignment.put("student_grade", Float.parseFloat(gradeRatio[0]));
+                        } catch (NumberFormatException e) {
+                            Log.w(TAG, "Error parsing student_grade as int, student_grade: " + gradeRatio[0]);
+                            assignment.put("student_grade_string", td.get(1).text().split(" / ")[0]);
+                        }
+                    }
+                }
+                if (status == null || status.equals("graded")) {
                     String[] overallGrade = td.get(2).text().split("% ");
                     try {
                         assignment.put("percent_overall_grade", Integer.parseInt(overallGrade[0]));
                         assignment.put("letter_overall_grade", overallGrade[1]);
+                        status = "graded";
                     } catch (NumberFormatException e) {
+                        status = "other";
                         assignment.put("overall_grade_string", td.get(2).text());
                     }
                 }
@@ -209,7 +218,6 @@ public class CourseParser extends PageParser {
             assignment.put("assigned", assigned);
             assignment.put("due", due);
             assignment.put("last_modified", lastModified);
-
             assignments.put(assignment);
             count += 1;
             tr = course.getElementById("LOy_row" + Integer.toString(count));

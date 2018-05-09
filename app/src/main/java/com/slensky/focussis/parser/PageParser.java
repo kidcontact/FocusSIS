@@ -1,5 +1,7 @@
 package com.slensky.focussis.parser;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,7 +15,7 @@ import org.jsoup.select.Elements;
  */
 
 public abstract class PageParser {
-
+    private static final String TAG = "PageParser";
     public abstract JSONObject parse(String html) throws JSONException;
 
     protected JSONObject getMarkingPeriods(String html) throws JSONException {
@@ -25,9 +27,9 @@ public abstract class PageParser {
         int selectedYear = -1;
         for (int i = 0; i < years.size(); i++) {
             if (years.get(i).hasAttr("selected")) {
-                selectedYear = Integer.parseInt(years.attr("value"));
+                selectedYear = Integer.parseInt(years.get(i).attr("value"));
             }
-            availableYears.put(Integer.parseInt(years.attr("value")));
+            availableYears.put(Integer.parseInt(years.get(i).attr("value")));
         }
 
         Elements mps = page.getElementsByAttributeValue("name", "side_mp").first().children();

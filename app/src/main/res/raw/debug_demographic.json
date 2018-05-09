@@ -1,0 +1,14 @@
+{
+  "name": "Debug",
+  "username": "debug",
+  "pass_length": 10,
+  "level": 7,
+  "gender": "Male",
+  "email": "debug@asdnh.org",
+  "locker": "542",
+  "arrival_bus": "476",
+  "dismissal_bus": "489",
+  "cumulative_file": "Have file",
+  "medical_record_status": "Need emergency contact form",
+  "photo_auth": true
+}

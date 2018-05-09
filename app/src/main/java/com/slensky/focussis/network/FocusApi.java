@@ -60,15 +60,15 @@ public class FocusApi {
     private final String username;
     private final String password;
     private boolean hasAccessedStudentPage; // api access requires first sending GET to student url
-    private Student student;
+    protected Student student;
     private boolean hasAccessedFinalGradesPage; // api access requires first sending GET to final grades url
-    private FinalGradesPage finalGradesPage;
+    protected FinalGradesPage finalGradesPage;
 
-    private final Context context;
+    protected final Context context;
 
-    private boolean loggedIn = false;
+    protected boolean loggedIn = false;
     private long sessionLengthMillis = 20 * 60 * 1000; // milliseconds
-    private long sessionTimeout;
+    protected long sessionTimeout;
 
     public FocusApi(String username, String password, Context context) {
         this.username = username;
@@ -181,15 +181,6 @@ public class FocusApi {
             public void onResponse(String response) {
                 PageParser scheduleParser = new ScheduleParser();
                 try {
-                    String veryLongString = scheduleParser.parse(response).toString(2);
-                    int maxLogSize = 1000;
-                    for(int i = 0; i <= veryLongString.length() / maxLogSize; i++) {
-                        int start = i * maxLogSize;
-                        int end = (i+1) * maxLogSize;
-                        end = end > veryLongString.length() ? veryLongString.length() : end;
-                        Log.d(TAG, veryLongString.substring(start, end));
-                    }
-                    Log.i(TAG, scheduleParser.parse(response).toString(2));
                     listener.onResponse(scheduleParser.parse(response));
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing schedule");
@@ -211,15 +202,6 @@ public class FocusApi {
             public void onResponse(String response) {
                 PageParser calendarParser = new CalendarParser();
                 try {
-                    String veryLongString = calendarParser.parse(response).toString(2);
-                    int maxLogSize = 1000;
-                    for(int i = 0; i <= veryLongString.length() / maxLogSize; i++) {
-                        int start = i * maxLogSize;
-                        int end = (i+1) * maxLogSize;
-                        end = end > veryLongString.length() ? veryLongString.length() : end;
-                        Log.d(TAG, veryLongString.substring(start, end));
-                    }
-                    Log.i(TAG, calendarParser.parse(response).toString(2));
                     listener.onResponse(calendarParser.parse(response));
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing calendar");
@@ -658,6 +640,15 @@ public class FocusApi {
 //            cookieManager.getCookieStore().getCookies().get(0).setSecure(false);
 //        }
         RequestSingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    public void cancelAll(final RequestQueue.RequestFilter filter) {
+        RequestSingleton.getInstance(context).getRequestQueue().cancelAll(new RequestQueue.RequestFilter() {
+            @Override
+            public boolean apply(Request<?> request) {
+                return filter.apply(request);
+            }
+        });
     }
 
     public Student getStudent() {

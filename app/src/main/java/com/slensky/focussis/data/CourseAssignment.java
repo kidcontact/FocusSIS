@@ -19,6 +19,7 @@ public class CourseAssignment implements Comparable<CourseAssignment> {
     private final String maxGradeString;
     private final double studentGrade;
     private final String studentGradeString;
+    private final String fullGradeRatioString;
     private final String letterGrade;
     private final int percentGrade;
     private final String overallGradeString;
@@ -34,11 +35,12 @@ public class CourseAssignment implements Comparable<CourseAssignment> {
         NOT_GRADED,
         MISSING,
         EXTRA_CREDIT,
-        GRADED
+        GRADED,
+        OTHER
     }
     private final Status status;
 
-    public CourseAssignment(String name, DateTime assigned, DateTime due, DateTime lastModified, String category, int maxGrade, String maxGradeString, double studentGrade, String studentGradeString, String letterGrade, int percentGrade, String overallGradeString, String description, Status status, String markingPeriodId) {
+    public CourseAssignment(String name, DateTime assigned, DateTime due, DateTime lastModified, String category, int maxGrade, String maxGradeString, double studentGrade, String studentGradeString, String fullGradeRatioString, String letterGrade, int percentGrade, String overallGradeString, String description, Status status, String markingPeriodId) {
         this.name = name;
         this.assigned = assigned;
         this.due = due;
@@ -48,6 +50,7 @@ public class CourseAssignment implements Comparable<CourseAssignment> {
         this.maxGradeString = maxGradeString;
         this.studentGrade = studentGrade;
         this.studentGradeString = studentGradeString;
+        this.fullGradeRatioString = fullGradeRatioString;
         this.letterGrade = letterGrade;
         this.percentGrade = percentGrade;
         this.status = status;
@@ -112,6 +115,14 @@ public class CourseAssignment implements Comparable<CourseAssignment> {
 
     public String getStudentGradeString() {
         return studentGradeString;
+    }
+
+    public boolean hasFullGradeRatioString() {
+        return fullGradeRatioString != null;
+    }
+
+    public String getFullGradeRatioString() {
+        return fullGradeRatioString;
     }
 
     public String getLetterGrade() {
@@ -201,6 +212,8 @@ public class CourseAssignment implements Comparable<CourseAssignment> {
             return false;
         if (studentGradeString != null ? !studentGradeString.equals(that.studentGradeString) : that.studentGradeString != null)
             return false;
+        if (fullGradeRatioString != null ? !fullGradeRatioString.equals(that.fullGradeRatioString) : that.fullGradeRatioString != null)
+            return false;
         if (letterGrade != null ? !letterGrade.equals(that.letterGrade) : that.letterGrade != null)
             return false;
         if (overallGradeString != null ? !overallGradeString.equals(that.overallGradeString) : that.overallGradeString != null)
@@ -226,6 +239,7 @@ public class CourseAssignment implements Comparable<CourseAssignment> {
         temp = Double.doubleToLongBits(studentGrade);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (studentGradeString != null ? studentGradeString.hashCode() : 0);
+        result = 31 * result + (fullGradeRatioString != null ? fullGradeRatioString.hashCode() : 0);
         result = 31 * result + (letterGrade != null ? letterGrade.hashCode() : 0);
         result = 31 * result + percentGrade;
         result = 31 * result + (overallGradeString != null ? overallGradeString.hashCode() : 0);

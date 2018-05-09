@@ -16,7 +16,7 @@ import com.slensky.focussis.activities.CrashReportActivity;
     reportDialogClass = CrashReportActivity.class)
 public class FocusApplication extends Application {
 
-    public static boolean USE_DEBUG_API = true;
+    public static boolean USE_DEBUG_API = false;
 
     @Override
     public void onCreate() {

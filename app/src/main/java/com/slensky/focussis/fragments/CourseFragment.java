@@ -318,6 +318,9 @@ public class CourseFragment extends NetworkFragment {
             List<CourseAssignment> assignments = course.getAssignments();
 
             TableRow headerRow = (TableRow) inflater.inflate(R.layout.view_course_assignment_header, assignmentTable, false);
+            if (!course.hasCategories()) {
+                headerRow.findViewById(R.id.text_assignment_category).setVisibility(View.GONE);
+            }
             assignmentTable.addView(headerRow);
 
             replacedAssignments = new ArrayList<>();
@@ -501,22 +504,33 @@ public class CourseFragment extends NetworkFragment {
                 grade.setText("Extra Credit");
                 break;
             default:
-                gradeBuilder = new StringBuilder();
-                if (assignment.hasStudentGradeString()) {
-                    gradeBuilder.append(assignment.getStudentGradeString());
+                if (assignment.hasFullGradeRatioString()) {
+                    points.setText(assignment.getFullGradeRatioString());
                 }
                 else {
-                    gradeBuilder.append((int) assignment.getStudentGrade());
+                    gradeBuilder = new StringBuilder();
+                    if (assignment.hasStudentGradeString()) {
+                        gradeBuilder.append(assignment.getStudentGradeString());
+                    }
+                    else {
+                        gradeBuilder.append((int) assignment.getStudentGrade());
+                    }
+                    gradeBuilder.append(" / ");
+                    if (assignment.hasMaxGradeString()) {
+                        gradeBuilder.append(assignment.getMaxGradeString());
+                    }
+                    else {
+                        gradeBuilder.append(assignment.getMaxGrade());
+                    }
+                    points.setText(gradeBuilder.toString());
                 }
-                gradeBuilder.append(" / ");
-                if (assignment.hasMaxGradeString()) {
-                    gradeBuilder.append(assignment.getMaxGradeString());
+                if (assignment.getStatus().equals(CourseAssignment.Status.GRADED)) {
+                    grade.setText(Integer.toString(assignment.getPercentGrade()) + "% " + assignment.getLetterGrade());
                 }
                 else {
-                    gradeBuilder.append(assignment.getMaxGrade());
+                    grade.setText(assignment.getOverallGradeString());
                 }
-                points.setText(gradeBuilder.toString());
-                grade.setText(Integer.toString(assignment.getPercentGrade()) + "% " + assignment.getLetterGrade());
+
                 break;
         }
 
@@ -526,9 +540,12 @@ public class CourseFragment extends NetworkFragment {
         final TextView due = (TextView) row.findViewById(R.id.text_assignment_due);
         due.setText(DateUtil.dateTimeToShortString(assignment.getDue()));
 
+        TextView category = (TextView) row.findViewById(R.id.text_assignment_category);
         if (assignment.hasCategory()) {
-            TextView category = (TextView) row.findViewById(R.id.text_assignment_category);
             category.setText(assignment.getCategory());
+        }
+        else {
+            category.setVisibility(View.GONE);
         }
 
         row.setOnClickListener(new View.OnClickListener()
@@ -957,6 +974,7 @@ public class CourseFragment extends NetworkFragment {
                     String maxGradeString = "*";
                     double studentGrade = -1;
                     String studentGradeString = "*";
+                    String fullGradeRatioString = null;
                     String letterGrade = null;
                     int percentGrade = -1;
                     String overallGradeString = null;
@@ -974,7 +992,7 @@ public class CourseFragment extends NetworkFragment {
                         mpId = assignment.getMarkingPeriodId();
                     }
 
-                    CourseAssignment newAssignment = new CourseAssignment(name, assigned, new DateTime(due), now, category, maxGrade, maxGradeString, studentGrade, studentGradeString, letterGrade, percentGrade, overallGradeString, description, status, mpId);
+                    CourseAssignment newAssignment = new CourseAssignment(name, assigned, new DateTime(due), now, category, maxGrade, maxGradeString, studentGrade, studentGradeString, fullGradeRatioString, letterGrade, percentGrade, overallGradeString, description, status, mpId);
                     if (assignment != null && !assignment.isCustomAssignment()) {
                         newAssignment.setEditedAssignment(true);
                         replacedAssignments.add(assignment);

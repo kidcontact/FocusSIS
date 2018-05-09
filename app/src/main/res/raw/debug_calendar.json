@@ -1,0 +1,83 @@
+{
+  "month": 5,
+  "year": 2018,
+  "events": {
+    "116701": {
+      "name": "Don DeLillo documentary response paper",
+      "id": "116701",
+      "type": "assignment",
+      "date": "2018-05-02T14:32"
+    },
+    "116142": {
+      "name": "APhw2.16: Ch28",
+      "id": "116142",
+      "type": "assignment",
+      "date": "2018-05-03T14:32"
+    },
+    "116703": {
+      "name": "Read White Noise Ch 22-31",
+      "id": "116703",
+      "type": "assignment",
+      "date": "2018-05-04T14:32"
+    },
+    "116705": {
+      "name": "Finish White Noise",
+      "id": "116705",
+      "type": "assignment",
+      "date": "2018-05-07T14:32"
+    },
+    "103040": {
+      "name": "Complete Rough Draft",
+      "id": "103040",
+      "type": "assignment",
+      "date": "2018-05-09T14:32"
+    },
+    "117039": {
+      "name": "APhw2.17: 2013APCE&M FRQ",
+      "id": "117039",
+      "type": "assignment",
+      "date": "2018-05-10T14:32"
+    },
+    "742": {
+      "name": "Teacher Workday - No School",
+      "id": "742",
+      "type": "occasion",
+      "date": "2018-05-16T14:32"
+    },
+    "744": {
+      "name": "SPARK Conference",
+      "id": "744",
+      "type": "occasion",
+      "date": "2018-05-23T14:32"
+    },
+    "743": {
+      "name": "Memorial Day - No School",
+      "id": "743",
+      "type": "occasion",
+      "date": "2018-05-28T14:32"
+    }
+  },
+  "mps": {
+    "349": {
+      "id": "349",
+      "name": "Sem1GradeBook",
+      "year": 2017
+    },
+    "350": {
+      "id": "350",
+      "name": "Sem2Gradebook",
+      "year": 2017,
+      "selected": true
+    }
+  },
+  "mp_years": [
+    2012,
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019
+  ]
+}

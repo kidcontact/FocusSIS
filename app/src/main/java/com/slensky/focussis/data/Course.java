@@ -2,6 +2,7 @@ package com.slensky.focussis.data;
 
 import android.util.Log;
 
+import org.apache.commons.lang.WordUtils;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,6 +59,7 @@ public class Course extends MarkingPeriodPage {
                 String maxGradeString = null;
                 double studentGrade = -1;
                 String studentGradeString = null;
+                String fullGradeRatioString = null;
                 String assignmentLetterGrade = null;
                 int assignmentPercentGrade = -1;
                 String gradeString = null;
@@ -111,22 +113,29 @@ public class Course extends MarkingPeriodPage {
                         studentGrade = assignmentJSON.getDouble("student_grade");
                     }
                 }
-                else if (assignmentJSON.getString("status").equals("graded")) {
-                    status = CourseAssignment.Status.GRADED;
-                    if (assignmentJSON.has("max_grade_string")) {
-                        maxGradeString = assignmentJSON.getString("max_grade_string");
+                else {
+                    status = assignmentJSON.getString("status").equals("graded") ? CourseAssignment.Status.GRADED : CourseAssignment.Status.OTHER;
+                    if (assignmentJSON.has("full_grade_ratio_string")) {
+                        fullGradeRatioString = assignmentJSON.getString("full_grade_ratio_string");
                     }
                     else {
-                        maxGrade = assignmentJSON.getInt("max_grade");
+                        if (assignmentJSON.has("max_grade_string")) {
+                            maxGradeString = assignmentJSON.getString("max_grade_string");
+                        }
+                        else {
+                            maxGrade = assignmentJSON.getInt("max_grade");
+                        }
+                        if (assignmentJSON.has("student_grade_string")) {
+                            studentGradeString = assignmentJSON.getString("student_grade_string");
+                        }
+                        else {
+                            studentGrade = assignmentJSON.getDouble("student_grade");
+                        }
                     }
-                    if (assignmentJSON.has("student_grade_string")) {
-                        studentGradeString = assignmentJSON.getString("student_grade_string");
-                    }
-                    else {
-                        studentGrade = assignmentJSON.getDouble("student_grade");
-                    }
+
                     if (assignmentJSON.has("overall_grade_string")) {
                         gradeString = assignmentJSON.getString("overall_grade_string");
+                        gradeString = WordUtils.capitalize(gradeString);
                     }
                     else {
                         assignmentLetterGrade = assignmentJSON.getString("letter_overall_grade");
@@ -139,7 +148,7 @@ public class Course extends MarkingPeriodPage {
                     description = assignmentJSON.getString("description");
                 }
 
-                assignments.add(new CourseAssignment(assignmentName, assigned, due, lastModified, category, maxGrade, maxGradeString, studentGrade, studentGradeString, assignmentLetterGrade, assignmentPercentGrade, gradeString, description, status, getCurrentMarkingPeriod().getId()));
+                assignments.add(new CourseAssignment(assignmentName, assigned, due, lastModified, category, maxGrade, maxGradeString, studentGrade, studentGradeString, fullGradeRatioString, assignmentLetterGrade, assignmentPercentGrade, gradeString, description, status, getCurrentMarkingPeriod().getId()));
 
             }
         } catch (JSONException e) {

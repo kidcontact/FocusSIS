@@ -137,7 +137,7 @@ public class CalendarFragment extends NetworkTabAwareFragment implements Syncabl
         calendarView.setOnMonthChangedListener(new OnMonthChangedListener() {
             @Override
             public void onMonthChanged(MaterialCalendarView materialCalendarView, CalendarDay calendarDay) {
-                RequestSingleton.getInstance(getContext()).getRequestQueue().cancelAll(new RequestQueue.RequestFilter() {
+                api.cancelAll(new RequestQueue.RequestFilter() {
                     @Override
                     public boolean apply(Request<?> request) {
                         return true;
@@ -176,6 +176,9 @@ public class CalendarFragment extends NetworkTabAwareFragment implements Syncabl
             Thread decoratorThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    if (calendar == null) {
+                        return;
+                    }
                     final int occasionColor = ContextCompat.getColor(getContext(), com.slensky.focussis.R.color.calendarOccasionDecorator);
                     final int assignmentColor = ContextCompat.getColor(getContext(), com.slensky.focussis.R.color.calendarAssignmentDecorator);
 

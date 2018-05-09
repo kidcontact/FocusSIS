@@ -223,9 +223,16 @@ public class MainActivity extends AppCompatActivity
         TextView email = (TextView) header.findViewById(com.slensky.focussis.R.id.nav_text_email);
 
         String[] n = username.replace(".", " ").split(" "); // for some reason you can't split on spaces?
-        String first = n[0].substring(0, 1).toUpperCase() + n[0].substring(1);
-        String last = n[1].substring(0, 1).toUpperCase() + n[1].substring(1);
-        name.setText(first + " " + last);
+        if (n.length > 1) {
+            String first = n[0].substring(0, 1).toUpperCase() + n[0].substring(1);
+            String last = n[1].substring(0, 1).toUpperCase() + n[1].substring(1);
+            name.setText(first + " " + last);
+        }
+        else {
+
+            name.setText(n[0]);
+        }
+
         email.setText(username + "@asdnh.org");
 
         Log.d(TAG, "Configure viewpager + tab layout");
@@ -356,7 +363,8 @@ public class MainActivity extends AppCompatActivity
             });
             waitForOnLoad.start();
         }
-        RequestSingleton.getInstance(this).getRequestQueue().cancelAll(new RequestQueue.RequestFilter() {
+
+        api.cancelAll(new RequestQueue.RequestFilter() {
             @Override
             public boolean apply(Request<?> request) {
                 return !REAUTH_REQUEST_TAG.equals(request.getTag());
