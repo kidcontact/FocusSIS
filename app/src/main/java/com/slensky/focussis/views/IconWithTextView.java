@@ -5,8 +5,11 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -17,12 +20,13 @@ import com.slensky.focussis.R;
  * Created by slensky on 5/16/17.
  */
 
-public class IconWithTextView extends RelativeLayout {
+public class IconWithTextView extends FrameLayout {
 
     private Drawable icon;
     private String text;
     private String hint;
 
+    private RelativeLayout layout;
     private ImageView iconView;
     private TextView textView;
     private TextView hintView;
@@ -52,20 +56,25 @@ public class IconWithTextView extends RelativeLayout {
      *           the current context for the view.
      */
     private void initializeViews(Context context) {
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.view_icon_with_text, this);
+        inflate(getContext(), R.layout.view_icon_with_text, this);
+    }
+
+    @Override
+    public void setOnClickListener(@Nullable OnClickListener l) {
+        layout.setClickable(false);
+        super.setOnClickListener(l);
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        iconView = (ImageView) this.findViewById(R.id.row_icon);
+        layout = findViewById(R.id.relative_layout);
+        iconView = (ImageView) findViewById(R.id.row_icon);
         iconView.setImageDrawable(icon);
         iconView.setColorFilter(Color.argb(132, 0, 0, 0), PorterDuff.Mode.MULTIPLY);
-        textView = (TextView) this.findViewById(R.id.text_main);
+        textView = (TextView) findViewById(R.id.text_main);
         textView.setText(text);
-        hintView = (TextView) this.findViewById(R.id.text_hint);
+        hintView = (TextView) findViewById(R.id.text_hint);
         hintView.setText(hint);
     }
 

@@ -1,13 +1,20 @@
 package com.slensky.focussis.fragments;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.slensky.focussis.R;
+import com.slensky.focussis.util.CardViewAnimationController;
 import com.slensky.focussis.views.IconWithTextView;
 
 import org.json.JSONObject;
@@ -43,7 +50,7 @@ public class DemographicFragment extends NetworkTabAwareFragment {
 
     @Override
     protected void onSuccess(JSONObject response) {
-        Demographic demographic = new Demographic(response);
+        final Demographic demographic = new Demographic(response);
         demographic.setPicture(api.getStudent().getPicture());
         View view = getView();
         if (view != null) {
@@ -53,6 +60,19 @@ public class DemographicFragment extends NetworkTabAwareFragment {
             dob.setText(DateUtil.dateTimeToLongString(demographic.getBirthdate()));
             IconWithTextView email = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_email);
             email.setText(demographic.getEmail());
+            email.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(Intent.ACTION_SENDTO);
+                    intent.putExtra(Intent.EXTRA_EMAIL, new String[]{demographic.getEmail()});
+                    intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+                    //startActivity(intent);
+                    if (getContext() != null && intent.resolveActivity(getContext().getPackageManager()) != null) {
+                        Log.i(TAG, "Emailing " + demographic.getEmail());
+                        startActivity(intent);
+                    }
+                }
+            });
             IconWithTextView gender = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_gender);
             gender.setText(demographic.getGender());
             IconWithTextView grade = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_grade);
@@ -88,6 +108,13 @@ public class DemographicFragment extends NetworkTabAwareFragment {
             cumulative.setText(demographic.getCumulativeFile());
             IconWithTextView studentID = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_student_id);
             studentID.setText(Integer.toString(demographic.getId()));
+
+            CardViewAnimationController animationController = new CardViewAnimationController(getContext());
+            CardView basic = view.findViewById(R.id.card_basic);
+            CardView detailed = view.findViewById(R.id.card_detailed);
+            basic.setAnimation(animationController.nextAnimation());
+            detailed.setAnimation(animationController.nextAnimation());
+
         }
 
         requestFinished = true;

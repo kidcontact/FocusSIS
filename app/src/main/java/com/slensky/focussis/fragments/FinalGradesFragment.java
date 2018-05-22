@@ -332,6 +332,10 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
                 table.addView(gradeRow);
             }
 
+            if (finalGrades.getFinalGrades().size() == 0) {
+                table.addView(inflater.inflate(R.layout.view_no_records_row, table, false));
+            }
+
             loadingView.setVisibility(View.GONE);
             table.setVisibility(View.VISIBLE);
         }

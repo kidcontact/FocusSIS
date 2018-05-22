@@ -25,8 +25,8 @@ android {
         applicationId "com.slensky.focussis"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 18
-        versionName "1.1.9"
+        versionCode 19
+        versionName "1.2.0"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -83,6 +83,9 @@ dependencies {
     compile('com.google.apis:google-api-services-calendar:v3-rev315-1.23.0') {
         exclude group: 'org.apache.httpcomponents'
     }
+    implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
+    compile 'org.apache.commons:commons-lang3:3.6'
+    compile 'me.xdrop:fuzzywuzzy:1.1.10'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
     compile project(':MaterialCalendarView')

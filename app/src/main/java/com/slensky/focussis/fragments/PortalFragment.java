@@ -55,7 +55,6 @@ import java.util.List;
 
 public class PortalFragment extends NetworkTabAwareFragment implements ActionMode.Callback, Syncable {
     private static final String TAG = "PortalFragment";
-    private static final int CALENDAR_PERMISSION_REQUEST = 0;
 
     private Portal portal;
     private CourseFragment currentCourseFragment;

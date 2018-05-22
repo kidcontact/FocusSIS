@@ -2,6 +2,7 @@ package com.slensky.focussis.school;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
+import org.json.JSONObject;
 
 /**
  * Created by slensky on 4/25/18.
@@ -23,4 +24,8 @@ public abstract class School {
     // not guaranteed to produce accurate results, but is used when districts follow simple formats
     // (e.g. firstname.lastname@domain.edu) and the teacher's email cannot be found through other means
     public abstract String getTeacherEmailFromName(String teacherName);
+
+    public abstract int getMapDrawableId();
+    public abstract JSONObject getMapRoomCoordinates();
+    public abstract JSONObject getMapTeacherCoordinates();
 }

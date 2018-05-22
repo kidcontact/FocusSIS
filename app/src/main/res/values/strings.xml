@@ -90,6 +90,19 @@
     <string name="course_days_header">Meeting Days</string>
     <string name="course_room_header">Room</string>
     <string name="course_term_header">Term</string>
+    <string name="map_search_hint">Search for a room # or teacher</string>
+    <string name="map_search_error">Room or teacher could not be found</string>
+    <string name="pinch_to_zoom">Pinch to zoom</string>
+    <string name="bell_schedule">Bell Schedule</string>
+    <string-array name="bell_schedule_type">
+        <item>Grades 7–12</item>
+        <item>Grade 6</item>
+        <item>Grades 7–12 Delay</item>
+        <item>Grade 6 Delay</item>
+        <item>SPARK</item>
+    </string-array>
+    <string name="schedule_prefs">schedulePrefs</string>
+    <string name="schedule_prefs_spinner_selection">spinnerSelection</string>
 
     <!-- Calendar -->
     <string name="calendar_hint">Tap a day on the calendar to see events and assignments</string>
@@ -112,7 +125,7 @@
 
     <!-- Demographic -->
     <string name="demographic_name_hint">Name</string>
-    <string name="demographic_dob_hint">Birthday</string>
+    <string name="demographic_dob_hint">Birthdate</string>
     <string name="demographic_email_hint">Email</string>
     <string name="demographic_gender_hint">Gender</string>
     <string name="demographic_grade_hint">Grade</string>
@@ -189,11 +202,12 @@
     <string name="network_failure_button">Retry</string>
 
     <!-- Extras -->
-    <string name="EXTRA_PORTAL">org.kidcontact.focussis.PORTAL</string>
-    <string name="EXTRA_USERNAME">org.kidcontact.focussis.USERNAME</string>
-    <string name="EXTRA_PASSWORD">org.kidcontact.focussis.PASSWORD</string>
-    <string name="EXTRA_COURSE_ID">org.kidcontact.focussis.COURSE_ID</string>
-    <string name="EXTRA_DISABLE_AUTO_SIGN_IN">org.kidcontact.focussis.DISABLE_AUTO_SIGN_IN</string>
+    <string name="EXTRA_PORTAL">com.slensky.focussis.PORTAL</string>
+    <string name="EXTRA_SCHEDULE">com.slensky.focussis.SCHEDULE</string>
+    <string name="EXTRA_USERNAME">com.slensky.focussis.USERNAME</string>
+    <string name="EXTRA_PASSWORD">com.slensky.focussis.PASSWORD</string>
+    <string name="EXTRA_COURSE_ID">com.slensky.focussis.COURSE_ID</string>
+    <string name="EXTRA_DISABLE_AUTO_SIGN_IN">com.slensky.focussis.DISABLE_AUTO_SIGN_IN</string>
 
     <!-- Preferences -->
     <string name="login_prefs">loginPrefs</string>
@@ -294,5 +308,6 @@
     <string name="cancel">Cancel</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="no_records">No records to show</string>
 
 </resources>

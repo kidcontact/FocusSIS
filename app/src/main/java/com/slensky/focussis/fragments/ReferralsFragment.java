@@ -160,6 +160,10 @@ public class ReferralsFragment extends NetworkTabAwareFragment {
                 table.addView(referralRow);
             }
 
+            if (refList.size() == 0) {
+                table.addView(inflater.inflate(R.layout.view_no_records_row, table, false));
+            }
+
         }
 
         requestFinished = true;

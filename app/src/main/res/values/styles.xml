@@ -52,4 +52,14 @@
         <item name="android:textSize">@dimen/about_description_text_size</item>
     </style>
 
+    <!-- used for displaying bell schedules -->
+    <style name="schedule_textview" parent="primaryBodyText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">fill</item>
+        <item name="android:background">@drawable/border</item>
+        <item name="android:padding">8dp</item>
+    </style>
+
 </resources>

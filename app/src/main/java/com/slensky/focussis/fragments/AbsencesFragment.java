@@ -212,6 +212,10 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
                 table.addView(absenceRow);
             }
 
+            if (absences.getDays().size() == 0) {
+                table.addView(inflater.inflate(R.layout.view_no_records_row, table, false));
+            }
+
         }
         requestFinished = true;
     }

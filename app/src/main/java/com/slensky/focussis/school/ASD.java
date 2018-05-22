@@ -3,9 +3,12 @@ package com.slensky.focussis.school;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.slensky.focussis.R;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalTime;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -201,6 +204,21 @@ public class ASD extends School {
             return names[0] + "." + names[names.length - 1] + "@" + DOMAIN_NAME;
         }
         return names[0] + "@" + DOMAIN_NAME;
+    }
+
+    @Override
+    public int getMapDrawableId() {
+        return R.drawable.school_asd_school_map;
+    }
+
+    @Override
+    public JSONObject getMapRoomCoordinates() {
+        return null;
+    }
+
+    @Override
+    public JSONObject getMapTeacherCoordinates() {
+        return null;
     }
 
 }

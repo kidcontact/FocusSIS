@@ -36,7 +36,7 @@ import java.util.List;
 
 public class FocusDebugApi extends FocusApi {
     private static final String TAG = "FocusDebugApi";
-    private static final int FAKE_LOAD_TIME_MS = 1000;
+    private static final int FAKE_LOAD_TIME_MS = 500;
     private long sessionLengthMillis = 20 * 60 * 1000; // milliseconds
     private List<Thread> threads = new ArrayList<>();
     private Request dummyRequest;

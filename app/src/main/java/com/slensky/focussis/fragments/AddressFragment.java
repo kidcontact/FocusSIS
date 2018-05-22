@@ -1,8 +1,11 @@
 package com.slensky.focussis.fragments;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,7 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.slensky.focussis.data.AddressContactDetail;
+import com.slensky.focussis.util.CardViewAnimationController;
 import com.slensky.focussis.views.IconWithTextView;
 
 import org.json.JSONObject;
@@ -60,14 +64,10 @@ public class AddressFragment extends NetworkTabAwareFragment {
         Address address = new Address(response);
         View view = getView();
         if (view != null) {
-//            IconWithTextView userAddress = (IconWithTextView) view.findViewById(R.id.view_address);
-//            userAddress.setText(address.getAddress() + "\n" + address.getCity() + " " + address.getState() + ", " + address.getZip());
-//            IconWithTextView userPhone = (IconWithTextView) view.findViewById(R.id.view_phone);
-//            userPhone.setText(formatPhone(address.getPhone()));
-
+            CardViewAnimationController animationController = new CardViewAnimationController(getContext());
             LinearLayout addressLayout = (LinearLayout) view.findViewById(R.id.address_layout);
             for (int i = 0; i < address.getContacts().size(); i++) {
-                AddressContact c = address.getContacts().get(i);
+                final AddressContact c = address.getContacts().get(i);
                 CardView cview = (CardView) LayoutInflater.from(getContext()).inflate(R.layout.view_address_contact, addressLayout, false);
 
                 TextView title = (TextView) cview.findViewById(R.id.text_contact_title);
@@ -99,6 +99,17 @@ public class AddressFragment extends NetworkTabAwareFragment {
                 IconWithTextView contactAddress = (IconWithTextView) cview.findViewById(R.id.view_address);
                 if (c.hasAddress()) {
                     contactAddress.setText(c.getAddress() + "\n" + c.getCity() + " " + c.getState() + ", " + c.getZip());
+                    contactAddress.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            Uri geoLocation = Uri.parse("geo:0,0?q=" + Uri.encode(c.getAddress() + " " + c.getCity() + " " + c.getState() + " " + c.getZip()));
+                            intent.setData(geoLocation);
+                            if (getContext() != null && intent.resolveActivity(getContext().getPackageManager()) != null) {
+                                startActivity(intent);
+                            }
+                        }
+                    });
                 }
                 else {
                     contactAddress.setVisibility(View.GONE);
@@ -106,6 +117,16 @@ public class AddressFragment extends NetworkTabAwareFragment {
                 IconWithTextView phone = (IconWithTextView) cview.findViewById(R.id.view_phone);
                 if (c.hasPhone()) {
                     phone.setText(formatPhone(c.getPhone()));
+                    phone.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(Intent.ACTION_DIAL);
+                            intent.setData(Uri.parse("tel:" + c.getPhone()));
+                            if (getContext() != null && intent.resolveActivity(getContext().getPackageManager()) != null) {
+                                startActivity(intent);
+                            }
+                        }
+                    });
                 }
                 else {
                     phone.setVisibility(View.GONE);
@@ -113,6 +134,19 @@ public class AddressFragment extends NetworkTabAwareFragment {
                 IconWithTextView email = (IconWithTextView) cview.findViewById(R.id.view_email);
                 if (c.hasEmail()) {
                     email.setText(c.getEmail());
+                    email.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(Intent.ACTION_SENDTO);
+                            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{c.getEmail()});
+                            intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+                            //startActivity(intent);
+                            if (getContext() != null && intent.resolveActivity(getContext().getPackageManager()) != null) {
+                                Log.i(TAG, "Emailing " + c.getEmail());
+                                startActivity(intent);
+                            }
+                        }
+                    });
                 }
                 else {
                     email.setVisibility(View.GONE);
@@ -146,6 +180,8 @@ public class AddressFragment extends NetworkTabAwareFragment {
                 int margin = dpToPixel(16);
                 params.setMargins(margin, margin, margin, margin);
                 cview.setLayoutParams(params);
+
+                cview.setAnimation(animationController.nextAnimation());
 
                 addressLayout.addView(cview);
             }

@@ -410,6 +410,9 @@ public class CourseFragment extends NetworkFragment {
                     assignmentTable.addView(row);
                 }
             }
+            else {
+                assignmentTable.addView(inflater.inflate(R.layout.view_no_records_row, assignmentTable, false));
+            }
 
             courseLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
@@ -1028,12 +1031,19 @@ public class CourseFragment extends NetworkFragment {
                     assignmentTable.removeViewAt(i); // remove assignment row
                     assignmentTable.removeViewAt(i - 1); // remove divider
                     course.getAssignments().remove(row.getTag());
+                    if (course.getAssignments().size() == 0) {
+                        assignmentTable.addView(LayoutInflater.from(assignmentTable.getContext()).inflate(R.layout.view_no_records_row, assignmentTable, false));
+                    }
                     break;
                 }
             }
         }
 
         if (to != null) {
+            if (course.getAssignments().size() == 0 && assignmentTable.getChildCount() > 1) {
+                // remove "no records" row
+                assignmentTable.removeViewAt(1);
+            }
             course.getAssignments().add(to);
             Collections.sort(course.getAssignments(), Collections.<CourseAssignment>reverseOrder());
 

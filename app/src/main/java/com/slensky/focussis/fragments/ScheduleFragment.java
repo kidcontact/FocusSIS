@@ -2,26 +2,22 @@ package com.slensky.focussis.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.slensky.focussis.R;
+import com.google.gson.Gson;
 import com.slensky.focussis.data.Schedule;
 import com.slensky.focussis.network.FocusApiSingleton;
-import com.slensky.focussis.util.TableRowAnimationController;
-import com.slensky.focussis.util.TermUtil;
+import com.slensky.focussis.util.GsonSingleton;
 
 import org.json.JSONObject;
 
-import com.slensky.focussis.data.ScheduleCourse;
-
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,7 +26,12 @@ import java.util.List;
 
 public class ScheduleFragment extends NetworkTabAwareFragment {
     private static final String TAG = "ScheduleFragment";
+    private static List<String> tabNames;
     private Schedule schedule;
+
+    static {
+        tabNames = Arrays.asList("COURSES", "SCHOOL");
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,80 +52,23 @@ public class ScheduleFragment extends NetworkTabAwareFragment {
     @Override
     protected void onSuccess(JSONObject response) {
         schedule = new Schedule(response);
-        View view = getView();
-        if (view != null) {
-            LayoutInflater inflater = LayoutInflater.from(view.getContext());
+        if (isAdded()) {
+            List<Fragment> tempTabFragments = new ArrayList<>();
+            Bundle args = new Bundle();
+            Gson gson = GsonSingleton.getInstance();
+            args.putString(getString(com.slensky.focussis.R.string.EXTRA_SCHEDULE), gson.toJson(schedule));
 
-            TextView header = (TextView) view.findViewById(com.slensky.focussis.R.id.text_schedule_header);
-            header.setText(schedule.getCurrentMarkingPeriod().getName());
+            Fragment coursesFragment = new ScheduleCoursesTabFragment();
+            coursesFragment.setArguments(args);
+            tempTabFragments.add(coursesFragment);
 
-            TableLayout table = (TableLayout) view.findViewById(com.slensky.focussis.R.id.table_courses);
-            table.removeAllViews();
-            TableRow headerRow = (TableRow) inflater.inflate(com.slensky.focussis.R.layout.view_schedule_course_header, table, false);
-            table.addView(headerRow);
+            Fragment schoolFragment = new ScheduleSchoolTabFragment();
+            schoolFragment.setArguments(args);
+            tempTabFragments.add(schoolFragment);
 
-            List<ScheduleCourse> courses = schedule.getCourses();
-            TableRowAnimationController animationController = new TableRowAnimationController(getContext());
-            for (ScheduleCourse c : courses) {
-                final TableRow courseRow = (TableRow) inflater.inflate(com.slensky.focussis.R.layout.view_schedule_course, table, false);
-                TextView name = (TextView) courseRow.findViewById(com.slensky.focussis.R.id.text_course_name);
-                name.setText(c.getName());
-                TextView period = (TextView) courseRow.findViewById(com.slensky.focussis.R.id.text_course_period);
-                String periodStr;
-                if (c.isAdvisory()) {
-                    periodStr = "Advisory";
-                }
-                else {
-                    periodStr = "Period " + Integer.toString(c.getPeriod());
-                }
-                period.setText(periodStr);
-                TextView teacher = (TextView) courseRow.findViewById(com.slensky.focussis.R.id.text_course_teacher);
-                teacher.setText(c.getTeacher());
-                TextView days = (TextView) courseRow.findViewById(com.slensky.focussis.R.id.text_course_days);
-                days.setText(c.getDays());
-                TextView room = (TextView) courseRow.findViewById(com.slensky.focussis.R.id.text_course_room);
-                room.setText(c.getRoom().split(" ")[0]); // changes jr/sr area into just jr/sr for brevity
-                TextView term = (TextView) courseRow.findViewById(com.slensky.focussis.R.id.text_course_term);
-                term.setText(TermUtil.termToString(c.getTerm()));
-
-                final View divider = inflater.inflate(R.layout.view_divider, table, false);
-
-                Animation animation = animationController.nextAnimation();
-                courseRow.setAnimation(animation);
-                divider.setAnimation(animation);
-
-                divider.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-                courseRow.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-
-                animation.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        if (divider.getLayerType() != View.LAYER_TYPE_NONE) {
-                            divider.setLayerType(View.LAYER_TYPE_NONE, null);
-                        }
-                        if (courseRow.getLayerType() != View.LAYER_TYPE_NONE) {
-                            courseRow.setLayerType(View.LAYER_TYPE_NONE, null);
-                        }
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
-
-                table.addView(divider);
-                table.addView(courseRow);
-            }
-
+            tabFragments = tempTabFragments;
+            requestFinished = true;
         }
-
-        requestFinished = true;
     }
 
     @Override
@@ -144,11 +88,11 @@ public class ScheduleFragment extends NetworkTabAwareFragment {
 
     @Override
     public boolean hasTabs() {
-        return false;
+        return true;
     }
 
     @Override
     public List<String> getTabNames() {
-        return null;
+        return tabNames;
     }
 }

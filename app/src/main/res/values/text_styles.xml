@@ -44,4 +44,17 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <!-- Small text -->
+    <style name="smallText">
+        <item name="android:textSize">@dimen/smallText</item>
+    </style>
+
+    <style name="primarySmallText" parent="smallText">
+        <item name="android:textColor">@color/textPrimary</item>
+    </style>
+
+    <style name="secondarySmallText" parent="smallText">
+        <item name="android:textColor">@color/textTertiary</item>
+    </style>
+
 </resources>
