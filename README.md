@@ -1,6 +1,8 @@
 # FocusSIS
 
-Third-party Android app to retrieve and display student grade information from the Focus student information system. This app was originally created by as the senior project of a student at the Academy for Science and Design aiming to make the website more easily accessible on mobile devices with small screens. The Google Play listing for the application can be found [here](https://play.google.com/apps/testing/com.slensky.focussis). Please report any problems with the application to [focusbugreports@slensky.com](mailto:focusbugreports@slensky.com), or just open an issue on this repository. This project was developed for purely academic purposes, and is not associated with Focus School Software LLC.
+Third-party Android app to retrieve and display student grade information from the Focus student information system. This app was originally created by as the senior project of a student at the Academy for Science and Design aiming to make the website more easily accessible on mobile devices with small screens. The Google Play listing for the application can be found [here](https://play.google.com/apps/testing/com.slensky.focussis), and can be tested offline without an account by using the username and password "debug".
+
+Please report any problems with the application to [focusbugreports@slensky.com](mailto:focusbugreports@slensky.com), or just open an issue on this repository. This project was developed for purely academic purposes, and is not associated with Focus School Software LLC.
 
 ## Contributing
 
