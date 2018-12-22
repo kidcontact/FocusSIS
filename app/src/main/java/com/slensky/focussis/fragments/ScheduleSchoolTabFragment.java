@@ -4,14 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -42,11 +40,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.Normalizer;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
@@ -109,79 +104,82 @@ public class ScheduleSchoolTabFragment extends Fragment {
             }
         });
 
-        Spinner spinner = view.findViewById(R.id.spinner_bell_schedule);
-        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(getContext(), R.array.bell_schedule_type, android.R.layout.simple_spinner_item);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(spinnerAdapter);
-        bellSchedules = new View[spinnerAdapter.getCount()];
+        int scheduleTypesId = SchoolSingleton.getInstance().getSchool().getBellScheduleTypesId();
+        if (scheduleTypesId != -1) {
+            Spinner spinner = view.findViewById(R.id.spinner_bell_schedule);
+            ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(getContext(), scheduleTypesId, android.R.layout.simple_spinner_item);
+            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(spinnerAdapter);
+            bellSchedules = new View[spinnerAdapter.getCount()];
 
-        final HorizontalScrollView scrollView = view.findViewById(R.id.scrollview_bell_schedule);
+            final HorizontalScrollView scrollView = view.findViewById(R.id.scrollview_bell_schedule);
 
-        final SharedPreferences prefs = getContext().getSharedPreferences(getString(R.string.schedule_prefs), Context.MODE_PRIVATE);
-        spinner.setSelection(prefs.getInt(getString(R.string.schedule_prefs_spinner_selection), 0));
+            final SharedPreferences prefs = getContext().getSharedPreferences(getString(R.string.schedule_prefs), Context.MODE_PRIVATE);
+            spinner.setSelection(prefs.getInt(getString(R.string.schedule_prefs_spinner_selection), 0));
 
+            final int[] scheduleLayouts = SchoolSingleton.getInstance().getSchool().getBellScheduleLayouts();
 
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putInt(getString(R.string.schedule_prefs_spinner_selection), i);
+                    editor.apply();
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putInt(getString(R.string.schedule_prefs_spinner_selection), i);
-                editor.apply();
-
-                scrollView.removeAllViews();
-                if (bellSchedules[i] != null) {
-                    if (bellSchedules[i].getParent() != null) {
-                        ((ViewGroup) bellSchedules[i].getParent()).removeView(bellSchedules[i]);
+                    scrollView.removeAllViews();
+                    if (bellSchedules[i] != null) {
+                        if (bellSchedules[i].getParent() != null) {
+                            ((ViewGroup) bellSchedules[i].getParent()).removeView(bellSchedules[i]);
+                        }
+                        scrollView.addView(bellSchedules[i]);
                     }
-                    scrollView.addView(bellSchedules[i]);
-                }
-                else {
-                    // TODO: generalize for different schools
-                    switch (i) {
-                        case 0:
-                            bellSchedules[i] = inflater.inflate(R.layout.view_school_schedule_asd_7_12, scrollView, false);
-                            break;
-                        case 1:
-                            bellSchedules[i] = inflater.inflate(R.layout.view_school_schedule_asd_6, scrollView, false);
-                            break;
-                        case 2:
-                            bellSchedules[i] = inflater.inflate(R.layout.view_school_schedule_asd_7_12_delay, scrollView, false);
-                            break;
-                        case 3:
-                            bellSchedules[i] = inflater.inflate(R.layout.view_school_schedule_asd_6_delay, scrollView, false);
-                            break;
-                        case 4:
-                            bellSchedules[i] = inflater.inflate(R.layout.view_school_schedule_asd_spark, scrollView, false);
-                            break;
+                    else {
+                        // TODO: generalize for different schools
+                        bellSchedules[i] = inflater.inflate(scheduleLayouts[i], scrollView, false);
+                        scrollView.addView(bellSchedules[i]);
                     }
-                    scrollView.addView(bellSchedules[i]);
                 }
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
 
-            }
-        });
+                }
+            });
+        }
 
         return view;
     }
 
     private boolean performSearch(String text) {
+        final int roomNumbersId = SchoolSingleton.getInstance().getSchool().getMapRoomNumbersId();
+        final int roomKeywordsId = SchoolSingleton.getInstance().getSchool().getMapKeywordsId();
+        // no point in doing anything if we don't even have room numbers
+        if (roomNumbersId == -1) {
+            return false;
+        }
+
         text = StringUtils.stripAccents(text);
         text = text.replace(".", "")
                 .replace("'s", "")
                 .replace("'", "");
 
         try {
-            JSONObject roomNumbers = JSONUtil.JSONFromRawResource(getResources(), R.raw.map_asd_room_numbers);
-            JSONObject roomKeywords = JSONUtil.JSONFromRawResource(getResources(), R.raw.map_asd_room_keywords);
+            JSONObject roomNumbers = roomNumbers = JSONUtil.JSONFromRawResource(getResources(), R.raw.map_asd_room_numbers);
+            JSONObject roomKeywords = null;
+            if (roomKeywordsId != -1) {
+                roomKeywords = JSONUtil.JSONFromRawResource(getResources(), R.raw.map_asd_room_keywords);
+            }
+
 
             if (NumberUtils.isDigits(text) && roomNumbers.has(text)) {
                 Log.d(TAG, "Zooming to room " + text);
                 zoomMapToCoordinates(roomNumbers.getString(text));
                 return true;
+            }
+
+            // nothing else to do if there are no keywords for this school
+            if (roomKeywords == null) {
+                return false;
             }
 
             boolean isBathroom = text.equals("bathroom");

@@ -563,6 +563,10 @@ public class CourseFragment extends NetworkFragment {
                             "<b>Assigned: </b>" + assigned.getText() + "<br>" +
                             "<b>Due: </b>" + due.getText();
 
+                    if (!assignment.getLastModified().isEqual(assignment.getAssigned())) {
+                        html += "<br><b>Last modified: </b>" + DateUtil.dateTimeToShortString(assignment.getLastModified());
+                    }
+
                     if (assignment.hasDescription()) {
                         html += assignment.getDescription().contains("\n") ? "<br><b>Description:</b><br>" : "<br><b>Description: </b>";
                         html += assignment.getDescription().replace("\n", "<br>");

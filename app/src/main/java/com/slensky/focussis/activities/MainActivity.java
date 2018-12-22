@@ -94,7 +94,6 @@ import com.slensky.focussis.fragments.SettingsFragment;
 import com.slensky.focussis.network.FocusApi;
 import com.slensky.focussis.network.FocusApiSingleton;
 import com.slensky.focussis.network.FocusDebugApi;
-import com.slensky.focussis.network.RequestSingleton;
 
 import com.slensky.focussis.fragments.EmptyFragment;
 import com.slensky.focussis.fragments.LoadingFragment;
@@ -160,7 +159,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(com.slensky.focussis.R.style.AppTheme);
+        setTheme(com.slensky.focussis.R.style.AppTheme_Light);
         if (savedInstanceState != null) {
             Log.d(TAG, "Restoring saved instance state");
             username = savedInstanceState.getString(USERNAME_BUNDLE_KEY);
@@ -222,18 +221,20 @@ public class MainActivity extends AppCompatActivity
         TextView name = (TextView) header.findViewById(com.slensky.focussis.R.id.nav_text_name);
         TextView email = (TextView) header.findViewById(com.slensky.focussis.R.id.nav_text_email);
 
-        String[] n = username.replace(".", " ").split(" "); // for some reason you can't split on spaces?
+        String[] n = username.split("\\.");
         if (n.length > 1) {
             String first = n[0].substring(0, 1).toUpperCase() + n[0].substring(1);
             String last = n[1].substring(0, 1).toUpperCase() + n[1].substring(1);
             name.setText(first + " " + last);
         }
         else {
-
             name.setText(n[0]);
         }
 
-        email.setText(username + "@asdnh.org");
+        String domain = SchoolSingleton.getInstance().getSchool().getDomainName();
+        if (domain != null) {
+            email.setText(username + "@" + domain);
+        }
 
         Log.d(TAG, "Configure viewpager + tab layout");
 
@@ -292,8 +293,6 @@ public class MainActivity extends AppCompatActivity
         sessionKeepAliveThread.start();
 
         // Initialize progress dialog for event export, credentials, and service object.
-//        calendarExportProgress = new ProgressDialog(this);
-//        calendarExportProgress.setMessage(getString(R.string.export_progress_dialog));
         calendarExportProgress = new MaterialDialog.Builder(this)
                 .content(R.string.export_progress_dialog)
                 .progress(false, 0, true)

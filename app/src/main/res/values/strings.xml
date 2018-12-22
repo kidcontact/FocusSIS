@@ -49,6 +49,10 @@
     <string name="language_change_progress">Changing Language…</string>
     <string name="login_blank_username_error">Username cannot be blank</string>
     <string name="login_blank_password_error">Password cannot be blank</string>
+    <string name="login_asd_notice_title">Important Notice</string>
+    <string name="login_asd_notice_message">This app was created for the Academy for Science and Design. If you are not a student at this school, the app will not work for you. Sorry for the inconvenience!</string>
+    <string name="login_asd_notice_negative">Close</string>
+    <string name="login_asd_notice_positive">I understand</string>
 
     <!-- Portal page -->
     <string name="portal_empty_fragment">Whoops, looks like there isn\'t anything here!</string>
@@ -94,7 +98,7 @@
     <string name="map_search_error">Room or teacher could not be found</string>
     <string name="pinch_to_zoom">Pinch to zoom</string>
     <string name="bell_schedule">Bell Schedule</string>
-    <string-array name="bell_schedule_type">
+    <string-array name="asd_bell_schedule_type">
         <item>Grades 7–12</item>
         <item>Grade 6</item>
         <item>Grades 7–12 Delay</item>
@@ -194,6 +198,7 @@
     <!-- Network error messages -->
     <string name="network_error_timeout">Network error</string>
     <string name="network_error_auth">Invalid username or password</string>
+    <string name="network_error_auth_expanded">Invalid username or password. Are you a student at the Academy for Science and Design?</string>
     <string name="network_error_server">Server error. Please try again later</string>
     <string name="network_error_unknown">Error. Please try again later</string>
 
@@ -214,8 +219,7 @@
     <string name="login_prefs_save_login">saveLogin</string>
     <string name="login_prefs_username">username</string>
     <string name="login_prefs_password">password</string>
-
-    <!-- JSON keys for API fields -->
+    <string name="login_prefs_read_school_msg">readSchoolMsg</string>
 
     <!-- Preferences page -->
     <string name="settings_title_general">General</string>
@@ -227,8 +231,9 @@
     <string name="settings_always_check_preferences_title">Always check language on login</string>
     <string name="settings_always_check_preferences_summary">Prevents crashes if your language is set incorrectly on Focus, but can make logging in slightly slower</string>
     <string name="settings_change_google_account_title">Change selected Google account</string>
-    <string name="settings_change_google_account_summary_no_account">Used for exporting events to calendar. No account has been selected yet</string>
+    <string name="settings_change_google_account_summary_no_account">Used for exporting events to calendar. No account has been selected yet.</string>
     <string name="settings_change_google_account_summary">Used for exporting events to calendar. Currently selected account is %1$s</string>
+    <string name="settings_theme_title">Select app theme</string>
     <string name="settings_show_custom_assignments_in_portal_title">Show custom assignments</string>
     <string name="settings_show_custom_assignments_in_portal_summary">Custom assignments will be visible in the assignments tab</string>
     <string name="settings_get_assignment_descriptions_on_export_from_portal_title">Export descriptions for assignments</string>

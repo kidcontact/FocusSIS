@@ -56,11 +56,14 @@ public class CourseParser extends PageParser {
         boolean hasCategories = false;
         Element categoryTable = course.selectFirst("td.DarkGradientBG");
         if (categoryTable != null) {
-            String currGrade = course.getElementById("currentStudentGrade[]").text();
-            currGrade = currGrade.replace('\u00A0', ' '); // replace non-breaking space with normal space
-            if (currGrade.contains("%")) {
-                json.put("percent_grade", Integer.parseInt(currGrade.substring(0, currGrade.indexOf('%'))));
-                json.put("letter_grade", currGrade.substring(currGrade.indexOf(' ') + 1));
+            Element currGradeElement = course.getElementById("currentStudentGrade[]");
+            if (currGradeElement != null) { // possibly outdated? not sure if this element ever exists anymore
+                String currGrade = currGradeElement.text();
+                currGrade = currGrade.replace('\u00A0', ' '); // replace non-breaking space with normal space
+                if (currGrade.contains("%")) {
+                    json.put("percent_grade", Integer.parseInt(currGrade.substring(0, currGrade.indexOf('%'))));
+                    json.put("letter_grade", currGrade.substring(currGrade.indexOf(' ') + 1));
+                }
             }
 
             JSONArray categories = new JSONArray();
@@ -87,12 +90,20 @@ public class CourseParser extends PageParser {
 
                 List<String> scores = new ArrayList<>();
                 td = tr.get(2).getElementsByTag("td");
-                for (int i = 0; i < td.size() - 1; i++) {
+                for (int i = 0; i < td.size(); i++) {
                     String trimmed = td.get(i).text().trim();
                     if (trimmed.isEmpty()) {
                         continue;
                     }
                     scores.add(trimmed);
+                }
+
+                // the last element at the end of scores is now the weighted grade
+                // use this to assign course grade if currGradeElement could not be found
+                String weightedGrade = scores.get(scores.size() - 1);
+                if (currGradeElement == null && weightedGrade.contains("%")) {
+                    json.put("percent_grade", Integer.parseInt(weightedGrade.substring(0, weightedGrade.indexOf('%'))));
+                    json.put("letter_grade", weightedGrade.substring(weightedGrade.indexOf(' ') + 1));
                 }
 
                 for (int i = 0; i < names.size(); i++) {

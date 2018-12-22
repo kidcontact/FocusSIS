@@ -38,7 +38,6 @@ public class Portal extends MarkingPeriodPage {
             while (coursesIterator.hasNext()) {
                 JSONObject courseJSON = coursesJSON.getJSONObject(coursesIterator.next());
 
-                String days = courseJSON.getString("days");
                 String id = courseJSON.getString("id");
                 String name = courseJSON.getString("name");
                 String teacher = courseJSON.getString("teacher");
@@ -73,7 +72,7 @@ public class Portal extends MarkingPeriodPage {
                     }
                 }
 
-                courses.add(new PortalCourse(assignments, days, id, letterGrade, name, percentGrade, period, teacher, teacherEmail));
+                courses.add(new PortalCourse(assignments, id, letterGrade, name, percentGrade, period, teacher, teacherEmail));
 
             }
 

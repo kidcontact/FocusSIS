@@ -5,8 +5,14 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import com.slensky.focussis.util.JSONUtil;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,10 +60,32 @@ public class StudentParser extends PageParser {
                 json.put("grade", Integer.parseInt(data[1]));
             }
 
-            String birthdate = context.getJSONObject("obj_info").getString("birthdate");
-            birthdate = birthdate.replace(' ', 'T'); // fix format to ISO time
-            json.put("birthdate", birthdate);
+            if (context.getJSONObject("obj_info").has("birthdate")) {
+                String birthdate = context.getJSONObject("obj_info").getString("birthdate");
+                birthdate = birthdate.replace(' ', 'T'); // fix format to ISO time
+                json.put("birthdate", birthdate);
+            }
             json.put("picture", context.getJSONObject("obj_info").getString("image"));
+        }
+
+        // extract API related information from the page
+        Document student = Jsoup.parse(html);
+        String apiScript = student.selectFirst(".site-content > script").html();
+        Pattern pUrl = Pattern.compile("var url( )*?=( )*?\".*\";");
+        m = pUrl.matcher(apiScript);
+        if (m.find()) {
+            String url = m.group(0);
+            url = url.substring(url.indexOf('"') + 1, url.length() - 2);
+            json.put("api_url", url);
+        }
+
+        Pattern pMethods = Pattern.compile("var methods( )*?=( )*?\\{.*\\}");
+        m = pMethods.matcher(apiScript);
+        if (m.find()) {
+            String methodsStr = m.group(0);
+            methodsStr = methodsStr.substring(methodsStr.indexOf("{"));
+            JSONObject controllersJson = new JSONObject(methodsStr);
+            json.put("methods", controllersJson);
         }
 
         return JSONUtil.concatJson(json, this.getMarkingPeriods(html));

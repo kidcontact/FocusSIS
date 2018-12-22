@@ -66,9 +66,9 @@ public class FocusApi {
 
     protected final Context context;
 
-    protected boolean loggedIn = false;
+    boolean loggedIn = false;
     private long sessionLengthMillis = 20 * 60 * 1000; // milliseconds
-    protected long sessionTimeout;
+    long sessionTimeout;
 
     public FocusApi(String username, String password, Context context) {
         this.username = username;
@@ -241,7 +241,7 @@ public class FocusApi {
         return eventRequest;
     }
 
-    private void ensureStudentPage(final MultipartRequest nextRequest) {
+    private void ensureStudentPage(final Runnable onResponse, final Response.ErrorListener errorListener) {
         if (!hasAccessedStudentPage) {
             Log.d(TAG, "Retrieving student page for first time");
             final StringRequest studentRequest = new StringRequest(Request.Method.GET, UrlBuilder.get(FocusUrl.STUDENT), new Response.Listener<String>() {
@@ -250,124 +250,125 @@ public class FocusApi {
                 final PageParser studentParser = new StudentParser();
                 try {
                     final JSONObject parsed = studentParser.parse(response);
+                    student = new Student(parsed);
+
                     ImageRequest imageRequest = new ImageRequest(parsed.getString("picture"),
                             new Response.Listener<Bitmap>() {
                                 @Override
                                 public void onResponse(Bitmap bitmap) {
-                                    try {
-                                        parsed.remove("picture");
-                                        student = new Student(parsed);
-                                        student.setPicture(bitmap);
-                                        hasAccessedStudentPage = true;
-                                        queueRequest(nextRequest);
-                                    } catch (JSONException e) {
-                                        Log.e(TAG, "Error parsing student JSON (error in code, not Focus)");
-                                        e.printStackTrace();
-                                    }
+                                    parsed.remove("picture");
+                                    student.setPicture(bitmap);
+                                    hasAccessedStudentPage = true;
+                                    onResponse.run();
                                 }
                             }, 0, 0, null,
                             new Response.ErrorListener() {
                                 public void onErrorResponse(VolleyError error) {
                                     Log.w(TAG, "Network error fetching image, continuing anyway");
-                                    try {
-                                        parsed.remove("picture");
-                                        student = new Student(parsed);
-                                        hasAccessedStudentPage = true;
-                                        queueRequest(nextRequest);
-                                    } catch (JSONException e) {
-                                        Log.e(TAG, "Error parsing student JSON (error in code, not Focus)");
-                                        e.printStackTrace();
-                                    }
+                                    parsed.remove("picture");
+                                    hasAccessedStudentPage = true;
+                                    onResponse.run();
                                 }
                             });
                     queueRequest(imageRequest);
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing student page");
                     e.printStackTrace();
-                    nextRequest.getErrorListener().onErrorResponse(new VolleyError(e.toString()));
+                    errorListener.onErrorResponse(new VolleyError(e.toString()));
                     throw new RuntimeException(e);
                 }
                 }
-            }, nextRequest.getErrorListener());
+            }, errorListener);
             queueRequest(studentRequest);
-        }
-        else {
-            queueRequest(nextRequest);
+        } else {
+            onResponse.run();
         }
     }
 
-    public Request getDemographic(final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
-        final MultipartRequest demographicRequest = new MultipartRequest(
-                Request.Method.POST, UrlBuilder.get(FocusUrl.STUDENT), new Response.Listener<NetworkResponse>() {
+    public void getDemographic(final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
+        ensureStudentPage(new Runnable() {
             @Override
-            public void onResponse(NetworkResponse response) {
-                PageParser demographicParser = new DemographicParser();
-                String responseStr = new String(response.data);
-                try {
-                    JSONObject parsed = demographicParser.parse(responseStr);
-                    parsed = JSONUtil.concatJson(parsed, student.getJson());
-                    listener.onResponse(parsed);
-                } catch (JSONException e) {
-                    Log.e(TAG, "JSONException while parsing demographic");
-                    e.printStackTrace();
-                    errorListener.onErrorResponse(new VolleyError(e.toString()));
-                    throw new RuntimeException(e);
-                }
-            }
-        }, errorListener) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                String req = "{\"requests\":[" +
-                        "{\"controller\":\"EditController\",\"method\":\"cache:getFieldData\",\"token\":\"6f62bdafe60d9a146aa7be7174bcc31f8340360e\",\"args\":[\"general\",\"SISStudent\",%s]}," +
-                        "{\"controller\":\"EditController\",\"method\":\"cache:getFieldData\",\"token\":\"6f62bdafe60d9a146aa7be7174bcc31f8340360e\",\"args\":[\"9\",\"SISStudent\",%<s]}" +
-                        "]}";
-                Log.d(TAG,String.format(req, student.getId()));
+            public void run() {
+                final String csrfToken = student.getMethods().get("EditController").get("getFieldData");
 
-                params.put("__call__", String.format(req, student.getId()));
-                return params;
-            }
-        };
+                final MultipartRequest demographicRequest = new MultipartRequest(
+                        Request.Method.POST, student.getApiUrl(), new Response.Listener<NetworkResponse>() {
+                    @Override
+                    public void onResponse(NetworkResponse response) {
+                        PageParser demographicParser = new DemographicParser();
+                        String responseStr = new String(response.data);
+                        try {
+                            JSONObject parsed = demographicParser.parse(responseStr);
+                            parsed = JSONUtil.concatJson(parsed, student.getJson());
+                            listener.onResponse(parsed);
+                        } catch (JSONException e) {
+                            Log.d(TAG, responseStr);
+                            Log.e(TAG, "JSONException while parsing demographic");
+                            e.printStackTrace();
+                            errorListener.onErrorResponse(new VolleyError(e.toString()));
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }, errorListener) {
+                    @Override
+                    protected Map<String, String> getParams() {
+                        Map<String, String> params = new HashMap<>();
+                        String req = "{\"requests\":[" +
+                                "{\"controller\":\"EditController\",\"method\":\"cache:getFieldData\",\"token\":\"" + csrfToken + "\",\"args\":[\"general\",\"SISStudent\",%s]}," +
+                                "{\"controller\":\"EditController\",\"method\":\"cache:getFieldData\",\"token\":\"" + csrfToken + "\",\"args\":[\"9\",\"SISStudent\",%<s]}" +
+                                "]}";
+                        Log.d(TAG,String.format(req, student.getId()));
 
-        ensureStudentPage(demographicRequest);
-        return demographicRequest;
+                        params.put("__call__", String.format(req, student.getId()));
+                        return params;
+                    }
+                };
+                queueRequest(demographicRequest);
+            }
+        }, errorListener);
     }
 
-    public Request getAddress(final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
-        final MultipartRequest addressRequest = new MultipartRequest(
-                Request.Method.POST, UrlBuilder.get(FocusUrl.STUDENT), new Response.Listener<NetworkResponse>() {
+    public void getAddress(final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
+        ensureStudentPage(new Runnable() {
             @Override
-            public void onResponse(NetworkResponse response) {
-                PageParser addressParser = new AddressParser();
-                String responseStr = new String(response.data);
-                try {
-                    JSONObject parsed = addressParser.parse(responseStr);
-                    parsed = JSONUtil.concatJson(parsed, student.getJson());
-                    listener.onResponse(parsed);
-                } catch (JSONException e) {
-                    Log.e(TAG, "JSONException while parsing address");
-                    e.printStackTrace();
-                    errorListener.onErrorResponse(new VolleyError(e.toString()));
-                    throw new RuntimeException(e);
-                }
-            }
-        }, errorListener) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                String req = "{\"requests\":[" +
-                        "{\"controller\":\"AddressController\",\"method\":\"getAddresses\",\"token\":\"abb1810fed911fb83956bc40780ab74d147548c0\",\"args\":[%s]}," +
-                        "{\"controller\":\"AddressController\",\"method\":\"getContacts\",\"token\":\"9c1d08797dbab3df87fb894dd22599c84500897b\",\"args\":[%<s]}" +
-                        "]}";
-                Log.d(TAG, String.format(req, student.getId()));
+            public void run() {
+                final String csrfTokenAddresses = student.getMethods().get("AddressController").get("getAddresses");
+                final String csrfTokenContacts = student.getMethods().get("AddressController").get("getContacts");
 
-                params.put("__call__", String.format(req, student.getId()));
-                return params;
-            }
-        };
+                final MultipartRequest addressRequest = new MultipartRequest(
+                        Request.Method.POST, student.getApiUrl(), new Response.Listener<NetworkResponse>() {
+                    @Override
+                    public void onResponse(NetworkResponse response) {
+                        PageParser addressParser = new AddressParser();
+                        String responseStr = new String(response.data);
+                        try {
+                            JSONObject parsed = addressParser.parse(responseStr);
+                            parsed = JSONUtil.concatJson(parsed, student.getJson());
+                            listener.onResponse(parsed);
+                        } catch (JSONException e) {
+                            Log.e(TAG, "JSONException while parsing address");
+                            e.printStackTrace();
+                            errorListener.onErrorResponse(new VolleyError(e.toString()));
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }, errorListener) {
+                    @Override
+                    protected Map<String, String> getParams() {
+                        Map<String, String> params = new HashMap<>();
+                        String req = "{\"requests\":[" +
+                                "{\"controller\":\"AddressController\",\"method\":\"getAddresses\",\"token\":\"" + csrfTokenAddresses + "\",\"args\":[%s]}," +
+                                "{\"controller\":\"AddressController\",\"method\":\"getContacts\",\"token\":\"" + csrfTokenContacts + "\",\"args\":[%<s]}" +
+                                "]}";
+                        Log.d(TAG, String.format(req, student.getId()));
 
-        ensureStudentPage(addressRequest);
-        return addressRequest;
+                        params.put("__call__", String.format(req, student.getId()));
+                        return params;
+                    }
+                };
+                queueRequest(addressRequest);
+            }
+        }, errorListener);
     }
 
     public Request getReferrals(final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {

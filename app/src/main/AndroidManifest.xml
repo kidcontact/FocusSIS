@@ -25,11 +25,15 @@
             android:name="com.slensky.focussis.activities.MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="Portal"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme.Light"/>
         <activity android:name="com.slensky.focussis.activities.CrashReportActivity"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
             android:launchMode="singleInstance" />
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
     </application>
 
 </manifest>

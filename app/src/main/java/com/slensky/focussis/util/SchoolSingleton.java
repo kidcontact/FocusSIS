@@ -9,14 +9,14 @@ import com.slensky.focussis.school.School;
 
 public class SchoolSingleton {
     private static final SchoolSingleton ourInstance = new SchoolSingleton();
-    private School school;
+    private School school = new ASD();
 
     public static SchoolSingleton getInstance() {
         return ourInstance;
     }
 
     private SchoolSingleton() {
-        school = new ASD();
+
     }
 
     public School getSchool() {

@@ -13,7 +13,6 @@ import java.util.List;
 public class PortalCourse implements Comparable<PortalCourse> {
 
     private final List<PortalAssignment> assignments;
-    private final String days;
     private final String id;
     private final String letterGrade;
     private final String name;
@@ -23,7 +22,6 @@ public class PortalCourse implements Comparable<PortalCourse> {
     private final String teacherEmail;
 
     public PortalCourse(List<PortalAssignment> assignments,
-                        String days,
                         String id,
                         String letterGrade,
                         String name,
@@ -32,7 +30,6 @@ public class PortalCourse implements Comparable<PortalCourse> {
                         String teacher,
                         String teacherEmail) {
         this.assignments = assignments;
-        this.days = days;
         this.id = id;
         this.letterGrade = letterGrade;
         this.name = name;
@@ -44,10 +41,6 @@ public class PortalCourse implements Comparable<PortalCourse> {
 
     public List<PortalAssignment> getAssignments() {
         return assignments;
-    }
-
-    public String getDays() {
-        return days;
     }
 
     public String getId() {

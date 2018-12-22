@@ -77,9 +77,6 @@
             android:layout_height="wrap_content"
             android:fillViewport="true">
 
-            <include
-                layout="@layout/view_school_schedule_asd_7_12" />
-
         </HorizontalScrollView>
 
     </LinearLayout>

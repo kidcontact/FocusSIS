@@ -1,15 +1,29 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="PreferenceFixTheme.Light.NoActionBar">
+    <style name="AppTheme" parent="PreferenceFixTheme.NoActionBar" />
+
+
+    <style name="AppTheme.Light" parent="PreferenceFixTheme.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="alertDialogTheme">@style/AppAlertDialog</item>
-        <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/actionModePrimary</item>
         <item name="selectedItemBackground">@color/selectedItemBackground</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.Black" parent="PreferenceFixTheme.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimaryBlack</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkBlack</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="alertDialogTheme">@style/AppAlertDialog</item>
+        <item name="actionModeBackground">@color/actionModePrimary</item>
+        <item name="selectedItemBackground">@color/selectedItemBackground</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
 
     <style name="AppTheme.Launcher">

@@ -25,7 +25,9 @@ public abstract class School {
     // (e.g. firstname.lastname@domain.edu) and the teacher's email cannot be found through other means
     public abstract String getTeacherEmailFromName(String teacherName);
 
+    public abstract int getBellScheduleTypesId();
+    public abstract int[] getBellScheduleLayouts();
     public abstract int getMapDrawableId();
-    public abstract JSONObject getMapRoomCoordinates();
-    public abstract JSONObject getMapTeacherCoordinates();
+    public abstract int getMapRoomNumbersId();
+    public abstract int getMapKeywordsId();
 }

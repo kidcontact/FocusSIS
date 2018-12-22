@@ -42,83 +42,65 @@ public class Course extends MarkingPeriodPage {
         String teacher;
 
         try {
-            JSONArray assignmentsJSON = courseJSON.getJSONArray("assignments");
+            if (courseJSON.has("assignments")) {
+                JSONArray assignmentsJSON = courseJSON.getJSONArray("assignments");
 
-            for (int i = 0; i < assignmentsJSON.length(); i++) {
-                JSONObject assignmentJSON = assignmentsJSON.getJSONObject(i);
-                String assignmentName = assignmentJSON.getString("name");
-                DateTime assigned = new DateTime(assignmentJSON.getString("assigned"));
-                DateTime due = new DateTime(assignmentJSON.getString("due"));
-                DateTime lastModified = new DateTime(assignmentJSON.getString("last_modified"));
-                String category = null;
-                if (assignmentJSON.has("category")) {
-                    category = assignmentJSON.getString("category");
-                }
+                for (int i = 0; i < assignmentsJSON.length(); i++) {
+                    JSONObject assignmentJSON = assignmentsJSON.getJSONObject(i);
+                    String assignmentName = assignmentJSON.getString("name");
+                    DateTime assigned = new DateTime(assignmentJSON.getString("assigned"));
+                    DateTime due = new DateTime(assignmentJSON.getString("due"));
+                    DateTime lastModified = new DateTime(assignmentJSON.getString("last_modified"));
+                    String category = null;
+                    if (assignmentJSON.has("category")) {
+                        category = assignmentJSON.getString("category");
+                    }
 
-                int maxGrade = -1;
-                String maxGradeString = null;
-                double studentGrade = -1;
-                String studentGradeString = null;
-                String fullGradeRatioString = null;
-                String assignmentLetterGrade = null;
-                int assignmentPercentGrade = -1;
-                String gradeString = null;
-                CourseAssignment.Status status = null;
+                    int maxGrade = -1;
+                    String maxGradeString = null;
+                    double studentGrade = -1;
+                    String studentGradeString = null;
+                    String fullGradeRatioString = null;
+                    String assignmentLetterGrade = null;
+                    int assignmentPercentGrade = -1;
+                    String gradeString = null;
+                    CourseAssignment.Status status = null;
 
-                if (assignmentJSON.getString("status").equals("pass")) {
-                    status = CourseAssignment.Status.PASS;
-                }
-                else if (assignmentJSON.getString("status").equals("fail")) {
-                    status = CourseAssignment.Status.FAIL;
-                }
-                else if (assignmentJSON.getString("status").equals("excluded")) {
-                    status = CourseAssignment.Status.EXCLUDED;
-                    if (assignmentJSON.has("max_grade_string")) {
-                        maxGradeString = assignmentJSON.getString("max_grade_string");
+                    if (assignmentJSON.getString("status").equals("pass")) {
+                        status = CourseAssignment.Status.PASS;
                     }
-                    else {
-                        maxGrade = assignmentJSON.getInt("max_grade");
+                    else if (assignmentJSON.getString("status").equals("fail")) {
+                        status = CourseAssignment.Status.FAIL;
                     }
-                }
-                else if (assignmentJSON.getString("status").equals("ng")) {
-                    status = CourseAssignment.Status.NOT_GRADED;
-                    if (assignmentJSON.has("max_grade_string")) {
-                        maxGradeString = assignmentJSON.getString("max_grade_string");
+                    else if (assignmentJSON.getString("status").equals("excluded")) {
+                        status = CourseAssignment.Status.EXCLUDED;
+                        if (assignmentJSON.has("max_grade_string")) {
+                            maxGradeString = assignmentJSON.getString("max_grade_string");
+                        }
+                        else {
+                            maxGrade = assignmentJSON.getInt("max_grade");
+                        }
                     }
-                    else {
-                        maxGrade = assignmentJSON.getInt("max_grade");
+                    else if (assignmentJSON.getString("status").equals("ng")) {
+                        status = CourseAssignment.Status.NOT_GRADED;
+                        if (assignmentJSON.has("max_grade_string")) {
+                            maxGradeString = assignmentJSON.getString("max_grade_string");
+                        }
+                        else {
+                            maxGrade = assignmentJSON.getInt("max_grade");
+                        }
                     }
-                }
-                else if (assignmentJSON.getString("status").equals("missing")) {
-                    status = CourseAssignment.Status.MISSING;
-                    if (assignmentJSON.has("max_grade_string")) {
-                        maxGradeString = assignmentJSON.getString("max_grade_string");
+                    else if (assignmentJSON.getString("status").equals("missing")) {
+                        status = CourseAssignment.Status.MISSING;
+                        if (assignmentJSON.has("max_grade_string")) {
+                            maxGradeString = assignmentJSON.getString("max_grade_string");
+                        }
+                        else {
+                            maxGrade = assignmentJSON.getInt("max_grade");
+                        }
                     }
-                    else {
-                        maxGrade = assignmentJSON.getInt("max_grade");
-                    }
-                }
-                else if (assignmentJSON.getString("status").equals("extra")) {
-                    status = CourseAssignment.Status.EXTRA_CREDIT;
-                    if (assignmentJSON.has("max_grade_string")) {
-                        maxGradeString = assignmentJSON.getString("max_grade_string");
-                    }
-                    else {
-                        maxGrade = assignmentJSON.getInt("max_grade");
-                    }
-                    if (assignmentJSON.has("student_grade_string")) {
-                        studentGradeString = assignmentJSON.getString("student_grade_string");
-                    }
-                    else {
-                        studentGrade = assignmentJSON.getDouble("student_grade");
-                    }
-                }
-                else {
-                    status = assignmentJSON.getString("status").equals("graded") ? CourseAssignment.Status.GRADED : CourseAssignment.Status.OTHER;
-                    if (assignmentJSON.has("full_grade_ratio_string")) {
-                        fullGradeRatioString = assignmentJSON.getString("full_grade_ratio_string");
-                    }
-                    else {
+                    else if (assignmentJSON.getString("status").equals("extra")) {
+                        status = CourseAssignment.Status.EXTRA_CREDIT;
                         if (assignmentJSON.has("max_grade_string")) {
                             maxGradeString = assignmentJSON.getString("max_grade_string");
                         }
@@ -132,26 +114,47 @@ public class Course extends MarkingPeriodPage {
                             studentGrade = assignmentJSON.getDouble("student_grade");
                         }
                     }
-
-                    if (assignmentJSON.has("overall_grade_string")) {
-                        gradeString = assignmentJSON.getString("overall_grade_string");
-                        gradeString = WordUtils.capitalize(gradeString);
-                    }
                     else {
-                        assignmentLetterGrade = assignmentJSON.getString("letter_overall_grade");
-                        assignmentPercentGrade = assignmentJSON.getInt("percent_overall_grade");
+                        status = assignmentJSON.getString("status").equals("graded") ? CourseAssignment.Status.GRADED : CourseAssignment.Status.OTHER;
+                        if (assignmentJSON.has("full_grade_ratio_string")) {
+                            fullGradeRatioString = assignmentJSON.getString("full_grade_ratio_string");
+                        }
+                        else {
+                            if (assignmentJSON.has("max_grade_string")) {
+                                maxGradeString = assignmentJSON.getString("max_grade_string");
+                            }
+                            else {
+                                maxGrade = assignmentJSON.getInt("max_grade");
+                            }
+                            if (assignmentJSON.has("student_grade_string")) {
+                                studentGradeString = assignmentJSON.getString("student_grade_string");
+                            }
+                            else {
+                                studentGrade = assignmentJSON.getDouble("student_grade");
+                            }
+                        }
+
+                        if (assignmentJSON.has("overall_grade_string")) {
+                            gradeString = assignmentJSON.getString("overall_grade_string");
+                            gradeString = WordUtils.capitalize(gradeString);
+                        }
+                        else {
+                            assignmentLetterGrade = assignmentJSON.getString("letter_overall_grade");
+                            assignmentPercentGrade = assignmentJSON.getInt("percent_overall_grade");
+                        }
                     }
+
+                    String description = null;
+                    if (assignmentJSON.has("description")) {
+                        description = assignmentJSON.getString("description");
+                    }
+
+                    assignments.add(new CourseAssignment(assignmentName, assigned, due, lastModified, category, maxGrade, maxGradeString, studentGrade, studentGradeString, fullGradeRatioString, assignmentLetterGrade, assignmentPercentGrade, gradeString, description, status, getCurrentMarkingPeriod().getId()));
+
                 }
-
-                String description = null;
-                if (assignmentJSON.has("description")) {
-                    description = assignmentJSON.getString("description");
-                }
-
-                assignments.add(new CourseAssignment(assignmentName, assigned, due, lastModified, category, maxGrade, maxGradeString, studentGrade, studentGradeString, fullGradeRatioString, assignmentLetterGrade, assignmentPercentGrade, gradeString, description, status, getCurrentMarkingPeriod().getId()));
-
             }
         } catch (JSONException e) {
+            e.printStackTrace();
             Log.e(TAG, "Error parsing course assignment JSON");
 
         }

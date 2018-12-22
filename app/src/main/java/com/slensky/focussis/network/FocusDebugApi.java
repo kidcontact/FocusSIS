@@ -208,7 +208,7 @@ public class FocusDebugApi extends FocusApi {
     }
 
     @Override
-    public Request getDemographic(final Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public void getDemographic(final Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         waitForFakeLoad(new Runnable() {
             @Override
             public void run() {
@@ -220,11 +220,10 @@ public class FocusDebugApi extends FocusApi {
                 }
             }
         });
-        return dummyRequest;
     }
 
     @Override
-    public Request getAddress(final Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public void getAddress(final Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         waitForFakeLoad(new Runnable() {
             @Override
             public void run() {
@@ -236,7 +235,6 @@ public class FocusDebugApi extends FocusApi {
                 }
             }
         });
-        return dummyRequest;
     }
 
     @Override

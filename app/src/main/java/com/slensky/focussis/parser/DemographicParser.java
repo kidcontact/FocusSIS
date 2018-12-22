@@ -35,11 +35,20 @@ public class DemographicParser extends PageParser {
         parsed.put("username", findField("Username", "students|username", "username").getString("value"));
         parsed.put("pass_length", findField("Password", "students|password", "password").getString("value").length());
 
-        JSONObject levelField = findField("Level (Year)", "384", "custom_103");
-        parsed.put("level", Integer.parseInt(getTextFromOptions(levelField, "1")));
+        try {
+            JSONObject levelField = findField("Level (Year)", "384", "custom_103");
+            parsed.put("level", Integer.parseInt(getTextFromOptions(levelField, "1")));
+        } catch (NoSuchElementException e) {
+            Log.w(TAG, "Level (number of years at school) not found in demographic JSON");
+        }
 
-        JSONObject genderField = findField("Gender", "380", "custom_200000000");
-        parsed.put("gender", getTextFromOptions(genderField, "Unknown"));
+        try {
+            JSONObject genderField = findField("Gender", "380", "custom_200000000");
+            parsed.put("gender", getTextFromOptions(genderField, "Unknown"));
+        } catch (NoSuchElementException e) {
+            Log.w(TAG, "Gender not found in demographic JSON");
+        }
+
 
         JSONObject nicknameField = findField("Nickname", "394", "custom_200000002");
         if (!JSONObject.NULL.equals(nicknameField.get("value"))) {
@@ -65,23 +74,35 @@ public class DemographicParser extends PageParser {
         }
 
         JSONObject busesField = findField("Bus", "28", "custom_50");
-        String[] buses = busesField.getString("value").split("/");
-        if (!buses[0].isEmpty() && !buses[0].equals("0") && !buses[0].equals("-")) {
-            parsed.put("arrival_bus", buses[0]);
-            if (buses.length == 1 && buses[0].split(" ").length > 1) {
-                buses = buses[0].split(" ");
+        if (!JSONObject.NULL.equals(busesField.get("value"))) {
+            String[] buses = busesField.getString("value").split("/");
+            if (!buses[0].trim().isEmpty() && !buses[0].equals("0") && !buses[0].equals("-")) {
+                parsed.put("arrival_bus", buses[0]);
+                if (buses.length == 1 && buses[0].split(" ").length > 1) {
+                    buses = buses[0].split(" ");
+                }
+                parsed.put("dismissal_bus", buses.length == 1 ? buses[0] : buses[1]);
             }
-            parsed.put("dismissal_bus", buses.length == 1 ? buses[0] : buses[1]);
         }
 
-        JSONObject cumulativeFileField = findField("Cumulative File", "518", "custom_92");
-        parsed.put("cumulative_file", getTextFromOptions(cumulativeFileField, "Unknown"));
+        try {
+            JSONObject cumulativeFileField = findField("Cumulative File", "518", "custom_92");
+            parsed.put("cumulative_file", getTextFromOptions(cumulativeFileField, "Unknown"));
+        } catch (NoSuchElementException e) {
+            Log.w(TAG, "Cumulative file not found in demographic JSON");
+        }
 
-        JSONObject medicalRecordsField = findField("Medical Records In", "297", "custom_94");
-        parsed.put("medical_record_status", getTextFromOptions(medicalRecordsField, "Unknown"));
+        try {
+            JSONObject medicalRecordsField = findField("Medical Records In", "297", "custom_94");
+            parsed.put("medical_record_status", getTextFromOptions(medicalRecordsField, "Unknown"));
+        } catch (NoSuchElementException e) {
+            Log.w(TAG, "Medical records in not found in demographic JSON");
+        }
 
         JSONObject photoAuthField = findField("Photo/Publicity Authorized", "232", "custom_317");
         parsed.put("photo_auth", photoAuthField.getString("value").equals("1"));
+
+        // TODO: new fields, permission to record and off campus lunch?
 
         JSONObject studentMobileField = findField("Student Mobile", "392", "custom_64");
         String studentMobile = sanitizePhoneNumber(studentMobileField.getString("value"));

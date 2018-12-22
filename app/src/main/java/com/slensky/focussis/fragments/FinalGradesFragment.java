@@ -533,31 +533,33 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        final TextView nameHeader = table.getChildAt(0).findViewById(com.slensky.focussis.R.id.text_finalgrade_name);
-        table.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                int width = nameHeader.getWidth();
-                int height = nameHeader.getHeight();
-                int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-                int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY);
-                for (int i = 2; i < table.getChildCount(); i++) {
-                    TextView name = table.getChildAt(i).findViewById(com.slensky.focussis.R.id.text_finalgrade_name);
-                    if (name == null) { // divider row
-                        continue;
-                    }
-                    String originalText = originalNameColumnText.get((i - 1) / 2); // divison to account for divider rows
-                    name.setText(originalText);
-                    name.measure(widthMeasureSpec, heightMeasureSpec);
-                    while (name.getMeasuredWidth() > width) {
-                        originalText = originalText.substring(0, originalText.length() - 1);
-                        name.setText(originalText + "...");
+        if (table != null) {
+            final TextView nameHeader = table.getChildAt(0).findViewById(com.slensky.focussis.R.id.text_finalgrade_name);
+            table.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    int width = nameHeader.getWidth();
+                    int height = nameHeader.getHeight();
+                    int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                    int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY);
+                    for (int i = 2; i < table.getChildCount(); i++) {
+                        TextView name = table.getChildAt(i).findViewById(com.slensky.focussis.R.id.text_finalgrade_name);
+                        if (name == null) { // divider row
+                            continue;
+                        }
+                        String originalText = originalNameColumnText.get((i - 1) / 2); // divison to account for divider rows
+                        name.setText(originalText);
                         name.measure(widthMeasureSpec, heightMeasureSpec);
+                        while (name.getMeasuredWidth() > width) {
+                            originalText = originalText.substring(0, originalText.length() - 1);
+                            name.setText(originalText + "...");
+                            name.measure(widthMeasureSpec, heightMeasureSpec);
+                        }
                     }
+                    table.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
-                table.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            }
-        });
+            });
+        }
 
     }
 }

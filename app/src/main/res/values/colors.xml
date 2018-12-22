@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Normal theme -->
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
@@ -7,10 +9,18 @@
     <color name="textPrimaryDark">@android:color/primary_text_dark</color>
     <color name="textSecondary">#8A000000</color>
     <color name="textTertiary">@android:color/tertiary_text_light</color>
+    <color name="secondaryIcon">#757575</color>
     <color name="calendarOccasionDecorator">#2979ff</color>
     <color name="calendarAssignmentDecorator">#ff1744</color>
     <color name="calendarSelectBackground">#bdbdbd</color>
     <color name="selectedItemBackground">#eeeeee</color>
     <color name="actionModePrimary">#757575</color>
     <color name="actionModeDark">#616161</color>
+
+    <!-- Black theme -->
+    <color name="colorPrimaryBlack">#212121</color>
+    <color name="colorPrimaryDarkBlack">#121212</color>
+    <color name="colorAccentBlack">#FF4081</color>
+    <!--<color name="actionModePrimary">#757575</color>-->
+    <!--<color name="actionModeDark">#616161</color>-->
 </resources>

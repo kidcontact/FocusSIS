@@ -207,18 +207,34 @@ public class ASD extends School {
     }
 
     @Override
+    public int getBellScheduleTypesId() {
+        return R.array.asd_bell_schedule_type;
+    }
+
+    @Override
+    public int[] getBellScheduleLayouts() {
+        return new int[]{
+                R.layout.view_school_schedule_asd_7_12,
+                R.layout.view_school_schedule_asd_6,
+                R.layout.view_school_schedule_asd_7_12_delay,
+                R.layout.view_school_schedule_asd_6_delay,
+                R.layout.view_school_schedule_asd_spark
+        };
+    }
+
+    @Override
     public int getMapDrawableId() {
         return R.drawable.school_asd_school_map;
     }
 
     @Override
-    public JSONObject getMapRoomCoordinates() {
-        return null;
+    public int getMapRoomNumbersId() {
+        return R.raw.map_asd_room_numbers;
     }
 
     @Override
-    public JSONObject getMapTeacherCoordinates() {
-        return null;
+    public int getMapKeywordsId() {
+        return R.raw.map_asd_room_keywords;
     }
 
 }

@@ -15,7 +15,7 @@ public class CrashReportActivity extends BaseCrashReportDialog implements Dialog
 
     @Override
     protected void init(@Nullable Bundle savedInstanceState) {
-        setTheme(com.slensky.focussis.R.style.AppTheme);
+        setTheme(com.slensky.focussis.R.style.AppTheme_Light);
         super.init(savedInstanceState);
         final AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle(com.slensky.focussis.R.string.acra_dialog_title)

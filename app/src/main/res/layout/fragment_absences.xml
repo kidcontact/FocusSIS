@@ -51,6 +51,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
                     android:id="@+id/text_absent"
                     style="@style/primaryBodyText"/>
 
@@ -73,6 +74,7 @@
                     android:id="@+id/text_excused_absences"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
                     style="@style/primaryBodyText"/>
 
             </LinearLayout>
@@ -103,6 +105,7 @@
                     android:id="@+id/text_late"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
                     style="@style/primaryBodyText"/>
 
             </LinearLayout>
@@ -124,6 +127,7 @@
                     android:id="@+id/text_tardy"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
                     style="@style/primaryBodyText"/>
 
             </LinearLayout>
@@ -145,6 +149,7 @@
                     android:id="@+id/text_misc_activity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
                     style="@style/primaryBodyText"/>
 
             </LinearLayout>
@@ -165,6 +170,7 @@
                     android:id="@+id/text_offsite"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
                     style="@style/primaryBodyText"/>
 
             </LinearLayout>

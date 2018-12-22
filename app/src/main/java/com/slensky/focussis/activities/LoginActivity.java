@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -43,8 +44,6 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(com.slensky.focussis.R.id.check_remember) CheckBox _saveLoginCheckBox;
 
     private SharedPreferences loginPrefs;
-    private SharedPreferences.Editor loginPrefsEditor;
-    private Boolean saveLogin;
 
     private AlertDialog languageErrorDialog;
     private FocusPreferences focusPreferences;
@@ -53,9 +52,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private SharedPreferences defaultSharedPrefs;
 
+    // count the number of times the login has failed due to invalid credentials
+    // if it has failed too many times, show a different message ensuring the student is from ASD
+    private int authErrors;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setTheme(com.slensky.focussis.R.style.AppTheme);
+        setTheme(com.slensky.focussis.R.style.AppTheme_Light);
         super.onCreate(savedInstanceState);
 
         // finish activity and resume MainActivity if the app was already open
@@ -71,8 +74,70 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(com.slensky.focussis.R.layout.activity_login);
         ButterKnife.bind(this);
-
+        loginPrefs = getSharedPreferences(getString(com.slensky.focussis.R.string.login_prefs), MODE_PRIVATE);
+        authErrors = 0;
         Intent intent = getIntent();
+
+        // show a dialog indicating that the app only works for ASD. Mandatory delay before allowing the user to close it
+        if (!loginPrefs.getBoolean(getString(R.string.login_prefs_read_school_msg), false)) {
+            final AlertDialog schoolMessage = new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.login_asd_notice_title))
+                    .setMessage(getString(R.string.login_asd_notice_message))
+                    .setNegativeButton(R.string.login_asd_notice_negative, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    }).setPositiveButton(R.string.login_asd_notice_positive, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            final SharedPreferences.Editor loginPrefsEditor = loginPrefs.edit();
+                            loginPrefsEditor.putBoolean(getString(R.string.login_prefs_read_school_msg), true);
+                            loginPrefsEditor.apply();
+                        }
+                    }).setCancelable(false)
+                    .create();
+
+            schoolMessage.show();
+
+            final Button positive = schoolMessage.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setEnabled(false);
+
+            final CharSequence positiveMessage = positive.getText();
+            final Thread waitToEnableButtonThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    int waitTime = 6;
+                    while (true) {
+                        final int finalWaitTime = waitTime;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                positive.setText(positiveMessage + " (" + finalWaitTime + ")");
+                            }
+                        });
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        waitTime--;
+                        if (waitTime == 0) {
+                            break;
+                        }
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            positive.setText(positiveMessage);
+                            positive.setEnabled(true);
+                        }
+                    });
+                }
+            });
+            waitToEnableButtonThread.start();
+
+        }
 
         RelativeLayout rl = (RelativeLayout) findViewById(com.slensky.focussis.R.id.login_layout);
         rl.setPadding(rl.getPaddingLeft(), getWindowManager().getDefaultDisplay().getHeight() / 6, rl.getPaddingRight(), rl.getPaddingBottom());
@@ -85,9 +150,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        loginPrefs = getSharedPreferences(getString(com.slensky.focussis.R.string.login_prefs), MODE_PRIVATE);
-        loginPrefsEditor = loginPrefs.edit();
-        saveLogin = loginPrefs.getBoolean(getString(com.slensky.focussis.R.string.login_prefs_save_login), false);
+        Boolean saveLogin = loginPrefs.getBoolean(getString(R.string.login_prefs_save_login), false);
         if (saveLogin) {
             _usernameText.setText(loginPrefs.getString(getString(com.slensky.focussis.R.string.login_prefs_username), ""));
             _passwordText.setText(loginPrefs.getString(getString(com.slensky.focussis.R.string.login_prefs_password), ""));
@@ -191,17 +254,20 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(Boolean response) {
                 if (response) {
                     Log.d(TAG, "Login successful");
+                    final SharedPreferences.Editor loginPrefsEditor = loginPrefs.edit();
                     if (_saveLoginCheckBox.isChecked()) {
                         Log.d(TAG, "Remembering user " + username);
                         loginPrefsEditor.putBoolean(getString(com.slensky.focussis.R.string.login_prefs_save_login), true);
                         loginPrefsEditor.putString(getString(com.slensky.focussis.R.string.login_prefs_username), username);
                         loginPrefsEditor.putString(getString(com.slensky.focussis.R.string.login_prefs_password), password);
-                        loginPrefsEditor.commit();
+                        loginPrefsEditor.apply();
                     } else {
-                        Log.d(TAG, "Remember me not checked, clearing prefs");
-                        loginPrefsEditor.clear();
-                        loginPrefsEditor.commit();
+                        loginPrefsEditor.putBoolean(getString(com.slensky.focussis.R.string.login_prefs_save_login), false);
+                        loginPrefsEditor.putString(getString(com.slensky.focussis.R.string.login_prefs_username), "");
+                        loginPrefsEditor.putString(getString(com.slensky.focussis.R.string.login_prefs_password), "");
+                        loginPrefsEditor.apply();
                     }
+                    loginPrefsEditor.apply();
 
                     if (defaultSharedPrefs.getBoolean("always_check_preferences", true)) {
                         api.getPreferences(new Response.Listener<JSONObject>() {
@@ -296,12 +362,19 @@ public class LoginActivity extends AppCompatActivity {
         moveTaskToBack(true);
     }
 
-    public void onLoginFailed(final String error) {
+    public void onLoginFailed(String error) {
         Log.e(TAG, error);
+        if (error.equals(getString(R.string.network_error_auth))) {
+            authErrors++;
+            if (authErrors > 2) {
+                error = getString(R.string.network_error_auth_expanded);
+            }
+        }
+        final String finalError = error;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getBaseContext(), error, Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), finalError, Toast.LENGTH_LONG).show();
             }
         });
         _loginButton.setEnabled(true);

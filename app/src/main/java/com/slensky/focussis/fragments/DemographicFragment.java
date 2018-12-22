@@ -57,7 +57,12 @@ public class DemographicFragment extends NetworkTabAwareFragment {
             IconWithTextView name = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_name);
             name.setText(demographic.getName());
             IconWithTextView dob = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_dob);
-            dob.setText(DateUtil.dateTimeToLongString(demographic.getBirthdate()));
+            if (demographic.getBirthdate() != null) {
+                dob.setText(DateUtil.dateTimeToLongString(demographic.getBirthdate()));
+            }
+            else {
+                dob.setVisibility(View.GONE);
+            }
             IconWithTextView email = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_email);
             email.setText(demographic.getEmail());
             email.setOnClickListener(new View.OnClickListener() {
@@ -73,10 +78,23 @@ public class DemographicFragment extends NetworkTabAwareFragment {
                     }
                 }
             });
+
             IconWithTextView gender = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_gender);
-            gender.setText(demographic.getGender());
+            if (demographic.getGender() != null) {
+                gender.setText(demographic.getGender());
+            }
+            else {
+                gender.setVisibility(View.GONE);
+            }
+
             IconWithTextView grade = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_grade);
-            grade.setText(ordinal(demographic.getGrade()) + ", " + ordinal(demographic.getLevel()) + " year");
+            if (demographic.getLevel() != 0) {
+                grade.setText(ordinal(demographic.getGrade()) + ", " + ordinal(demographic.getLevel()) + " year");
+            }
+            else {
+                grade.setText(ordinal(demographic.getGrade()));
+            }
+
 
             IconWithTextView bus = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_bus);
             if (demographic.getArrivalBus() == null || demographic.getArrivalBus().equals(demographic.getDismissalBus())) {
@@ -92,7 +110,7 @@ public class DemographicFragment extends NetworkTabAwareFragment {
                 bus.setHint(getString(com.slensky.focussis.R.string.demographic_bus_multiple_hint));
                 bus.setText(demographic.getArrivalBus() + "/" + demographic.getDismissalBus());
             }
-            bus.setText(demographic.getArrivalBus() + "/" + demographic.getDismissalBus());
+
             IconWithTextView locker = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_locker);
             if (demographic.getLocker() != null) {
                 locker.setText(demographic.getLocker());
@@ -101,11 +119,21 @@ public class DemographicFragment extends NetworkTabAwareFragment {
                 locker.setText(getString(com.slensky.focussis.R.string.demographic_unassigned));
             }
             IconWithTextView medical = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_medical_record_status);
-            medical.setText(demographic.getMedicalRecordStatus());
+            if (demographic.getMedicalRecordStatus() != null) {
+                medical.setText(demographic.getMedicalRecordStatus());
+            }
+            else {
+                medical.setVisibility(View.GONE);
+            }
             IconWithTextView photoAuth = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_photo_auth);
             photoAuth.setText(boolToYesNo(demographic.isPhotoAuthorized()));
             IconWithTextView cumulative = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_cumulative_file);
-            cumulative.setText(demographic.getCumulativeFile());
+            if (demographic.getCumulativeFile() != null) {
+                cumulative.setText(demographic.getCumulativeFile());
+            }
+            else {
+                cumulative.setVisibility(View.GONE);
+            }
             IconWithTextView studentID = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_student_id);
             studentID.setText(Integer.toString(demographic.getId()));
 

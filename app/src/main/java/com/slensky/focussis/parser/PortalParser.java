@@ -33,51 +33,64 @@ public class PortalParser extends PageParser {
         Document portal = Jsoup.parse(html);
         JSONObject json = new JSONObject();
 
-        Element featuredProgs = portal.selectFirst("td:contains(Featured Programs)").parent().parent();
-        Elements links = featuredProgs.getElementsByTag("a");
-
         JSONObject courses = new JSONObject();
-        String urlStart = "Modules.php?modname=Grades/StudentGBGrades.php?course_period_id=";
-        for (Element a : links) {
-            if (a.hasAttr("href") && a.attr("href").startsWith(urlStart)) {
-                String id = a.attr("href").substring(urlStart.length());
-                if (!courses.has(id)) {
-                    JSONObject course = new JSONObject();
-                    course.put("id", id);
-                    courses.put(id, course);
-                }
-                JSONObject course = courses.getJSONObject(id);
 
-                String t = a.text().replace('\u00A0', ' '); // replace non-breaking space with normal space
-                if (t.contains("%")) {
-                    course.put("percent_grade", Integer.parseInt(t.substring(0, t.indexOf('%'))));
-                    course.put("letter_grade", t.substring(t.indexOf(' ') + 1));
+        Elements featuredProgramsRows = portal.select("[class^=portal_block_Featured] table table table > tbody > tr ~ tr");
+        for (Element tr : featuredProgramsRows) {
+            String urlStart = "Modules.php?modname=Grades/StudentGBGrades.php?course_period_id=";
+            Element courseNameLink = tr.selectFirst("a[href^=" + urlStart + "]");
+            if (courseNameLink == null) {
+                continue; // this isn't a course row
+            }
 
-                    Element input = a.parent().parent().selectFirst("input.EmailTeacher");
-                    if (input != null) {
-                        course.put("teacher_email", input.attr("value"));
-                    }
-                }
-                else if (t.contains("Period")) {
-                    String[] data = t.split(" - ");
-                    course.put("name", data[0]);
-                    course.put("period", Integer.parseInt(data[1].substring("Period ".length())));
-                    course.put("days", data[data.length - 3]);
-                    StringBuilder teacherName = new StringBuilder();
-                    for (String n: data[data.length - 1].split(" ")) {
-                        if (!n.isEmpty()) {
-                            teacherName.append(n + " ");
-                        }
-                    }
-                    teacherName.deleteCharAt(teacherName.length() - 1);
-                    course.put("teacher", teacherName.toString());
+            JSONObject course = new JSONObject();
+
+            String id = courseNameLink.attr("href").substring(urlStart.length());
+            course.put("id", id);
+
+            // \u00A0 is a nonbreaking space, sometimes found in Focus fields inconsistently + for unknown reasons
+            String name = courseNameLink.text().replace('\u00A0', ' ').trim();
+            course.put("name", name);
+
+            // remember, courseNameLink is a <a>, so the parent of that is the <td> child of tr
+            Element periodTd = tr.child(courseNameLink.parent().elementSiblingIndex() + 1);
+            String period = periodTd.text().replace('\u00A0', ' ').trim();
+            if (period.toLowerCase().startsWith("period ")) {
+                period = period.substring("period ".length());
+            }
+            course.put("period", period);
+
+            Element teacherTd = tr.child(periodTd.elementSiblingIndex() + 1);
+            String teacher = teacherTd.text().replace('\u00A0', ' ').trim();
+            // there are double spaces in the name field sometimes, make sure to get rid of double or triple spaces (to be safe)
+            teacher.replace("  ", " ").replace("  ", " ");
+            course.put("teacher", teacher);
+
+            // the course grade link is the first link with the appropriate prefix that appears after teacherTd
+            Element courseGradeLink = null;
+            for (int i = teacherTd.elementSiblingIndex() + 1; i < tr.childNodeSize(); i++) {
+                courseGradeLink = tr.child(i).selectFirst("a[href^=" + urlStart + "]");
+                if (courseGradeLink != null) {
+                    break;
                 }
             }
+            String courseGrade = courseGradeLink.text();
+            if (courseGrade.contains("%")) {
+                course.put("percent_grade", Integer.parseInt(courseGrade.substring(0, courseGrade.indexOf('%'))));
+                course.put("letter_grade", courseGrade.substring(courseGrade.indexOf(' ') + 1));
+            }
+
+            Element emailInput = tr.selectFirst("input.EmailTeacher");
+            if (emailInput != null) {
+                course.put("teacher_email", emailInput.attr("value"));
+            }
+
+            courses.put(id, course);
         }
 
         JSONArray events = new JSONArray();
         Element upcoming = portal.selectFirst("td.portal_block_Upcoming");
-        links = upcoming.getElementsByTag("a");
+        Elements links = upcoming.getElementsByTag("a");
         final ArrayList<String> comments = new ArrayList<>();
         upcoming.traverse(new NodeVisitor() {
             @Override
@@ -118,23 +131,30 @@ public class PortalParser extends PageParser {
             for (int i = 0; i < li.size(); i+= 2) {
                 String[] data = li.get(i).text().split(" - ");
                 String periodStr = data[0];
-                int period = -1;
-                try {
-                    period = Integer.parseInt(periodStr.substring(periodStr.length() - 1));
-                } catch (NumberFormatException e) {
-                    // assignment belongs to advisory
+                String period = periodStr;
+                if (periodStr.toLowerCase().startsWith("period ")) {
+                    period = periodStr.substring(periodStr.length() - 1);
                 }
 
+                String teacher = data[data.length - 1].replace('\u00A0', ' ').trim();
+                // there are double spaces in the name field sometimes, make sure to get rid of double or triple spaces (to be safe)
+                teacher.replace("  ", " ").replace("  ", " ");
+
+                // attempt to match the assignments to an existing course
+                // a course is considered a match if it shares the same period as these assignments, but sharing the same teacher name is preferred
                 JSONObject course = null;
+                boolean matchesTeacher = false;
                 Iterator<?> keys = courses.keys();
                 while(keys.hasNext()) {
                     String key = (String) keys.next();
-                    if (courses.get(key) instanceof JSONObject && courses.getJSONObject(key).getInt("period") == period) {
+                    if (courses.get(key) instanceof JSONObject && courses.getJSONObject(key).getString("period").equals(period)) {
+                        matchesTeacher = courses.getJSONObject(key).getString("teacher").equals(teacher);
                         course = (JSONObject) courses.get(key);
-                        break;
+                        if (matchesTeacher) {
+                            break;
+                        }
                     }
                 }
-
 
                 JSONArray assignments = new JSONArray();
                 for (Element tr : li.get(i + 1).getElementsByTag("tr")) {
@@ -165,15 +185,15 @@ public class PortalParser extends PageParser {
                         }
                     }
                     teacherName.deleteCharAt(teacherName.length() - 1);
-                    String teacher = teacherName.toString();
-                    newCourse.put("teacher", teacher);
+                    String newTeacher = teacherName.toString();
+                    newCourse.put("teacher", newTeacher);
 
                     JSONObject c = null;
                     Iterator<?> k = courses.keys();
                     while(k.hasNext()) {
                         String key = (String) k.next();
                         if (courses.get(key) instanceof JSONObject
-                                && courses.getJSONObject(key).getString("teacher").equals(teacher)
+                                && courses.getJSONObject(key).getString("teacher").equals(newTeacher)
                                 && courses.getJSONObject(key).has("teacher_email")) {
                             newCourse.put("teacher_email", courses.getJSONObject(key).getString("teacher_email"));
                             break;

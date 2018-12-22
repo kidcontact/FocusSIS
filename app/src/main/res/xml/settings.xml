@@ -1,14 +1,5 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--<PreferenceCategory-->
-        <!--android:title="@string/settings_title_general">-->
-
-        <!--<Preference-->
-            <!--android:key="date_format"-->
-            <!--android:title="@string/settings_date_format_title"/>-->
-
-    <!--</PreferenceCategory>-->
-
     <PreferenceCategory
         android:title="@string/settings_title_general">
 
