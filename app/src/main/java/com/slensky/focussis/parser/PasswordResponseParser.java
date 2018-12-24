@@ -12,7 +12,7 @@ import org.jsoup.nodes.Element;
  * Created by slensky on 4/5/18.
  */
 
-public class PasswordResponseParser extends PageParser {
+public class PasswordResponseParser extends FocusPageParser {
     private final static String TAG = "PasswordResponseParser";
 
     @Override

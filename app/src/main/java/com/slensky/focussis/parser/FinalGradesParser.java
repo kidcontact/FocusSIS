@@ -12,7 +12,7 @@ import java.util.Iterator;
  * Created by slensky on 4/1/18.
  */
 
-public class FinalGradesParser extends PageParser {
+public class FinalGradesParser extends FocusPageParser {
     private static final String TAG = "FinalGradesParser";
     private JSONObject json;
 

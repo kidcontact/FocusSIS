@@ -15,7 +15,7 @@ import java.util.Calendar;
  * Created by slensky on 3/18/18.
  */
 
-public class CalendarParser extends PageParser {
+public class CalendarParser extends FocusPageParser {
     private static final String TAG = "CalendarParser";
 
     @Override

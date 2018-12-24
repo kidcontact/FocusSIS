@@ -15,7 +15,7 @@ import java.util.Iterator;
  * Created by slensky on 3/23/18.
  */
 
-public class ReferralsParser extends PageParser {
+public class ReferralsParser extends FocusPageParser {
     private static final String TAG = "ReferralsParser";
 
     @Override

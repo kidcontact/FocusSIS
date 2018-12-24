@@ -16,7 +16,7 @@ import java.util.List;
  * Created by slensky on 3/27/18.
  */
 
-public class AddressParser extends PageParser {
+public class AddressParser extends FocusPageParser {
     private static final String TAG = "AddressParser";
 
     @Override

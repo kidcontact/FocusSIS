@@ -8,26 +8,20 @@ import org.joda.time.DateTime;
 
 public class AbsencePeriod {
 
-    private final String days;
     private final DateTime lastUpdated;
     private final String lastUpdatedBy;
     private final String name;
-    private final int period;
+    private final String period;
     private final Absences.Status status;
     private final String teacher;
 
-    public AbsencePeriod(String days, DateTime lastUpdated, String lastUpdatedBy, String name, int period, Absences.Status status, String teacher) {
-        this.days = days;
+    public AbsencePeriod(DateTime lastUpdated, String lastUpdatedBy, String name, String period, Absences.Status status, String teacher) {
         this.lastUpdated = lastUpdated;
         this.lastUpdatedBy = lastUpdatedBy;
         this.name = name;
         this.period = period;
         this.status = status;
         this.teacher = teacher;
-    }
-
-    public String getDays() {
-        return days;
     }
 
     public DateTime getLastUpdated() {
@@ -42,7 +36,7 @@ public class AbsencePeriod {
         return name;
     }
 
-    public int getPeriod() {
+    public String getPeriod() {
         return period;
     }
 

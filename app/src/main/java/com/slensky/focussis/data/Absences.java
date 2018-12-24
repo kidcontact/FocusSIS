@@ -40,6 +40,7 @@ public class Absences extends MarkingPeriodPage {
         PRESENT,
         HALF_DAY,
         ABSENT,
+        DISMISSED,
         EXCUSED,
         LATE,
         TARDY,
@@ -56,6 +57,7 @@ public class Absences extends MarkingPeriodPage {
         double daysAttended = 0;
         double daysAttendedPercent = 0;
         int periodsAbsent = 0;
+        int periodsDismissed = 0;
         int periodsAbsentUnexcused = 0;
         int periodsAbsentExcused = 0;
         int periodsOtherMarks = 0;
@@ -88,10 +90,6 @@ public class Absences extends MarkingPeriodPage {
                         String periodKey = (String) periodKeys.next();
                         JSONObject periodJSON = periodsJSON.getJSONObject(periodKey);
 
-                        String days = null;
-                        if (periodJSON.has("days")) {
-                            days = periodJSON.getString("days");
-                        }
                         DateTime lastUpdated = null;
                         if (periodJSON.has("last_updated")) {
                             lastUpdated = new DateTime(periodJSON.getString("last_updated"));
@@ -104,12 +102,12 @@ public class Absences extends MarkingPeriodPage {
                         if (periodJSON.has("name")) {
                             name = periodJSON.getString("name");
                         }
-                        int period = 0;
-                        try {
-                            period = periodJSON.getInt("period");
-                        } catch (JSONException e) {
-                            // period isn't an int, which means it's an advisory period, which is 0
+
+                        String period = null;
+                        if (periodJSON.has("period")) {
+                            period = periodJSON.getString("period");
                         }
+
                         String teacher = null;
                         if (periodJSON.has("teacher")) {
                             teacher = periodJSON.getString("teacher");
@@ -120,7 +118,7 @@ public class Absences extends MarkingPeriodPage {
                             periodStatus = stringtoStatus(periodJSON.getString("status"));
                         }
 
-                        periods.add(new AbsencePeriod(days, lastUpdated, lastUpdatedBy, name, period, periodStatus, teacher));
+                        periods.add(new AbsencePeriod(lastUpdated, lastUpdatedBy, name, period, periodStatus, teacher));
 
                     }
 
@@ -177,6 +175,13 @@ public class Absences extends MarkingPeriodPage {
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(TAG, "periods_absent not found in JSON");
+        }
+
+        try {
+            periodsDismissed = absencesJSON.getInt("periods_dismissed");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(TAG, "periods_dismissed not found in JSON");
         }
 
         try {

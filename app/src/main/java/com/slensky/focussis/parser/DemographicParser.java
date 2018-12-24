@@ -13,7 +13,7 @@ import java.util.NoSuchElementException;
  * Created by slensky on 3/24/18.
  */
 
-public class DemographicParser extends PageParser {
+public class DemographicParser extends FocusPageParser {
     private static final String TAG = "DemographicParser";
 
     private JSONArray result0;

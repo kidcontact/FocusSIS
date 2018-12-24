@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  * Created by slensky on 3/29/18.
  */
 
-public class AbsencesParser extends PageParser {
+public class AbsencesParser extends FocusPageParser {
     private static final String TAG = "AbsencesParser";
 
     @Override
@@ -30,23 +30,22 @@ public class AbsencesParser extends PageParser {
         JSONObject json = new JSONObject();
         Document absences = Jsoup.parse(html);
 
-        Element table = absences.selectFirst("td.WhiteDrawHeader");
-        Pattern r = Pattern.compile("Absent: ([0-9]+) periods \\(during ([0-9]+) days\\) A Absent: ([0-9]+) periods " +
-                "E Excused Absence: ([0-9]+) periods -- ([0-9]+) days Other Marks: ([0-9]+) periods \\(during ([0-9]+) days\\) " +
-                "L Late: ([0-9]+) periods T Tardy: ([0-9]+) periods M Misc. Activity: ([0-9]+) periods O Off Site\\/Field Trip: ([0-9]+) periods");
+        Element table = absences.select("table.WhiteDrawHeader").get(1);
+        Pattern r = Pattern.compile("Absent: ([0-9]+) periods \\(during ([0-9]+) days\\) A Absent ([0-9]+) periods D Dismissed ([0-9]+) periods E Excused Absence ([0-9]+) periods -- ([0-9]+) days Other Marks: ([0-9]+) periods \\(during ([0-9]+) days\\) L Late ([0-9]+) periods T Tardy ([0-9]+) periods M Misc. Activity ([0-9]+) periods O Off Site/Field Trip ([0-9]+) periods");
         Matcher m = r.matcher(table.text());
         if (m.find()) {
             json.put("periods_absent", Integer.parseInt(m.group(1)));
             json.put("days_partially_absent", Integer.parseInt(m.group(2)));
             json.put("periods_absent_unexcused", Integer.parseInt(m.group(3)));
-            json.put("periods_absent_excused", Integer.parseInt(m.group(4)));
-            json.put("days_absent_excused", Integer.parseInt(m.group(5)));
-            json.put("periods_other_marks", Integer.parseInt(m.group(6)));
-            json.put("days_other_marks", Integer.parseInt(m.group(7)));
-            json.put("periods_late", Integer.parseInt(m.group(8)));
-            json.put("periods_tardy", Integer.parseInt(m.group(9)));
-            json.put("periods_misc", Integer.parseInt(m.group(10)));
-            json.put("periods_offsite", Integer.parseInt(m.group(11)));
+            json.put("periods_dismissed", Integer.parseInt(m.group(4)));
+            json.put("periods_absent_excused", Integer.parseInt(m.group(5)));
+            json.put("days_absent_excused", Integer.parseInt(m.group(6)));
+            json.put("periods_other_marks", Integer.parseInt(m.group(7)));
+            json.put("days_other_marks", Integer.parseInt(m.group(8)));
+            json.put("periods_late", Integer.parseInt(m.group(9)));
+            json.put("periods_tardy", Integer.parseInt(m.group(10)));
+            json.put("periods_misc", Integer.parseInt(m.group(11)));
+            json.put("periods_offsite", Integer.parseInt(m.group(12)));
         }
         else {
             Log.e(TAG, "Regex failed to match table text: " + table.text());
@@ -78,7 +77,7 @@ public class AbsencesParser extends PageParser {
         List<String> periodNames = new ArrayList<>();
         for (int i = 2; i < headers.size(); i++) {
             if (headers.get(i).parent().parent().tagName().equals("thead")) {
-                periodNames.add(headers.get(i).text().toLowerCase());
+                periodNames.add(headers.get(i).text().trim());
             }
             else {
                 break;
@@ -103,23 +102,18 @@ public class AbsencesParser extends PageParser {
                     Element p = fields.get(i + 2);
                     String n = periodNames.get(i);
                     JSONObject c = new JSONObject();
-
-                    try {
-                        c.put("period", Integer.parseInt(n));
-                    } catch (NumberFormatException e) {
-                        c.put("period", n);
-                    }
+                    c.put("period", n);
 
                     Element tooltip = p.selectFirst("div");
                     if (tooltip != null) {
                         String[] data = tooltip.attr("data-tooltip").split("<BR>");
-                        String[] courseInfo = data[0].split(" - ");
-                        c.put("name", courseInfo[0]);
-                        c.put("days", courseInfo[2]);
+                        HyphenatedCourseInformation courseInfo = parseHyphenatedCourseInformation(data[0], true, false);
+                        c.put("name", courseInfo.getCourseName());
 
-                        // focus doesn't account for middle names properly in this page, so teachers without
-                        // middle names have two spaces in between their first and last!
-                        c.put("teacher", courseInfo[courseInfo.length - 1].replace("  ", " "));
+                        // courses on this page apparently do not always include meeting days
+                        // c.put("days", courseInfo.getMeetingDays());
+
+                        c.put("teacher", courseInfo.getTeacher());
 
                         groups = DateUtil.nattyDateParser.parse(data[1].substring("Last Modified: ".length()));
                         String lastUpdated = DateUtil.ISO_DATE_FORMATTER.format(groups.get(0).getDates().get(0));
@@ -165,7 +159,7 @@ public class AbsencesParser extends PageParser {
         }
         json.put("absences", missed);
 
-        return JSONUtil.concatJson(json, this.getMarkingPeriods(html));
+        return JSONUtil.concatJson(json, getMarkingPeriods(html));
     }
 
 }

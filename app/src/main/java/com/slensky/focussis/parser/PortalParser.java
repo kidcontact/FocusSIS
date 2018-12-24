@@ -1,7 +1,5 @@
 package com.slensky.focussis.parser;
 
-import android.util.Log;
-
 import com.joestelmach.natty.DateGroup;
 import com.slensky.focussis.util.JSONUtil;
 
@@ -25,7 +23,7 @@ import java.util.List;
  * Created by slensky on 3/12/18.
  */
 
-public class PortalParser extends PageParser {
+public class PortalParser extends FocusPageParser {
     private static final String TAG = "PortalParser";
 
     @Override

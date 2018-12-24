@@ -8,10 +8,12 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,19 +36,24 @@ import com.slensky.focussis.network.FocusApiSingleton;
 import com.slensky.focussis.util.TableRowAnimationController;
 import com.slensky.focussis.views.AbsenceLabelView;
 
+import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.json.JSONObject;
 
 import com.slensky.focussis.data.AbsenceDay;
 import com.slensky.focussis.data.AbsencePeriod;
 import com.slensky.focussis.util.DateUtil;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by slensky on 5/24/17.
  */
 
 public class AbsencesFragment extends NetworkTabAwareFragment {
+    private static final String TAG = "AbsencesFragment";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,11 +64,10 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(com.slensky.focussis.R.layout.fragment_absences, container, false);
-        return view;
+        return inflater.inflate(R.layout.fragment_absences, container, false);
     }
 
     @Override
@@ -80,32 +86,32 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
         View view = getView();
         if (view != null) {
             final ScrollView scrollView = view.findViewById(R.id.scrollview_absences);
-            TextView summary = (TextView) view.findViewById(com.slensky.focussis.R.id.text_absences_summary);
+            TextView summary = view.findViewById(R.id.text_absences_summary);
             String html = "<b>" + getString(com.slensky.focussis.R.string.absences_days_possible) + ": </b>" + absences.getDaysPossible() + "|"
                     + "<br><b>" + getString(com.slensky.focussis.R.string.absences_days_attended) + ": </b>" + absences.getDaysAttended() + "| (" + absences.getDaysAttendedPercent() + "%)"
                     + "<br><b>" + getString(com.slensky.focussis.R.string.absences_days_absent) + ": </b>" + absences.getDaysAbsent() + "| (" + absences.getDaysAbsentPercent() + "%)";
             html = html.replace(".0|", "").replace("|", "");
             summary.setText(Html.fromHtml(html));
 
-            TextView absentHeader = (TextView) view.findViewById(com.slensky.focussis.R.id.text_absent_header);
+            TextView absentHeader = view.findViewById(R.id.text_absent_header);
             absentHeader.setText(Html.fromHtml(getString(com.slensky.focussis.R.string.absences_absent_header, absences.getPeriodsAbsent(), absences.getDaysPartiallyAbsent())));
-            TextView absent = (TextView) view.findViewById(com.slensky.focussis.R.id.text_absent);
+            TextView absent = view.findViewById(R.id.text_absent);
             absent.setText(Html.fromHtml(getString(com.slensky.focussis.R.string.absences_absent, absences.getPeriodsAbsentUnexcused())));
-            TextView absentExcused = (TextView) view.findViewById(com.slensky.focussis.R.id.text_excused_absences);
+            TextView absentExcused = view.findViewById(R.id.text_excused_absences);
             absentExcused.setText(Html.fromHtml(getString(com.slensky.focussis.R.string.absences_excused, absences.getPeriodsAbsentExcused(), absences.getDaysAbsentExcused())));
-            TextView otherMarksHeader = (TextView) view.findViewById(com.slensky.focussis.R.id.text_other_marks_header);
+            TextView otherMarksHeader = view.findViewById(R.id.text_other_marks_header);
             otherMarksHeader.setText(Html.fromHtml(getString(com.slensky.focussis.R.string.absences_other_marks, absences.getPeriodsOtherMarks(), absences.getDaysOtherMarks())));
-            TextView late = (TextView) view.findViewById(com.slensky.focussis.R.id.text_late);
+            TextView late = view.findViewById(com.slensky.focussis.R.id.text_late);
             late.setText(Html.fromHtml(getString(com.slensky.focussis.R.string.absences_late, absences.getPeriodsLate())));
-            TextView tardy = (TextView) view.findViewById(com.slensky.focussis.R.id.text_tardy);
+            TextView tardy = view.findViewById(com.slensky.focussis.R.id.text_tardy);
             tardy.setText(Html.fromHtml(getString(com.slensky.focussis.R.string.absences_tardy, absences.getPeriodsTardy())));
-            TextView misc = (TextView) view.findViewById(com.slensky.focussis.R.id.text_misc_activity);
+            TextView misc = view.findViewById(com.slensky.focussis.R.id.text_misc_activity);
             misc.setText(Html.fromHtml(getString(com.slensky.focussis.R.string.absences_misc, absences.getPeriodsMisc())));
-            TextView offsite = (TextView) view.findViewById(com.slensky.focussis.R.id.text_offsite);
+            TextView offsite = view.findViewById(com.slensky.focussis.R.id.text_offsite);
             offsite.setText(Html.fromHtml(getString(com.slensky.focussis.R.string.absences_offsite, absences.getPeriodsOffsite())));
 
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            TableLayout table = (TableLayout) view.findViewById(com.slensky.focussis.R.id.table_absences);
+            TableLayout table = view.findViewById(com.slensky.focussis.R.id.table_absences);
             table.removeAllViews();
             TableRow headerRow = (TableRow) inflater.inflate(com.slensky.focussis.R.layout.view_absences_header, table, false);
             table.addView(headerRow);
@@ -116,9 +122,9 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
                     continue;
                 }
                 final TableRow absenceRow = (TableRow) inflater.inflate(com.slensky.focussis.R.layout.view_absences_row, table, false);
-                TextView date = (TextView) absenceRow.findViewById(com.slensky.focussis.R.id.text_absence_date);
+                TextView date = absenceRow.findViewById(R.id.text_absence_date);
                 date.setText(DateUtil.dateTimeToShortString(d.getDate()));
-                TextView daily = (TextView) absenceRow.findViewById(com.slensky.focussis.R.id.text_absence_daily);
+                TextView daily = absenceRow.findViewById(R.id.text_absence_daily);
                 String status = statusToString(d.getStatus());
                 daily.setText(status);
 
@@ -245,15 +251,11 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
         fl.addView(table);
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) table.getLayoutParams();
         lp.setMargins(dpToPixels(16), dpToPixels(16), dpToPixels(16), 0);
+
         for (AbsencePeriod p : d.getPeriods()) {
             TableRow row = (TableRow) inflater.inflate(com.slensky.focussis.R.layout.view_absence_dialog_row, table, false);
             TextView period = (TextView) row.findViewById(com.slensky.focussis.R.id.text_period);
-            if (p.getPeriod() == 0) {
-                period.setText("Advisory: ");
-            }
-            else {
-                period.setText("Period " + p.getPeriod() + ": ");
-            }
+            period.setText(unabbreviatePeriod(p.getPeriod()));
             AbsenceLabelView label = (AbsenceLabelView) row.findViewById(com.slensky.focussis.R.id.period_absence_label);
             label.setStatus(p.getStatus());
             TextView textLabel = (TextView) row.findViewById(com.slensky.focussis.R.id.text_absence_label);
@@ -272,13 +274,6 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
                 });
         builder.create().show();
     }
-
-//    @Override
-//    public void configureRequest(JsonObjectRequest request) {
-//        super.configureRequest(request);
-//        // for some reason, the absences page on focus takes forever to load. Give some extra time before timing out
-//        request.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-//    }
 
     private int dpToPixels(int dp) {
         final float scale = getResources().getDisplayMetrics().density;
@@ -307,6 +302,36 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
                 return "Off Site";
         }
         return null;
+    }
+
+    private String unabbreviatePeriod(String period) {
+        String p = period.toLowerCase(); // for more robust comparisons
+
+        // if the period is an integer, return "Period i"
+        if (NumberUtils.isDigits(p)) {
+            return "Period " + p;
+        }
+
+        // if the period is in the form "P3", return "Period 3"
+        if (p.charAt(0) == 'p' && NumberUtils.isDigits(p.substring(1))) {
+            return "Period " + p.substring(1);
+        }
+
+        // these abbreviations can be found in the absences page of sixth graders
+        if (p.equals("hr")) {
+            return "Homeroom";
+        }
+        if (p.equals("sh")) {
+            return "Study Hall";
+        }
+
+        // possible abbreviations for advisory
+        if (p.equals("adv") || p.equals("adv.")) {
+            return "Advisory";
+        }
+
+        // no abbreviation/unknown pattern, capitalize it just in case it isn't for some reason
+        return WordUtils.capitalize(period);
     }
 
 }

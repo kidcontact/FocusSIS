@@ -13,7 +13,7 @@ import java.util.Date;
  * Created by slensky on 3/18/18.
  */
 
-public class CalendarEventParser extends PageParser {
+public class CalendarEventParser extends FocusPageParser {
     private static final String TAG = "CalendarEventParser";
 
     @Override

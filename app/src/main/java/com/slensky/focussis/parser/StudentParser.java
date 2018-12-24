@@ -10,9 +10,6 @@ import org.jsoup.nodes.Document;
 
 import com.slensky.focussis.util.JSONUtil;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,7 +17,7 @@ import java.util.regex.Pattern;
  * Created by slensky on 3/26/18.
  */
 
-public class StudentParser extends PageParser {
+public class StudentParser extends FocusPageParser {
     private static final String TAG = "StudentParser";
 
     @Override

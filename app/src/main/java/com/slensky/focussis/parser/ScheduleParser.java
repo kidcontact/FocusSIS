@@ -14,7 +14,7 @@ import org.jsoup.select.Elements;
  * Created by slensky on 3/18/18.
  */
 
-public class ScheduleParser extends PageParser {
+public class ScheduleParser extends FocusPageParser {
     private static final String TAG = "ScheduleParser";
 
     @Override

@@ -22,7 +22,7 @@ import java.util.List;
  * Created by slensky on 3/17/18.
  */
 
-public class CourseParser extends PageParser {
+public class CourseParser extends FocusPageParser {
     private static final String TAG = "CourseParser";
 
     @Override

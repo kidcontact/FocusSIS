@@ -10,7 +10,7 @@ import org.jsoup.nodes.Element;
  * Created by slensky on 4/5/18.
  */
 
-public class PreferencesParser extends PageParser {
+public class PreferencesParser extends FocusPageParser {
     private final static String TAG = "PreferencesParser";
 
     @Override

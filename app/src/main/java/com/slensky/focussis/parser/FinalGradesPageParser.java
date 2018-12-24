@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * Created by slensky on 4/1/18.
  */
 
-public class FinalGradesPageParser extends PageParser {
+public class FinalGradesPageParser extends FocusPageParser {
     private static final String TAG = "FinalGradesPageParser";
 
     @Override
