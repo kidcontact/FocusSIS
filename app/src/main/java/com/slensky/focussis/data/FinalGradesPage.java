@@ -12,9 +12,12 @@ public class FinalGradesPage extends MarkingPeriodPage {
     private final String studentId;
     private final String hmacSecret;
     private final String currentSemesterName;
-    private final String currentSemesterExamsName;
     private final String currentSemesterTargetMarkingPeriod;
+
+    // these fields seem to be optional, 6th grade accounts or new student accounts may not have them
+    private final String currentSemesterExamsName;
     private final String currentSemesterExamsTargetMarkingPeriod;
+
     private final String commentCodes;
     private final String gpa;
     private final String weightedGpa;
@@ -27,9 +30,14 @@ public class FinalGradesPage extends MarkingPeriodPage {
         this.studentId = finalGradesPage.getString("student_id");
         this.hmacSecret = finalGradesPage.getString("hmac_secret");
         this.currentSemesterName = finalGradesPage.getString("current_sem_name");
-        this.currentSemesterExamsName = finalGradesPage.getString("current_sem_exams_name");
         this.currentSemesterTargetMarkingPeriod = finalGradesPage.getString("current_sem_target_mp");
-        this.currentSemesterExamsTargetMarkingPeriod = finalGradesPage.getString("current_sem_exams_target_mp");
+        if (finalGradesPage.has("current_sem_exams_name")) { // if the page has the current exam name, it is assumed to have an associated mp
+            this.currentSemesterExamsName = finalGradesPage.getString("current_sem_exams_name");
+            this.currentSemesterExamsTargetMarkingPeriod = finalGradesPage.getString("current_sem_exams_target_mp");
+        } else {
+            this.currentSemesterExamsName = null;
+            this.currentSemesterExamsTargetMarkingPeriod = null;
+        }
         this.commentCodes = finalGradesPage.getString("comment_codes");
         this.gpa = finalGradesPage.getString("gpa");
         this.weightedGpa = finalGradesPage.getString("weighted_gpa");
@@ -46,6 +54,10 @@ public class FinalGradesPage extends MarkingPeriodPage {
 
     public String getCurrentSemesterName() {
         return currentSemesterName;
+    }
+
+    public boolean hasCurrentSemesterExams() {
+        return currentSemesterExamsName != null;
     }
 
     public String getCurrentSemesterExamsName() {

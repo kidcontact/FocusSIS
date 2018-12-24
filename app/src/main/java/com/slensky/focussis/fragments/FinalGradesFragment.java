@@ -41,7 +41,9 @@ import com.slensky.focussis.data.FinalGrades;
 import com.slensky.focussis.util.TableRowAnimationController;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by slensky on 4/1/18.
@@ -51,6 +53,7 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
     private static final String TAG = "FinalGradesFragment";
 
     private FinalGrades finalGrades;
+    private Map<Integer, FocusApi.FinalGradesType> gradeTypeSpinnerPositions = new HashMap<>();
     private FocusApi.FinalGradesType selectedType = FocusApi.FinalGradesType.COURSE_HISTORY;
     private ArrayAdapter<String> spinnerAdapter;
     private View loadingView;
@@ -198,11 +201,15 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
                     .create();
 
             if (spinnerAdapter.getCount() == 0) {
-                spinnerAdapter.add(finalGradesTypeToString(FocusApi.FinalGradesType.COURSE_HISTORY));
-                spinnerAdapter.add(finalGradesTypeToString(FocusApi.FinalGradesType.CURRENT_SEMESTER));
-                spinnerAdapter.add(finalGradesTypeToString(FocusApi.FinalGradesType.CURRENT_SEMESTER_EXAMS));
-                spinnerAdapter.add(finalGradesTypeToString(FocusApi.FinalGradesType.ALL_SEMESTERS));
-                spinnerAdapter.add(finalGradesTypeToString(FocusApi.FinalGradesType.ALL_SEMESTERS_EXAMS));
+                int i = 0;
+                for (FocusApi.FinalGradesType t : FocusApi.FinalGradesType.values()) {
+                    // not all final grades pages have current semester exams (6th graders/new students don't?)
+                    if (!t.equals(FocusApi.FinalGradesType.CURRENT_SEMESTER_EXAMS) || finalGrades.hasCurrentSemesterExams()) {
+                        spinnerAdapter.add(finalGradesTypeToString(t));
+                        gradeTypeSpinnerPositions.put(i, t);
+                        i++;
+                    }
+                }
                 spinnerAdapter.notifyDataSetChanged();
             }
 
@@ -500,24 +507,8 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         FocusApi.FinalGradesType oldSelection = selectedType;
-        switch (i) {
-            case 0:
-                selectedType = FocusApi.FinalGradesType.COURSE_HISTORY;
-                break;
-            case 1:
-                selectedType = FocusApi.FinalGradesType.CURRENT_SEMESTER;
-                break;
-            case 2:
-                selectedType = FocusApi.FinalGradesType.CURRENT_SEMESTER_EXAMS;
-                break;
-            case 3:
-                selectedType = FocusApi.FinalGradesType.ALL_SEMESTERS;
-                break;
-            case 4:
-                selectedType = FocusApi.FinalGradesType.ALL_SEMESTERS_EXAMS;
-                break;
-        }
-        if (selectedType != oldSelection) {
+        selectedType = gradeTypeSpinnerPositions.get(i);
+        if (selectedType != oldSelection) { // only reload page if the selection has changed
             table.setVisibility(View.GONE);
             loadingView.setVisibility(View.VISIBLE);
             refresh();

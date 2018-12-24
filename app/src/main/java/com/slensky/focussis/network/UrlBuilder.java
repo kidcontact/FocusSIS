@@ -58,7 +58,7 @@ public class UrlBuilder {
             case FINAL_GRADES:
                 return getTld() + "/focus/Modules.php?force_package=SIS&modname=Grades/StudentRCGrades.php";
             case API:
-                return getTld() + "/focus/API/APIEndpoint.php";
+                return getTld() + "/focus/legacy_API/APIEndpoint.php";
             case PREFERENCES:
                 return getTld() + "/focus/Modules.php?force_package=SIS&modname=Users/Preferences.php";
             case PREFERENCES_PASSWORD:

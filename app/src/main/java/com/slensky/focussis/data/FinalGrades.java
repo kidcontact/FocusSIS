@@ -61,11 +61,14 @@ public class FinalGrades extends MarkingPeriodPage {
             Log.e(TAG, "Error getting current semester name");
             e.printStackTrace();
         }
-        try {
-            currentSemesterExamsName = page.getString("current_sem_exams_name");
-        } catch (JSONException e) {
-            Log.e(TAG, "Error getting current semester exams name");
-            e.printStackTrace();
+
+        if (page.has("current_sem_exams_name")) { // some final grades pages seem to not have a tab for current semester exam grades
+            try {
+                currentSemesterExamsName = page.getString("current_sem_exams_name");
+            } catch (JSONException e) {
+                // this should never happen
+                e.printStackTrace();
+            }
         }
 
         try {
@@ -172,6 +175,10 @@ public class FinalGrades extends MarkingPeriodPage {
 
     public String getCurrentSemesterName() {
         return currentSemesterName;
+    }
+
+    public boolean hasCurrentSemesterExams() {
+        return currentSemesterExamsName != null;
     }
 
     public String getCurrentSemesterExamsName() {

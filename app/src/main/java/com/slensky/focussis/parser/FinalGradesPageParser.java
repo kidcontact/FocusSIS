@@ -53,7 +53,7 @@ public class FinalGradesPageParser extends PageParser {
                 || currentSemesterTargetMarkingPeriod == null
                 || currentSemesterExamsName == null
                 || currentSemesterExamsTargetMarkingPeriod == null) {
-            Log.e(TAG, String.format("Not all title/raw marking periods found!" +
+            Log.w(TAG, String.format("Not all title/raw marking periods found! (current exams not being found is ok)" +
                     "\n  currentSemesterName: %s" +
                     "\n  currentSemesterTargetMarkingPeriod: %s" +
                     "\n  currentSemesterExamsName: %s" +

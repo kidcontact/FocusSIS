@@ -62,7 +62,7 @@ public class FocusApi {
     private boolean hasAccessedStudentPage; // api access requires first sending GET to student url
     protected Student student;
     private boolean hasAccessedFinalGradesPage; // api access requires first sending GET to final grades url
-    protected FinalGradesPage finalGradesPage;
+    FinalGradesPage finalGradesPage;
 
     protected final Context context;
 
@@ -461,6 +461,7 @@ public class FocusApi {
         ALL_SEMESTERS_EXAMS
     }
     public Request getFinalGrades(final FinalGradesType type, final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
+        Log.d(TAG, "Retrieving final grades type " + type.name());
         DeliverableStringRequest finalGradesRequest = new DeliverableStringRequest(
                 Request.Method.POST, UrlBuilder.get(FocusUrl.API), new Response.Listener<String>() {
             @Override
