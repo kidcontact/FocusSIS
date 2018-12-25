@@ -165,7 +165,6 @@ public class CalendarFragment extends NetworkTabAwareFragment implements Syncabl
         return view;
     }
 
-    @Override
     protected void onSuccess(JSONObject response) {
         calendar = new Calendar(response);
         final View view = getView();

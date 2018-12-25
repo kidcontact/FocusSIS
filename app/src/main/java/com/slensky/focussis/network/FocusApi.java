@@ -15,7 +15,10 @@ import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.slensky.focussis.data.Address;
 import com.slensky.focussis.data.CalendarEvent;
+import com.slensky.focussis.data.Demographic;
 import com.slensky.focussis.data.FinalGradesPage;
 import com.slensky.focussis.data.FocusPreferences;
 import com.slensky.focussis.data.Student;
@@ -54,6 +57,11 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class FocusApi {
     private static final String TAG = "FocusApi";
+
+    public interface Listener<T> {
+        /** Called when a response is received. */
+        void onResponse(T response);
+    }
 
     private final String username;
     private final String password;
@@ -135,12 +143,11 @@ public class FocusApi {
                 Request.Method.GET, UrlBuilder.get(FocusUrl.PORTAL), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                FocusPageParser portalParser = new PortalParser();
+                PortalParser portalParser = new PortalParser();
                 try {
                     listener.onResponse(portalParser.parse(response));
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing portal");
-                    e.printStackTrace();
                     errorListener.onErrorResponse(new VolleyError(e.toString()));
                     throw new RuntimeException(e);
                 }
@@ -156,12 +163,11 @@ public class FocusApi {
                 Request.Method.GET, String.format(UrlBuilder.get(FocusUrl.COURSE), id), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                FocusPageParser courseParser = new CourseParser();
+                CourseParser courseParser = new CourseParser();
                 try {
                     listener.onResponse(courseParser.parse(response));
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing course (ID " + id + ")");
-                    e.printStackTrace();
                     errorListener.onErrorResponse(new VolleyError(e.toString()));
                     throw new RuntimeException(e);
                 }
@@ -177,12 +183,11 @@ public class FocusApi {
                 Request.Method.GET, UrlBuilder.get(FocusUrl.SCHEDULE), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                FocusPageParser scheduleParser = new ScheduleParser();
+                ScheduleParser scheduleParser = new ScheduleParser();
                 try {
                     listener.onResponse(scheduleParser.parse(response));
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing schedule");
-                    e.printStackTrace();
                     errorListener.onErrorResponse(new VolleyError(e.toString()));
                     throw new RuntimeException(e);
                 }
@@ -198,12 +203,11 @@ public class FocusApi {
                 Request.Method.GET, String.format(UrlBuilder.get(FocusUrl.CALENDAR), month, year), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                FocusPageParser calendarParser = new CalendarParser();
+                CalendarParser calendarParser = new CalendarParser();
                 try {
                     listener.onResponse(calendarParser.parse(response));
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing calendar");
-                    e.printStackTrace();
                     errorListener.onErrorResponse(new VolleyError(e.toString()));
                     throw new RuntimeException(e);
                 }
@@ -221,14 +225,13 @@ public class FocusApi {
                 Request.Method.GET, String.format(url, id), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                FocusPageParser calendarEventParser = new CalendarEventParser();
+                CalendarEventParser calendarEventParser = new CalendarEventParser();
                 try {
                     JSONObject parsed = calendarEventParser.parse(response);
                     parsed.put("id", id);
                     listener.onResponse(parsed);
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing calendar");
-                    e.printStackTrace();
                     errorListener.onErrorResponse(new VolleyError(e.toString()));
                     throw new RuntimeException(e);
                 }
@@ -245,16 +248,14 @@ public class FocusApi {
             final StringRequest studentRequest = new StringRequest(Request.Method.GET, UrlBuilder.get(FocusUrl.STUDENT), new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                final FocusPageParser studentParser = new StudentParser();
+                final StudentParser studentParser = new StudentParser();
                 try {
-                    final JSONObject parsed = studentParser.parse(response);
-                    student = new Student(parsed);
+                    student = studentParser.parse(response);
 
-                    ImageRequest imageRequest = new ImageRequest(parsed.getString("picture"),
+                    ImageRequest imageRequest = new ImageRequest(student.getPictureUrl(),
                             new Response.Listener<Bitmap>() {
                                 @Override
                                 public void onResponse(Bitmap bitmap) {
-                                    parsed.remove("picture");
                                     student.setPicture(bitmap);
                                     hasAccessedStudentPage = true;
                                     onResponse.run();
@@ -263,7 +264,6 @@ public class FocusApi {
                             new Response.ErrorListener() {
                                 public void onErrorResponse(VolleyError error) {
                                     Log.w(TAG, "Network error fetching image, continuing anyway");
-                                    parsed.remove("picture");
                                     hasAccessedStudentPage = true;
                                     onResponse.run();
                                 }
@@ -271,7 +271,6 @@ public class FocusApi {
                     queueRequest(imageRequest);
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing student page");
-                    e.printStackTrace();
                     errorListener.onErrorResponse(new VolleyError(e.toString()));
                     throw new RuntimeException(e);
                 }
@@ -283,7 +282,7 @@ public class FocusApi {
         }
     }
 
-    public void getDemographic(final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
+    public void getDemographic(final Listener<Demographic> listener, final Response.ErrorListener errorListener) {
         ensureStudentPage(new Runnable() {
             @Override
             public void run() {
@@ -293,16 +292,15 @@ public class FocusApi {
                         Request.Method.POST, student.getApiUrl(), new Response.Listener<NetworkResponse>() {
                     @Override
                     public void onResponse(NetworkResponse response) {
-                        FocusPageParser demographicParser = new DemographicParser();
+                        DemographicParser demographicParser = new DemographicParser();
                         String responseStr = new String(response.data);
                         try {
-                            JSONObject parsed = demographicParser.parse(responseStr);
-                            parsed = JSONUtil.concatJson(parsed, student.getJson());
-                            listener.onResponse(parsed);
+                            Demographic demographic = demographicParser.parse(responseStr);
+                            demographic.setStudent(student);
+                            listener.onResponse(demographic);
                         } catch (JSONException e) {
                             Log.d(TAG, responseStr);
                             Log.e(TAG, "JSONException while parsing demographic");
-                            e.printStackTrace();
                             errorListener.onErrorResponse(new VolleyError(e.toString()));
                             throw new RuntimeException(e);
                         }
@@ -313,7 +311,8 @@ public class FocusApi {
                         Map<String, String> params = new HashMap<>();
                         String req = "{\"requests\":[" +
                                 "{\"controller\":\"EditController\",\"method\":\"cache:getFieldData\",\"token\":\"" + csrfToken + "\",\"args\":[\"general\",\"SISStudent\",%s]}," +
-                                "{\"controller\":\"EditController\",\"method\":\"cache:getFieldData\",\"token\":\"" + csrfToken + "\",\"args\":[\"9\",\"SISStudent\",%<s]}" +
+                                "{\"controller\":\"EditController\",\"method\":\"cache:getFieldData\",\"token\":\"" + csrfToken + "\",\"args\":[\"9\",\"SISStudent\",%<s]}," +
+                                "{\"controller\":\"EditController\",\"method\":\"cache:getFieldData\",\"token\":\"" + csrfToken + "\",\"args\":[\"6\",\"SISStudent\",%<s]}" +
                                 "]}";
                         Log.d(TAG,String.format(req, student.getId()));
 
@@ -326,7 +325,7 @@ public class FocusApi {
         }, errorListener);
     }
 
-    public void getAddress(final Response.Listener<JSONObject> listener, final Response.ErrorListener errorListener) {
+    public void getAddress(final Listener<Address> listener, final Response.ErrorListener errorListener) {
         ensureStudentPage(new Runnable() {
             @Override
             public void run() {
@@ -337,15 +336,14 @@ public class FocusApi {
                         Request.Method.POST, student.getApiUrl(), new Response.Listener<NetworkResponse>() {
                     @Override
                     public void onResponse(NetworkResponse response) {
-                        FocusPageParser addressParser = new AddressParser();
+                        AddressParser addressParser = new AddressParser();
                         String responseStr = new String(response.data);
                         try {
-                            JSONObject parsed = addressParser.parse(responseStr);
-                            parsed = JSONUtil.concatJson(parsed, student.getJson());
-                            listener.onResponse(parsed);
+                            Address address = addressParser.parse(responseStr);
+                            address.setStudent(student);
+                            listener.onResponse(address);
                         } catch (JSONException e) {
                             Log.e(TAG, "JSONException while parsing address");
-                            e.printStackTrace();
                             errorListener.onErrorResponse(new VolleyError(e.toString()));
                             throw new RuntimeException(e);
                         }
@@ -374,12 +372,11 @@ public class FocusApi {
                 Request.Method.GET, UrlBuilder.get(FocusUrl.REFERRALS), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                FocusPageParser referralsParser = new ReferralsParser();
+                ReferralsParser referralsParser = new ReferralsParser();
                 try {
                     listener.onResponse(referralsParser.parse(response));
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing referrals");
-                    e.printStackTrace();
                     errorListener.onErrorResponse(new VolleyError(e.toString()));
                     throw new RuntimeException(e);
                 }
@@ -395,12 +392,11 @@ public class FocusApi {
                 Request.Method.GET, UrlBuilder.get(FocusUrl.ABSENCES), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                FocusPageParser absencesParser = new AbsencesParser();
+                AbsencesParser absencesParser = new AbsencesParser();
                 try {
                     listener.onResponse(absencesParser.parse(response));
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing absences");
-                    e.printStackTrace();
                     errorListener.onErrorResponse(new VolleyError(e.toString()));
                     throw new RuntimeException(e);
                 }
@@ -417,7 +413,7 @@ public class FocusApi {
             final StringRequest finalGradesRequest = new StringRequest(Request.Method.GET, UrlBuilder.get(FocusUrl.FINAL_GRADES), new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    final FocusPageParser finalGradesPageParser = new FinalGradesPageParser();
+                    final FinalGradesPageParser finalGradesPageParser = new FinalGradesPageParser();
                     try {
                         final JSONObject parsed = finalGradesPageParser.parse(response);
                         finalGradesPage = new FinalGradesPage(parsed);
@@ -425,7 +421,6 @@ public class FocusApi {
                         queueRequest(nextRequest);
                     } catch (JSONException e) {
                         Log.e(TAG, "JSONException while parsing final grades page");
-                        e.printStackTrace();
                         nextRequest.getErrorListener().onErrorResponse(new VolleyError(e.toString()));
                         throw new RuntimeException(e);
                     }
@@ -464,14 +459,13 @@ public class FocusApi {
                 Request.Method.POST, UrlBuilder.get(FocusUrl.API), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                FocusPageParser finalGradesParser = new FinalGradesParser();
+                FinalGradesParser finalGradesParser = new FinalGradesParser();
                 try {
                     JSONObject parsed = finalGradesParser.parse(response);
                     parsed = JSONUtil.concatJson(parsed, finalGradesPage.getJson());
                     listener.onResponse(parsed);
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing final grades");
-                    e.printStackTrace();
                     errorListener.onErrorResponse(new VolleyError(e.toString()));
                     throw new RuntimeException(e);
                 }
@@ -507,10 +501,8 @@ public class FocusApi {
                     signRequest(params, finalGradesPage.getHmacSecret());
                 } catch (NoSuchAlgorithmException e) {
                     Log.e(TAG, "Could not find HmacSHA1 algorithm for signing final grades request");
-                    e.printStackTrace();
                 } catch (InvalidKeyException e) {
                     Log.e(TAG, "Invalid key for HmacSHA1 algorithm while signing final grades request");
-                    e.printStackTrace();
                 }
                 return  params;
             }
@@ -525,12 +517,11 @@ public class FocusApi {
                 Request.Method.GET, UrlBuilder.get(FocusUrl.PREFERENCES), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                FocusPageParser preferencesParser = new PreferencesParser();
+                PreferencesParser preferencesParser = new PreferencesParser();
                 try {
                     listener.onResponse(preferencesParser.parse(response));
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing preferences");
-                    e.printStackTrace();
                     errorListener.onErrorResponse(new VolleyError(e.toString()));
                     throw new RuntimeException(e);
                 }
@@ -546,12 +537,11 @@ public class FocusApi {
                 Request.Method.POST, UrlBuilder.get(FocusUrl.PREFERENCES), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                FocusPageParser preferencesParser = new PreferencesParser();
+                PreferencesParser preferencesParser = new PreferencesParser();
                 try {
                     listener.onResponse(preferencesParser.parse(response));
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing preferences");
-                    e.printStackTrace();
                     errorListener.onErrorResponse(new VolleyError(e.toString()));
                     throw new RuntimeException(e);
                 }
@@ -577,12 +567,11 @@ public class FocusApi {
                 Request.Method.POST, UrlBuilder.get(FocusUrl.PREFERENCES_PASSWORD), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                FocusPageParser passwordParser = new PasswordResponseParser();
+                PasswordResponseParser passwordParser = new PasswordResponseParser();
                 try {
                     listener.onResponse(passwordParser.parse(response));
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException while parsing password");
-                    e.printStackTrace();
                     errorListener.onErrorResponse(new VolleyError(e.toString()));
                     throw new RuntimeException(e);
                 }

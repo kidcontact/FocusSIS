@@ -63,7 +63,6 @@ public class ReferralsFragment extends NetworkTabAwareFragment {
         return null;
     }
 
-    @Override
     protected void onSuccess(JSONObject response) {
         Referrals referrals = new Referrals(response);
         List<Referral> refList = referrals.getReferrals();

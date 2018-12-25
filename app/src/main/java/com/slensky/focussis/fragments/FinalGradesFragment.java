@@ -158,7 +158,6 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
         return view;
     }
 
-    @Override
     protected void onSuccess(JSONObject response) {
         finalGrades = new FinalGrades(response);
         View view = getView();

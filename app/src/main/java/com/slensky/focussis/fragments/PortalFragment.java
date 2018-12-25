@@ -84,7 +84,6 @@ public class PortalFragment extends NetworkTabAwareFragment implements ActionMod
         return view;
     }
 
-    @Override
     protected void onSuccess(JSONObject response) {
         portal = new Portal(response);
 

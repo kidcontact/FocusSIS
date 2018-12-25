@@ -1,6 +1,7 @@
 package com.slensky.focussis.data;
 
 import android.graphics.Bitmap;
+import android.support.annotation.Nullable;
 
 import org.joda.time.DateTime;
 import org.json.JSONException;
@@ -12,47 +13,27 @@ import java.util.Map;
 
 /**
  * Created by slensky on 3/26/18.
+ * (represents the Student page in Focus, not the actual student)
  */
 
 public class Student {
 
-    private final JSONObject json;
     private final String id;
     private final int grade;
-    private DateTime birthdate;
-    private Bitmap picture;
+    @Nullable private final DateTime birthdate;
+    private final String pictureUrl;
+    @Nullable private Bitmap picture;
 
     private final String apiUrl;
     private final Map<String, Map<String, String>> methods;
 
-    public Student(JSONObject student) throws JSONException {
-        this.json = student;
-        this.id = student.getString("id");
-        this.grade = student.getInt("grade");
-        if (student.has("birthdate")) {
-            this.birthdate = new DateTime(student.getString("birthdate"));
-        }
-
-        this.apiUrl = student.getString("api_url");
-
-        JSONObject controllersJson = student.getJSONObject("methods");
-        methods = new HashMap<>();
-        Iterator<?> keys = controllersJson.keys();
-        while(keys.hasNext()) {
-            String key = (String) keys.next();
-            if (controllersJson.get(key) instanceof JSONObject) {
-                Map<String, String> methodsMap = new HashMap<>();
-                JSONObject methodsJson = controllersJson.getJSONObject(key);
-                Iterator<?> keys2 = methodsJson.keys();
-                while(keys2.hasNext()) {
-                    String key2 = (String) keys2.next();
-                    if (methodsJson.get(key2) instanceof String) {
-                        methodsMap.put(key2, methodsJson.getString(key2));
-                    }
-                }
-                methods.put(key, methodsMap);
-            }
-        }
+    public Student(String id, int grade, DateTime birthdate, String pictureUrl, String apiUrl, Map<String, Map<String, String>> methods) {
+        this.id = id;
+        this.grade = grade;
+        this.birthdate = birthdate;
+        this.pictureUrl = pictureUrl;
+        this.apiUrl = apiUrl;
+        this.methods = methods;
     }
 
     public String getId() {
@@ -67,8 +48,8 @@ public class Student {
         return birthdate;
     }
 
-    public JSONObject getJson() {
-        return json;
+    public String getPictureUrl() {
+        return pictureUrl;
     }
 
     public Bitmap getPicture() {

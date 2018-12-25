@@ -2,12 +2,23 @@ package com.slensky.focussis.parser;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.SparseArray;
+
+import com.slensky.focussis.data.Demographic;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Created by slensky on 3/24/18.
@@ -16,178 +27,142 @@ import java.util.NoSuchElementException;
 public class DemographicParser extends FocusPageParser {
     private static final String TAG = "DemographicParser";
 
-    private JSONArray result0;
-    private JSONArray result1;
+    private JSONArray result0; // contains basic information like first/last name
+    private JSONArray result1; // custom demographic fields, e.g. nickname, locker #, bus #
+    private JSONArray result2; // parental permissions
 
     @Override
-    public JSONObject parse(String jsonStr) throws JSONException {
+    public Demographic parse(String jsonStr) throws JSONException {
         JSONArray json = new JSONArray(jsonStr);
         result0 = json.getJSONObject(0).getJSONArray("result");
         result1 = json.getJSONObject(1).getJSONArray("result");
-        JSONObject parsed = new JSONObject();
+        result2 = json.getJSONObject(2).getJSONArray("result");
 
-        String first = findField("First Name", "students|first_name", "first_name").getString("value");
-        Object middleObj = findField("Middle Name", "students|middle_name", "middle_name").get("value");
+        // Get basic user info which should always be present (result0)
+        String first = findField(result0, "First Name", "students|first_name", "first_name").getString("value");
+        Object middleObj = findField(result0, "Middle Name", "students|middle_name", "middle_name").get("value");
         String middle = JSONObject.NULL.equals(middleObj) ? null : (String) middleObj;
-        String last = findField("Last Name", "students|last_name", "last_name").getString("value");
-        parsed.put("name", first + " " + (middle != null ? middle + " " : "") + last);
+        String last = findField(result0, "Last Name", "students|last_name", "last_name").getString("value");
+        String name = first + " " + (middle != null ? middle + " " : "") + last;
 
-        parsed.put("username", findField("Username", "students|username", "username").getString("value"));
-        parsed.put("pass_length", findField("Password", "students|password", "password").getString("value").length());
+        int passLength = findField(result0, "Password", "students|password", "password").getString("value").length();
 
-        try {
-            JSONObject levelField = findField("Level (Year)", "384", "custom_103");
-            parsed.put("level", Integer.parseInt(getTextFromOptions(levelField, "1")));
-        } catch (NoSuchElementException e) {
-            Log.w(TAG, "Level (number of years at school) not found in demographic JSON");
-        }
-
-        try {
-            JSONObject genderField = findField("Gender", "380", "custom_200000000");
-            parsed.put("gender", getTextFromOptions(genderField, "Unknown"));
-        } catch (NoSuchElementException e) {
-            Log.w(TAG, "Gender not found in demographic JSON");
-        }
-
-
-        JSONObject nicknameField = findField("Nickname", "394", "custom_200000002");
-        if (!JSONObject.NULL.equals(nicknameField.get("value"))) {
-            parsed.put("nickname", nicknameField.getString("value"));
-        }
-
-        parsed.put("email", findField("Email", "393", "custom_200000012").getString("value"));
-
-        JSONObject lockerField = findField("Locker #", "245", "custom_51");
-        if (!JSONObject.NULL.equals(lockerField.get("value"))) {
-            String locker = lockerField.getString("value");
-            if (!locker.isEmpty() && !locker.equals("-")) {
-                parsed.put("locker", locker);
+        // Collect all custom field titles and values (result1)
+        Map<String, String> customFields = new LinkedHashMap<>();
+        for (int i = 0; i < result1.length(); i++) {
+            if (!(result1.get(i) instanceof JSONObject)) {
+                continue;
             }
-        }
 
-        JSONObject lockerComboField = findField("Locker Combo", "247", "custom_118");
-        if (!JSONObject.NULL.equals(lockerComboField.get("value"))) {
-            String lockerCombo = lockerComboField.getString("value");
-            if (!lockerCombo.isEmpty() && !lockerCombo.equals("-")) {
-                parsed.put("locker_combo", lockerCombo);
-            }
-        }
-
-        JSONObject busesField = findField("Bus", "28", "custom_50");
-        if (!JSONObject.NULL.equals(busesField.get("value"))) {
-            String[] buses = busesField.getString("value").split("/");
-            if (!buses[0].trim().isEmpty() && !buses[0].equals("0") && !buses[0].equals("-")) {
-                parsed.put("arrival_bus", buses[0]);
-                if (buses.length == 1 && buses[0].split(" ").length > 1) {
-                    buses = buses[0].split(" ");
+            JSONObject field = result1.getJSONObject(i);
+            if (field.has("title") && field.has("value") && !JSONObject.NULL.equals(field.get("value"))) {
+                String value = field.getString("value");
+                try {
+                    if (field.has("options") && field.get("options") instanceof JSONArray) {
+                        JSONArray options = field.getJSONArray("options");
+                        for (int j = 0; j < options.length(); j++) {
+                            if (options.get(j) instanceof JSONObject && options.getJSONObject(j).getString("value").equals(value)) {
+                                value = options.getJSONObject(j).getString("text");
+                                break;
+                            }
+                        }
+                    }
+                } catch (JSONException e) {
+                    Log.w(TAG, "JSONException while attempting to parse options for custom field " + field.getString("title"));
+                    Log.w(TAG, field.toString(2));
+                    e.printStackTrace();
                 }
-                parsed.put("dismissal_bus", buses.length == 1 ? buses[0] : buses[1]);
+
+                customFields.put(field.getString("title").trim(), value.trim());
             }
         }
 
-        try {
-            JSONObject cumulativeFileField = findField("Cumulative File", "518", "custom_92");
-            parsed.put("cumulative_file", getTextFromOptions(cumulativeFileField, "Unknown"));
-        } catch (NoSuchElementException e) {
-            Log.w(TAG, "Cumulative file not found in demographic JSON");
+        // Collect all parental document/permission information (result2)
+
+        // sort the table by the sort_order element so that data fields will be after their headers
+        SortedSet<JSONObject> formsPermissionsBySortOrder = new TreeSet<>(new Comparator<JSONObject>() {
+            @Override
+            public int compare(JSONObject o1, JSONObject o2) {
+                try {
+                    return o1.getInt("sort_order") - o2.getInt("sort_order");
+                } catch (JSONException e) {
+                    return 0; // should never happen, we ensure objects have this property before inserting them
+                }
+            }
+        });
+        Map<String, Boolean> parentalForms = new LinkedHashMap<>();
+        Map<String, Boolean> parentalPermissions = new LinkedHashMap<>();
+        for (int i = 0; i < result2.length(); i++) {
+            JSONObject o = result2.getJSONObject(i);
+            if (o.has("title") && o.has("value") && o.has("type") && o.has("sort_order")) {
+                formsPermissionsBySortOrder.add(o);
+            }
         }
 
-        try {
-            JSONObject medicalRecordsField = findField("Medical Records In", "297", "custom_94");
-            parsed.put("medical_record_status", getTextFromOptions(medicalRecordsField, "Unknown"));
-        } catch (NoSuchElementException e) {
-            Log.w(TAG, "Medical records in not found in demographic JSON");
+        boolean isFormsSection = false;
+        boolean isPermissionsSection = false;
+        for (JSONObject o : formsPermissionsBySortOrder) {
+            if (o.getString("type").equals("holder")) { // "holder" type seems to be a header
+                if (o.getString("title").toLowerCase().contains("documents")) {
+                    isPermissionsSection = false;
+                    isFormsSection = true;
+                } else if (o.getString("title").toLowerCase().contains("permissions")) {
+                    isPermissionsSection = true;
+                    isFormsSection = false;
+                } else {
+                    Log.w(TAG, "Unrecognized holder " + o.getString("title"));
+                }
+            } else if (o.getString("type").equals("checkbox")) {
+                String title = o.getString("title").trim();
+                String v = o.getString("value");
+                boolean value = v.equals("1") || v.equals("true");
+                if (isFormsSection) {
+                    parentalForms.put(title, value);
+                } else if (isPermissionsSection) {
+                    parentalPermissions.put(title, value);
+                }
+            }
         }
 
-        JSONObject photoAuthField = findField("Photo/Publicity Authorized", "232", "custom_317");
-        parsed.put("photo_auth", photoAuthField.getString("value").equals("1"));
-
-        // TODO: new fields, permission to record and off campus lunch?
-
-        JSONObject studentMobileField = findField("Student Mobile", "392", "custom_64");
-        String studentMobile = sanitizePhoneNumber(studentMobileField.getString("value"));
-        if (!studentMobile.isEmpty() && !studentMobile.equals("000")) {
-            parsed.put("student_mobile", studentMobile);
-        }
-
-        return parsed;
+        return new Demographic(name, passLength, customFields, parentalForms, parentalPermissions);
     }
 
-    // searches through both result0 and result1 to find the field that has either the title, id, or column_name given
+    // searches through the given result to find the field that has either the title, id, or column_name given
     // prefers to find a matching title, then matching id, then matching columnName
-    private JSONObject findField(@NonNull String title, @NonNull String id, @NonNull String columnName) throws JSONException {
-        // result0 title
-        for (int i = 0; i < result0.length(); i++) {
-            if (!(result0.get(i) instanceof JSONObject)) {
+    private JSONObject findField(@NonNull JSONArray result, @NonNull String title, @NonNull String id, @NonNull String columnName) throws JSONException {
+        // result title
+        for (int i = 0; i < result.length(); i++) {
+            if (!(result.get(i) instanceof JSONObject)) {
                 continue;
             }
 
-            JSONObject field = result0.getJSONObject(i);
+            JSONObject field = result.getJSONObject(i);
             if (field.getString("title").equals(title)) {
                 Log.v(TAG, String.format("\"%s\" retrieved via title", title));
                 return field;
             }
         }
 
-        // result1 title
-        for (int i = 0; i < result1.length(); i++) {
-            if (!(result1.get(i) instanceof JSONObject)) {
+        // result id
+        for (int i = 0; i < result.length(); i++) {
+            if (!(result.get(i) instanceof JSONObject)) {
                 continue;
             }
 
-            JSONObject field = result1.getJSONObject(i);
-            if (field.getString("title").equals(title)) {
-                Log.v(TAG, String.format("\"%s\" retrieved via title", title));
-                return field;
-            }
-        }
-
-        // result0 id
-        for (int i = 0; i < result0.length(); i++) {
-            if (!(result0.get(i) instanceof JSONObject)) {
-                continue;
-            }
-
-            JSONObject field = result0.getJSONObject(i);
+            JSONObject field = result.getJSONObject(i);
             if (field.getString("id").equals(id)) {
                 Log.v(TAG, String.format("\"%s\" retrieved via id", title));
                 return field;
             }
         }
 
-        // result1 id
-        for (int i = 0; i < result1.length(); i++) {
-            if (!(result1.get(i) instanceof JSONObject)) {
+        // result columnName
+        for (int i = 0; i < result.length(); i++) {
+            if (!(result.get(i) instanceof JSONObject)) {
                 continue;
             }
 
-            JSONObject field = result1.getJSONObject(i);
-            if (field.getString("id").equals(id)) {
-                Log.v(TAG, String.format("\"%s\" retrieved via id", title));
-                return field;
-            }
-        }
-
-        // result0 columnName
-        for (int i = 0; i < result0.length(); i++) {
-            if (!(result0.get(i) instanceof JSONObject)) {
-                continue;
-            }
-
-            JSONObject field = result0.getJSONObject(i);
-            if (field.getString("column_name").equals(columnName)) {
-                Log.v(TAG, String.format("\"%s\" retrieved via column_name", title));
-                return field;
-            }
-        }
-
-        // result1 columnName
-        for (int i = 0; i < result1.length(); i++) {
-            if (!(result1.get(i) instanceof JSONObject)) {
-                continue;
-            }
-
-            JSONObject field = result1.getJSONObject(i);
+            JSONObject field = result.getJSONObject(i);
             if (field.getString("column_name").equals(columnName)) {
                 Log.v(TAG, String.format("\"%s\" retrieved via column_name", title));
                 return field;

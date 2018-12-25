@@ -46,12 +46,13 @@ public class FocusDebugApi extends FocusApi {
         super(username, password, context);
         dummyRequest = new StringRequest(Request.Method.GET, null, null, null);
         handler = new Handler(context.getMainLooper());
-        try {
-            student = new Student(readJSON(R.raw.debug_student));
-        } catch (JSONException e) {
-            Log.e(TAG, "JSONException while creating student from debug data");
-            e.printStackTrace();
-        }
+        // TODO: FIX
+//        try {
+//             student = new Student(readJSON(R.raw.debug_student));
+//        } catch (JSONException e) {
+//            Log.e(TAG, "JSONException while creating student from debug data");
+//            e.printStackTrace();
+//        }
         try {
             finalGradesPage = new FinalGradesPage(readJSON(R.raw.debug_final_grades));
         } catch (JSONException e) {
@@ -207,7 +208,6 @@ public class FocusDebugApi extends FocusApi {
         return dummyRequest;
     }
 
-    @Override
     public void getDemographic(final Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         waitForFakeLoad(new Runnable() {
             @Override
@@ -222,7 +222,6 @@ public class FocusDebugApi extends FocusApi {
         });
     }
 
-    @Override
     public void getAddress(final Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         waitForFakeLoad(new Runnable() {
             @Override

@@ -7,7 +7,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -52,18 +53,18 @@
                         custom:hint="@string/demographic_email_hint"/>-->
 
                     <com.slensky.focussis.views.IconWithTextView
-                        android:id="@+id/view_gender"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        custom:icon="@drawable/ic_gender_male_female_black_24px"
-                        custom:hint="@string/demographic_gender_hint"/>
-
-                    <com.slensky.focussis.views.IconWithTextView
                         android:id="@+id/view_grade"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         custom:icon="@drawable/ic_calendar_text_black_24px"
                         custom:hint="@string/demographic_grade_hint"/>
+
+                    <com.slensky.focussis.views.IconWithTextView
+                        android:id="@+id/view_student_id"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:icon="@drawable/ic_account_card_details_black_24px"
+                        app:hint="@string/demographic_student_id_hint"/>
 
                 </LinearLayout>
 
@@ -85,47 +86,7 @@
                     android:showDividers="middle"
                     android:divider="@drawable/divider">
 
-                    <com.slensky.focussis.views.IconWithTextView
-                        android:id="@+id/view_bus"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:icon="@drawable/ic_directions_bus_black_24px"
-                        app:hint="@string/demographic_bus_multiple_hint"/>
 
-                    <com.slensky.focussis.views.IconWithTextView
-                        android:id="@+id/view_locker"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:icon="@drawable/ic_locker_multiple_black_24px"
-                        app:hint="@string/demographic_locker_hint"/>
-
-                    <com.slensky.focussis.views.IconWithTextView
-                        android:id="@+id/view_medical_record_status"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:icon="@drawable/ic_medical_bag_black_24px"
-                        app:hint="@string/demographic_medical_hint"/>
-
-                    <com.slensky.focussis.views.IconWithTextView
-                        android:id="@+id/view_photo_auth"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:icon="@drawable/ic_camera_black_24px"
-                        app:hint="@string/demographic_photo_auth_hint"/>
-
-                    <com.slensky.focussis.views.IconWithTextView
-                        android:id="@+id/view_cumulative_file"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:icon="@drawable/ic_clipboard_text_black_24px"
-                        app:hint="@string/demographic_cumulative_file_hint"/>
-
-                    <com.slensky.focussis.views.IconWithTextView
-                        android:id="@+id/view_student_id"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:icon="@drawable/ic_account_card_details_black_24px"
-                        app:hint="@string/demographic_student_id_hint"/>
 
                 </LinearLayout>
 

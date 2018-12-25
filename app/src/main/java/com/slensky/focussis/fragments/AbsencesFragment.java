@@ -80,7 +80,6 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
         return null;
     }
 
-    @Override
     protected void onSuccess(JSONObject response) {
         Absences absences = new Absences(response);
         View view = getView();

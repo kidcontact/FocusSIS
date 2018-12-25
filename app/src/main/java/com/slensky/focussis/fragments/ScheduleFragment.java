@@ -49,7 +49,6 @@ public class ScheduleFragment extends NetworkTabAwareFragment {
         return view;
     }
 
-    @Override
     protected void onSuccess(JSONObject response) {
         schedule = new Schedule(response);
         if (isAdded()) {

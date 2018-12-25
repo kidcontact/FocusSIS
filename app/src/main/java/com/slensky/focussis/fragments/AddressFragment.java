@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.slensky.focussis.data.AddressContactDetail;
+import com.slensky.focussis.network.FocusApi;
 import com.slensky.focussis.util.CardViewAnimationController;
 import com.slensky.focussis.views.IconWithTextView;
 
@@ -59,9 +60,7 @@ public class AddressFragment extends NetworkTabAwareFragment {
         return null;
     }
 
-    @Override
-    protected void onSuccess(JSONObject response) {
-        Address address = new Address(response);
+    protected void onSuccess(Address address) {
         View view = getView();
         if (view != null) {
             CardViewAnimationController animationController = new CardViewAnimationController(getContext());
@@ -191,9 +190,9 @@ public class AddressFragment extends NetworkTabAwareFragment {
 
     @Override
     protected void makeRequest() {
-        api.getAddress(new Response.Listener<JSONObject>() {
+        api.getAddress(new FocusApi.Listener<Address>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(Address response) {
                 onSuccess(response);
             }
         }, new Response.ErrorListener() {

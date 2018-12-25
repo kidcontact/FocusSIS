@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -30,6 +31,10 @@ public class IconWithTextView extends FrameLayout {
     private ImageView iconView;
     private TextView textView;
     private TextView hintView;
+
+    public IconWithTextView(@NonNull Context context) {
+        this(context, null);
+    }
 
     public IconWithTextView(Context context, AttributeSet attrs) {
         super(context, attrs);

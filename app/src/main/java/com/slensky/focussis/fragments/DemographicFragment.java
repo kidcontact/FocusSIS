@@ -1,8 +1,10 @@
 package com.slensky.focussis.fragments;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
 import android.util.Log;
@@ -10,13 +12,21 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.slensky.focussis.R;
+import com.slensky.focussis.activities.MainActivity;
+import com.slensky.focussis.data.Student;
+import com.slensky.focussis.network.FocusApi;
 import com.slensky.focussis.util.CardViewAnimationController;
+import com.slensky.focussis.util.SchoolSingleton;
 import com.slensky.focussis.views.IconWithTextView;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.json.JSONObject;
 
 import com.slensky.focussis.data.Demographic;
@@ -41,101 +51,119 @@ public class DemographicFragment extends NetworkTabAwareFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(com.slensky.focussis.R.layout.fragment_demographic, container, false);
         return view;
     }
 
-    @Override
-    protected void onSuccess(JSONObject response) {
-        final Demographic demographic = new Demographic(response);
-        demographic.setPicture(api.getStudent().getPicture());
+    protected void onSuccess(Demographic demographic) {
         View view = getView();
         if (view != null) {
             IconWithTextView name = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_name);
             name.setText(demographic.getName());
             IconWithTextView dob = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_dob);
-            if (demographic.getBirthdate() != null) {
-                dob.setText(DateUtil.dateTimeToLongString(demographic.getBirthdate()));
+            if (demographic.getStudent().getBirthdate() != null) {
+                dob.setText(DateUtil.dateTimeToLongString(demographic.getStudent().getBirthdate()));
             }
             else {
                 dob.setVisibility(View.GONE);
             }
+
+            // attempt to find email in custom fields
+            String emailStr = null;
+            for (String title : demographic.getCustomFields().keySet()) {
+                if (title.toLowerCase().equals("email") || title.toLowerCase().equals("e-mail")) {
+                    emailStr = demographic.getCustomFields().get(title);
+                    demographic.getCustomFields().remove(title);
+                    break;
+                }
+            }
+            // fall back to known email pattern if email cannot be found
+            if (emailStr == null) {
+                emailStr = ((MainActivity) getActivity()).getUsername() + SchoolSingleton.getInstance().getSchool().getDomainName();
+            }
             IconWithTextView email = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_email);
-            email.setText(demographic.getEmail());
+            email.setText(emailStr);
+            final String finalEmailStr = emailStr;
             email.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(Intent.ACTION_SENDTO);
-                    intent.putExtra(Intent.EXTRA_EMAIL, new String[]{demographic.getEmail()});
+                    intent.putExtra(Intent.EXTRA_EMAIL, new String[]{finalEmailStr});
                     intent.setData(Uri.parse("mailto:")); // only email apps should handle this
-                    //startActivity(intent);
                     if (getContext() != null && intent.resolveActivity(getContext().getPackageManager()) != null) {
-                        Log.i(TAG, "Emailing " + demographic.getEmail());
+                        Log.i(TAG, "Emailing " + finalEmailStr);
                         startActivity(intent);
                     }
                 }
             });
 
-            IconWithTextView gender = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_gender);
-            if (demographic.getGender() != null) {
-                gender.setText(demographic.getGender());
-            }
-            else {
-                gender.setVisibility(View.GONE);
+            // attempt to find the "level" custom field if it's present
+            int level = 0;
+            for (String title : demographic.getCustomFields().keySet()) {
+                if (title.toLowerCase().equals("level (year)") && NumberUtils.isDigits(demographic.getCustomFields().get(title))) {
+                    level = Integer.parseInt(demographic.getCustomFields().get(title));
+                    demographic.getCustomFields().remove(title);
+                    break;
+                }
             }
 
             IconWithTextView grade = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_grade);
-            if (demographic.getLevel() != 0) {
-                grade.setText(ordinal(demographic.getGrade()) + ", " + ordinal(demographic.getLevel()) + " year");
+            if (level != 0) {
+                grade.setText(ordinal(demographic.getStudent().getGrade()) + ", " + ordinal(level) + " year");
             }
             else {
-                grade.setText(ordinal(demographic.getGrade()));
+                grade.setText(ordinal(demographic.getStudent().getGrade()));
             }
 
-
-            IconWithTextView bus = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_bus);
-            if (demographic.getArrivalBus() == null || demographic.getArrivalBus().equals(demographic.getDismissalBus())) {
-                bus.setHint(getString(com.slensky.focussis.R.string.demographic_bus_single_hint));
-                if (demographic.getArrivalBus() == null) {
-                    bus.setText(getString(com.slensky.focussis.R.string.demographic_unassigned));
-                }
-                else {
-                    bus.setText(demographic.getArrivalBus());
-                }
-            }
-            else {
-                bus.setHint(getString(com.slensky.focussis.R.string.demographic_bus_multiple_hint));
-                bus.setText(demographic.getArrivalBus() + "/" + demographic.getDismissalBus());
-            }
-
-            IconWithTextView locker = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_locker);
-            if (demographic.getLocker() != null) {
-                locker.setText(demographic.getLocker());
-            }
-            else {
-                locker.setText(getString(com.slensky.focussis.R.string.demographic_unassigned));
-            }
-            IconWithTextView medical = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_medical_record_status);
-            if (demographic.getMedicalRecordStatus() != null) {
-                medical.setText(demographic.getMedicalRecordStatus());
-            }
-            else {
-                medical.setVisibility(View.GONE);
-            }
-            IconWithTextView photoAuth = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_photo_auth);
-            photoAuth.setText(boolToYesNo(demographic.isPhotoAuthorized()));
-            IconWithTextView cumulative = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_cumulative_file);
-            if (demographic.getCumulativeFile() != null) {
-                cumulative.setText(demographic.getCumulativeFile());
-            }
-            else {
-                cumulative.setVisibility(View.GONE);
-            }
             IconWithTextView studentID = (IconWithTextView) view.findViewById(com.slensky.focussis.R.id.view_student_id);
-            studentID.setText(Integer.toString(demographic.getId()));
+            studentID.setText(demographic.getStudent().getId());
+
+
+            LinearLayout llDetailed = view.findViewById(R.id.ll_detailed);
+            llDetailed.removeAllViews();
+            for (String title : demographic.getCustomFields().keySet()) {
+                View v = LayoutInflater.from(getContext()).inflate(R.layout.view_icon_with_text, llDetailed, false);
+                ImageView ic = v.findViewById(R.id.row_icon);
+                TextView hint = v.findViewById(R.id.text_hint);
+                TextView main = v.findViewById(R.id.text_main);
+                hint.setText(title);
+                main.setText(demographic.getCustomFields().get(title));
+                String t = title.toLowerCase();
+                int drawableId;
+                // custom fields can be anything, but we can try to set a nice icon based on their title
+                if (t.contains("locker")) {
+                    drawableId = R.drawable.ic_locker_multiple_black_24px;
+                } else if (t.contains("bus")) {
+                    drawableId = R.drawable.ic_directions_bus_black_24px;
+                } else if (t.contains("name")) {
+                    drawableId = R.drawable.ic_person_black_24px;
+                } else if (t.contains("medical") || t.contains("medicine")) {
+                    drawableId = R.drawable.ic_medical_bag_black_24px;
+                } else if (t.contains("file") || t.contains("form") || t.contains("document") || t.contains("documentation")) {
+                    drawableId = R.drawable.ic_clipboard_text_black_24px;
+                } else if (t.contains("birth")) {
+                    drawableId = R.drawable.ic_cake_variant_black_24px;
+                } else if (t.contains("picture") || t.contains("photo")) {
+                    drawableId = R.drawable.ic_camera_black_24px;
+                } else if (t.contains("gender") || t.contains("sex")) {
+                    drawableId = R.drawable.ic_gender_male_female_black_24px;
+                } else if (t.contains("phone") || t.contains("mobile") /* to catch "Student Mobile" field */) {
+                    drawableId = R.drawable.ic_phone_black_24px;
+                } else if (t.contains("account")) {
+                    drawableId = R.drawable.ic_account_card_details_black_24px;
+                } else if (t.contains("password")) {
+                    drawableId = R.drawable.ic_key_24px;
+                } else {
+                    drawableId = R.drawable.ic_information_outline_black_24px;
+                }
+                Drawable d = getResources().getDrawable(drawableId);
+                ic.setImageDrawable(d);
+
+                llDetailed.addView(v);
+            }
 
             CardViewAnimationController animationController = new CardViewAnimationController(getContext());
             CardView basic = view.findViewById(R.id.card_basic);
@@ -150,9 +178,9 @@ public class DemographicFragment extends NetworkTabAwareFragment {
 
     @Override
     protected void makeRequest() {
-        api.getDemographic(new Response.Listener<JSONObject>() {
+        api.getDemographic(new FocusApi.Listener<Demographic>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(Demographic response) {
                 onSuccess(response);
             }
         }, new Response.ErrorListener() {

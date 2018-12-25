@@ -1,5 +1,7 @@
 package com.slensky.focussis.parser;
 
+import android.support.annotation.Nullable;
+
 import org.apache.commons.lang.math.NumberUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,8 +13,6 @@ import org.jsoup.select.Elements;
 
 import java.util.Objects;
 
-import javax.annotation.Nullable;
-
 /**
  * Created by slensky on 3/12/18.
  * Contains parsing functions common to parsing multiple focus pages
@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 
 public abstract class FocusPageParser {
     private static final String TAG = "FocusPageParser";
-    public abstract JSONObject parse(String html) throws JSONException;
+    public abstract Object parse(String html) throws JSONException;
 
     static protected JSONObject getMarkingPeriods(String html) throws JSONException {
         Document page = Jsoup.parse(html);

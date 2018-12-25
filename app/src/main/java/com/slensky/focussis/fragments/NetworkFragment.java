@@ -25,7 +25,6 @@ public abstract class NetworkFragment extends Fragment {
         // required empty constructor
     }
 
-    protected abstract void onSuccess(JSONObject response);
     protected void onError(VolleyError error) {
         Log.d("NetworkFragment", error.toString());
         requestFinished = true;
