@@ -101,7 +101,7 @@ public class PortalAssignment implements Comparable<PortalAssignment>, GoogleCal
                 .setLocation(SchoolSingleton.getInstance().getSchool().getFullName());
 
         String description = courseName;
-        if (!isAdvisory) {
+        if (coursePeriod != null) {
             description += " - Period " + coursePeriod;
         }
         if (this.description != null) {

@@ -138,10 +138,9 @@ public class CalendarEventDetails implements GoogleCalendarEvent {
                     .setLocation(SchoolSingleton.getInstance().getSchool().getFullName());
 
             String description = courseName;
-            if (courseSection == null) {
+            if (coursePeriod != null) {
                 description += " - Period " + coursePeriod;
-            }
-            else {
+            } else {
                 description += " - " + courseSection;
             }
             if (notes != null) {

@@ -123,13 +123,13 @@ public class ASD extends School {
         sixthGradeScheduleStartTimes.put("6", new LocalTime(13, 45));
 
         // sixth grade stop times
-        sixthGradeScheduleStartTimes.put("0", new LocalTime(8, 25));
-        sixthGradeScheduleStartTimes.put("1", new LocalTime(9, 13));
-        sixthGradeScheduleStartTimes.put("2", new LocalTime(10, 3));
-        sixthGradeScheduleStartTimes.put("3", new LocalTime(11, 8));
-        sixthGradeScheduleStartTimes.put("4", new LocalTime(11, 58));
-        sixthGradeScheduleStartTimes.put("5", new LocalTime(13, 43));
-        sixthGradeScheduleStartTimes.put("6", new LocalTime(14, 32));
+        sixthGradeScheduleStopTimes.put("0", new LocalTime(8, 25));
+        sixthGradeScheduleStopTimes.put("1", new LocalTime(9, 13));
+        sixthGradeScheduleStopTimes.put("2", new LocalTime(10, 3));
+        sixthGradeScheduleStopTimes.put("3", new LocalTime(11, 8));
+        sixthGradeScheduleStopTimes.put("4", new LocalTime(11, 58));
+        sixthGradeScheduleStopTimes.put("5", new LocalTime(13, 43));
+        sixthGradeScheduleStopTimes.put("6", new LocalTime(14, 32));
 
     }
 
