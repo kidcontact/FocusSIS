@@ -21,49 +21,9 @@ public class PasswordResponse {
     }
     private final Error error;
 
-    public PasswordResponse(JSONObject json) {
-        boolean success = false;
-        try {
-            success = json.getBoolean("success");
-        } catch (JSONException e) {
-            Log.e(TAG, "Success not found in password response json");
-            e.printStackTrace();
-        }
+    public PasswordResponse(boolean success, Error error) {
         this.success = success;
-
-        String error = "other";
-        try {
-            if (!json.has("error")) {
-                error = null;
-            }
-            else {
-                error = json.getString("error");
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "Error not found in password response json");
-            e.printStackTrace();
-        }
-
-        if (error == null) {
-            this.error = null;
-        }
-        else {
-            switch (error) {
-                case "current_password_incorrect":
-                    this.error = Error.CURRENT_PASSWORD_INCORRECT;
-                    break;
-                case "passwords_dont_match":
-                    this.error = Error.PASSWORDS_DONT_MATCH;
-                    break;
-                case "is_debug_api":
-                    this.error = Error.IS_DEBUG_API;
-                    break;
-                default:
-                    this.error = Error.OTHER;
-                    break;
-            }
-        }
-
+        this.error = error;
     }
 
     public boolean isSuccess() {

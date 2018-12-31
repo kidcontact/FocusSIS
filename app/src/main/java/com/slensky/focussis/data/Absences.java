@@ -26,6 +26,7 @@ public class Absences extends MarkingPeriodPage {
     private final int periodsAbsent;
     private final int periodsAbsentUnexcused;
     private final int periodsAbsentExcused;
+    private final int periodsDismissed;
     private final int periodsOtherMarks;
     private final int periodsLate;
     private final int periodsTardy;
@@ -48,212 +49,9 @@ public class Absences extends MarkingPeriodPage {
         OFFSITE
     }
 
-
-    public Absences(JSONObject absencesJSON) {
-        super(absencesJSON);
-        double daysPossible = 0;
-        double daysAbsent = 0;
-        double daysAbsentPercent = 0;
-        double daysAttended = 0;
-        double daysAttendedPercent = 0;
-        int periodsAbsent = 0;
-        int periodsDismissed = 0;
-        int periodsAbsentUnexcused = 0;
-        int periodsAbsentExcused = 0;
-        int periodsOtherMarks = 0;
-        int periodsLate = 0;
-        int periodsTardy = 0;
-        int periodsMisc = 0;
-        int periodsOffsite = 0;
-        int daysPartiallyAbsent = 0;
-        int daysAbsentExcused = 0;
-        int daysOtherMarks = 0;
-        days = new ArrayList<>();
-
-        try {
-            JSONObject daysJSON = absencesJSON.getJSONObject("absences");
-            Iterator<?> keys = daysJSON.keys();
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                JSONObject dayJSON = daysJSON.getJSONObject(key);
-
-                try {
-                    DateTime date = new DateTime(dayJSON.getString("date"));
-                    Status status = Status.ABSENT;
-                    if (dayJSON.getString("status").equals("present")) {
-                        status = Status.PRESENT;
-                    }
-                    List<AbsencePeriod> periods = new ArrayList<>();
-                    JSONObject periodsJSON = dayJSON.getJSONObject("periods");
-                    Iterator<?> periodKeys = periodsJSON.keys();
-                    while (periodKeys.hasNext()) {
-                        String periodKey = (String) periodKeys.next();
-                        JSONObject periodJSON = periodsJSON.getJSONObject(periodKey);
-
-                        DateTime lastUpdated = null;
-                        if (periodJSON.has("last_updated")) {
-                            lastUpdated = new DateTime(periodJSON.getString("last_updated"));
-                        }
-                        String lastUpdatedBy = null;
-                        if (periodJSON.has("last_updated_by")) {
-                            lastUpdatedBy = periodJSON.getString("last_updated_by");
-                        }
-                        String name = null;
-                        if (periodJSON.has("name")) {
-                            name = periodJSON.getString("name");
-                        }
-
-                        String period = null;
-                        if (periodJSON.has("period")) {
-                            period = periodJSON.getString("period");
-                        }
-
-                        String teacher = null;
-                        if (periodJSON.has("teacher")) {
-                            teacher = periodJSON.getString("teacher");
-                        }
-
-                        Status periodStatus = Status.UNSET;
-                        if (periodJSON.has("status")) {
-                            periodStatus = stringtoStatus(periodJSON.getString("status"));
-                        }
-
-                        periods.add(new AbsencePeriod(lastUpdated, lastUpdatedBy, name, period, periodStatus, teacher));
-
-                    }
-
-                    days.add(new AbsenceDay(date, periods, status));
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.e(TAG, "error parsing day in absences");
-                }
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "absences not found in JSON");
-        }
-
-        try {
-            daysPossible = absencesJSON.getDouble("days_possible");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "days_possible not found in JSON");
-        }
-
-        try {
-            daysAbsent = absencesJSON.getDouble("days_absent");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "days_absent not found in JSON");
-        }
-
-        try {
-            daysAbsentPercent = absencesJSON.getDouble("days_absent_percent");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "days_absent_percent not found in JSON");
-        }
-
-        try {
-            daysAttended = absencesJSON.getDouble("days_attended");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "days_attended not found in JSON");
-        }
-
-        try {
-            daysAttendedPercent = absencesJSON.getDouble("days_attended_percent");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "days_attended_percent not found in JSON");
-        }
-
-        try {
-            periodsAbsent = absencesJSON.getInt("periods_absent");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "periods_absent not found in JSON");
-        }
-
-        try {
-            periodsDismissed = absencesJSON.getInt("periods_dismissed");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "periods_dismissed not found in JSON");
-        }
-
-        try {
-            periodsAbsentUnexcused = absencesJSON.getInt("periods_absent_unexcused");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "periods_absent_unexcused not found in JSON");
-        }
-
-        try {
-            periodsAbsentExcused = absencesJSON.getInt("periods_absent_excused");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "periods_absent_excused not found in JSON");
-        }
-
-        try {
-            periodsOtherMarks = absencesJSON.getInt("periods_other_marks");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "periods_other_marks not found in JSON");
-        }
-
-        try {
-            periodsLate = absencesJSON.getInt("periods_late");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "periods_late not found in JSON");
-        }
-
-        try {
-            periodsTardy = absencesJSON.getInt("periods_tardy");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "periods_tardy not found in JSON");
-        }
-
-        try {
-            periodsMisc = absencesJSON.getInt("periods_misc");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "periods_misc not found in JSON");
-        }
-
-        try {
-            periodsOffsite = absencesJSON.getInt("periods_offsite");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "periods_offsite not found in JSON");
-        }
-
-        try {
-            daysPartiallyAbsent = absencesJSON.getInt("days_partially_absent");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "days_partially_absent not found in JSON");
-        }
-
-        try {
-            daysAbsentExcused = absencesJSON.getInt("days_absent_excused");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "days_absent_excused not found in JSON");
-        }
-
-        try {
-            daysOtherMarks = absencesJSON.getInt("days_other_marks");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "days_other_marks not found in JSON");
-        }
-
+    public Absences(List<MarkingPeriod> markingPeriods, List<Integer> markingPeriodYears, List<AbsenceDay> days, double daysPossible, double daysAbsent, double daysAbsentPercent, double daysAttended, double daysAttendedPercent, int periodsAbsent, int periodsAbsentUnexcused, int periodsAbsentExcused, int periodsDismissed, int periodsOtherMarks, int periodsLate, int periodsTardy, int periodsMisc, int periodsOffsite, int daysPartiallyAbsent, int daysAbsentExcused, int daysOtherMarks) {
+        super(markingPeriods, markingPeriodYears);
+        this.days = days;
         this.daysPossible = daysPossible;
         this.daysAbsent = daysAbsent;
         this.daysAbsentPercent = daysAbsentPercent;
@@ -262,6 +60,7 @@ public class Absences extends MarkingPeriodPage {
         this.periodsAbsent = periodsAbsent;
         this.periodsAbsentUnexcused = periodsAbsentUnexcused;
         this.periodsAbsentExcused = periodsAbsentExcused;
+        this.periodsDismissed = periodsDismissed;
         this.periodsOtherMarks = periodsOtherMarks;
         this.periodsLate = periodsLate;
         this.periodsTardy = periodsTardy;
@@ -270,8 +69,6 @@ public class Absences extends MarkingPeriodPage {
         this.daysPartiallyAbsent = daysPartiallyAbsent;
         this.daysAbsentExcused = daysAbsentExcused;
         this.daysOtherMarks = daysOtherMarks;
-
-
     }
 
     public static Status stringtoStatus(String status) {
@@ -353,6 +150,10 @@ public class Absences extends MarkingPeriodPage {
 
     public int getPeriodsAbsentExcused() {
         return periodsAbsentExcused;
+    }
+
+    public int getPeriodsDismissed() {
+        return periodsDismissed;
     }
 
     public int getDaysAbsentExcused() {

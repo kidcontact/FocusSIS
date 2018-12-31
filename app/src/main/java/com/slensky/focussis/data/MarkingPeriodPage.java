@@ -19,6 +19,20 @@ public abstract class MarkingPeriodPage {
     private static final String TAG = MarkingPeriodPage.class.getName();
     private final List<MarkingPeriod> markingPeriods;
     private final List<Integer> markingPeriodYears;
+    private final MarkingPeriod currentMarkingPeriod;
+
+    public MarkingPeriodPage(List<MarkingPeriod> markingPeriods, List<Integer> markingPeriodYears) {
+        this.markingPeriods = markingPeriods;
+        this.markingPeriodYears = markingPeriodYears;
+        MarkingPeriod currentMarkingPeriod = null;
+        for (MarkingPeriod mp : markingPeriods) {
+            if (mp.isSelected()) {
+                currentMarkingPeriod = mp;
+                break;
+            }
+        }
+        this.currentMarkingPeriod = currentMarkingPeriod;
+    }
 
     public MarkingPeriodPage(JSONObject page) {
         List<MarkingPeriod> markingPeriods;
@@ -52,6 +66,14 @@ public abstract class MarkingPeriodPage {
 
         this.markingPeriods = markingPeriods;
         this.markingPeriodYears = markingPeriodYears;
+        MarkingPeriod currentMarkingPeriod = null;
+        for (MarkingPeriod mp : markingPeriods) {
+            if (mp.isSelected()) {
+                currentMarkingPeriod = mp;
+                break;
+            }
+        }
+        this.currentMarkingPeriod = currentMarkingPeriod;
     }
 
     public List<MarkingPeriod> getMarkingPeriods() {
@@ -63,12 +85,7 @@ public abstract class MarkingPeriodPage {
     }
 
     public MarkingPeriod getCurrentMarkingPeriod() {
-        for (MarkingPeriod mp : markingPeriods) {
-            if (mp.isSelected()) {
-                return mp;
-            }
-        }
-        return null;
+        return currentMarkingPeriod;
     }
 
 }

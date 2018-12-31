@@ -11,6 +11,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.slensky.focussis.data.Schedule;
+import com.slensky.focussis.network.FocusApi;
 import com.slensky.focussis.network.FocusApiSingleton;
 import com.slensky.focussis.util.GsonSingleton;
 
@@ -49,8 +50,8 @@ public class ScheduleFragment extends NetworkTabAwareFragment {
         return view;
     }
 
-    protected void onSuccess(JSONObject response) {
-        schedule = new Schedule(response);
+    protected void onSuccess(Schedule response) {
+        schedule = response;
         if (isAdded()) {
             List<Fragment> tempTabFragments = new ArrayList<>();
             Bundle args = new Bundle();
@@ -72,9 +73,9 @@ public class ScheduleFragment extends NetworkTabAwareFragment {
 
     @Override
     protected void makeRequest() {
-        api.getSchedule(new Response.Listener<JSONObject>() {
+        api.getSchedule(new FocusApi.Listener<Schedule>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(Schedule response) {
                 onSuccess(response);
             }
         }, new Response.ErrorListener() {

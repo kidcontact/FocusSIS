@@ -1,15 +1,22 @@
 package com.slensky.focussis.parser;
 
 import android.util.Log;
+import android.util.Pair;
 
+import com.slensky.focussis.data.MarkingPeriod;
+import com.slensky.focussis.data.Referral;
+import com.slensky.focussis.data.Referrals;
 import com.slensky.focussis.util.JSONUtil;
 
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by slensky on 3/23/18.
@@ -19,12 +26,10 @@ public class ReferralsParser extends FocusPageParser {
     private static final String TAG = "ReferralsParser";
 
     @Override
-    public JSONObject parse(String html) throws JSONException {
-        JSONObject json = new JSONObject();
-        JSONObject referrals = new JSONObject();
-        json.put("referrals", referrals);
-
+    public Referrals parse(String html) {
         boolean hasReferrals = html.contains("var records = {");
+
+        List<Referral> referrals = new ArrayList<>();
         if (hasReferrals) {
             int start = html.indexOf("var records = {") + "var records = ".length();
             int end = html.substring(start).indexOf(";\n") + start;
@@ -36,86 +41,95 @@ public class ReferralsParser extends FocusPageParser {
                     String key = (String) keys.next();
                     if (records.get(key) instanceof JSONObject) {
                         JSONObject record = records.getJSONObject(key);
-                        JSONObject referral = new JSONObject();
 
-                        Iterator<?> recordKeys = record.keys();
-                        while (recordKeys.hasNext()) {
-                            String recordKey = (String) recordKeys.next();
-                            if (!recordKey.startsWith("CUSTOM_")) {
-                                continue;
-                            }
+                        try {
+                            String violation = null;
+                            String otherViolation = null;
 
-                            Object violation = record.get(recordKey);
-                            if (violation != null) {
-                                if (violation instanceof JSONArray) {
-                                    for (int i = 0; i < ((JSONArray) violation).length(); i++) {
-                                        if (!((JSONArray) violation).getString(i).trim().isEmpty()) {
-                                            violation = ((JSONArray) violation).getString(i).trim();
-                                            break;
+                            Iterator<?> recordKeys = record.keys();
+                            while (recordKeys.hasNext()) {
+                                String recordKey = (String) recordKeys.next();
+                                if (!recordKey.startsWith("CUSTOM_")) {
+                                    continue;
+                                }
+
+                                Object violationObj = record.get(recordKey);
+                                if (violationObj != null) {
+                                    if (violationObj instanceof JSONArray) {
+                                        for (int i = 0; i < ((JSONArray) violationObj).length(); i++) {
+                                            if (!((JSONArray) violationObj).getString(i).trim().isEmpty()) {
+                                                violationObj = ((JSONArray) violationObj).getString(i).trim();
+                                                break;
+                                            }
                                         }
                                     }
-                                }
-                                if (!(violation instanceof String)) {
-                                    continue;
-                                }
-                                if (((String) violation).toLowerCase().trim().equals("other") || ((String) violation).toLowerCase().trim().length() < 2) {
-                                    continue;
-                                }
+                                    if (!(violationObj instanceof String)) {
+                                        continue;
+                                    }
+                                    if (((String) violationObj).toLowerCase().trim().equals("other") || ((String) violationObj).toLowerCase().trim().length() < 2) {
+                                        continue;
+                                    }
 
-                                if (recordKey.endsWith("_1")) {
-                                    referral.put("violation", violation);
-                                }
-                                else {
-                                    referral.put("other_violation", violation);
+                                    if (recordKey.endsWith("_1")) {
+                                        violation = (String) violationObj;
+                                    }
+                                    else {
+                                        otherViolation = (String) violationObj;
+                                    }
                                 }
                             }
+
+                            String id = key;
+                            DateTime creationDate = new DateTime(record.getString("CREATION_DATE"));
+                            boolean display = record.getString("DISPLAY").equals("Y");
+                            DateTime entryDate = new DateTime(record.getString("ENTRY_DATE"));
+                            DateTime lastUpdated = new DateTime(record.getString("LAST_UPDATED"));
+                            boolean notificationSent = record.getInt("NOTIFICATION_SENT") == 1;
+                            boolean processed = record.getString("PROCESSED").equals("Y");
+
+                            // unused in ui, don't bother parsing
+//                        if (record.getString("SUSPENSION_BEGIN") != null) {
+//                            referral.put("suspension_begin", record.getString("SUSPENSION_BEGIN"));
+//                            referral.put("suspension_end", record.getString("SUSPENSION_END"));
+//                        }
+
+                            int schoolYear = record.getInt("SYEAR");
+                            String school = record.getString("_school");
+
+                            String[] studentName = Jsoup.parse(record.getString("_student")).text().trim().split(",");
+                            String[] staffName = record.getString("_staff_name").split(",");
+
+                            String teacher;
+                            if (staffName.length > 1) {
+                                teacher = (staffName[1] + " " + staffName[0]).trim();
+                            }
+                            else {
+                                teacher = staffName[0];
+                            }
+
+                            String name;
+                            if (studentName.length > 1) {
+                                name = (studentName[1] + " " + studentName[0]).trim();
+                            }
+                            else {
+                                name = studentName[0];
+                            }
+                            int grade = Integer.parseInt(record.getString("_grade"));
+
+                            referrals.add(new Referral(creationDate, entryDate, lastUpdated, display, grade, id, name, notificationSent, processed, school, schoolYear, teacher, violation, otherViolation));
+                        } catch (JSONException e) {
+                            throw new FocusParseException("JSONException attempting to parse referral " + record.toString(), e);
                         }
-
-                        referral.put("id", key);
-                        referral.put("creation_date", record.getString("CREATION_DATE"));
-                        referral.put("display", record.getString("DISPLAY").equals("Y"));
-                        referral.put("entry_date", record.getString("ENTRY_DATE"));
-                        referral.put("last_updated", record.getString("LAST_UPDATED"));
-                        referral.put("notification_sent", record.getInt("NOTIFICATION_SENT") == 1);
-                        referral.put("processed", record.getString("PROCESSED").equals("Y"));
-
-                        if (record.getString("SUSPENSION_BEGIN") != null) {
-                            referral.put("suspension_begin", record.getString("SUSPENSION_BEGIN"));
-                            referral.put("suspension_end", record.getString("SUSPENSION_END"));
-                        }
-
-                        referral.put("school_year", record.getInt("SYEAR"));
-                        referral.put("school", record.getString("_school"));
-
-                        String[] studentName = Jsoup.parse(record.getString("_student")).text().trim().split(",");
-                        String[] staffName = record.getString("_staff_name").split(",");
-
-                        if (staffName.length > 1) {
-                            referral.put("teacher", (staffName[1] + " " + staffName[0]).trim());
-                        }
-                        else {
-                            referral.put("teacher", staffName[0]);
-                        }
-
-                        if (studentName.length > 1) {
-                            referral.put("name", (studentName[1] + " " + studentName[0]).trim());
-                        }
-                        else {
-                            referral.put("name", studentName[0]);
-                        }
-                        referral.put("grade", Integer.parseInt(record.getString("_grade")));
-
-                        referrals.put(key, referral);
                     }
                 }
 
             } catch (JSONException e) {
-                e.printStackTrace();
-                Log.w(TAG, "JSONException attempting to parse referral records");
+                throw new FocusParseException("JSONException attempting to parse referral records JSON " + html.substring(start, end), e);
             }
         }
 
-        return JSONUtil.concatJson(json, this.getMarkingPeriods(html));
+        Pair<List<MarkingPeriod>, List<Integer>> mp = getMarkingPeriods(html);
+        return new Referrals(mp.first, mp.second, referrals);
     }
 
 }

@@ -166,9 +166,9 @@ public class LoginActivity extends AppCompatActivity {
                         dialogInterface.dismiss();
                         final ProgressDialog progressDialog = ProgressDialog.show(LoginActivity.this, null, getString(com.slensky.focussis.R.string.language_change_progress),true);
                         focusPreferences.setEnglishLanguage(true);
-                        api.setPreferences(focusPreferences, new Response.Listener<JSONObject>() {
+                        api.setPreferences(focusPreferences, new FocusApi.Listener<FocusPreferences>() {
                             @Override
-                            public void onResponse(JSONObject response) {
+                            public void onResponse(FocusPreferences response) {
                                 progressDialog.hide();
                                 progressDialog.dismiss();
                                 login();
@@ -249,7 +249,7 @@ public class LoginActivity extends AppCompatActivity {
         else {
             api = new FocusApi(username, password, getApplicationContext());
         }
-        api.login(new Response.Listener<Boolean>() {
+        api.login(new FocusApi.Listener<Boolean>() {
             @Override
             public void onResponse(Boolean response) {
                 if (response) {
@@ -270,10 +270,10 @@ public class LoginActivity extends AppCompatActivity {
                     loginPrefsEditor.apply();
 
                     if (defaultSharedPrefs.getBoolean("always_check_preferences", true)) {
-                        api.getPreferences(new Response.Listener<JSONObject>() {
+                        api.getPreferences(new FocusApi.Listener<FocusPreferences>() {
                             @Override
-                            public void onResponse(JSONObject response) {
-                                focusPreferences = new FocusPreferences(response);
+                            public void onResponse(FocusPreferences response) {
+                                focusPreferences = response;
                                 if (focusPreferences.isEnglishLanguage()) {
                                     progressDialog.hide();
                                     progressDialog.dismiss();

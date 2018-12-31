@@ -2,6 +2,8 @@ package com.slensky.focussis.parser;
 
 import android.util.Log;
 
+import com.slensky.focussis.data.PasswordResponse;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -16,37 +18,41 @@ public class PasswordResponseParser extends FocusPageParser {
     private final static String TAG = "PasswordResponseParser";
 
     @Override
-    public JSONObject parse(String html) throws JSONException {
-        JSONObject json = new JSONObject();
+    public PasswordResponse parse(String html) {
         Document response = Jsoup.parse(html);
         Element table = response.selectFirst(".scroll_contents").child(0);
 
+        boolean success;
+        PasswordResponse.Error error;
+
         switch (table.text()) {
             case "Error: Your current password was incorrect.":
-                json.put("success", false);
-                json.put("error", "current_password_incorrect");
+                success = false;
+                error = PasswordResponse.Error.CURRENT_PASSWORD_INCORRECT;
                 break;
             case "Error: Your new passwords did not match.":
-                json.put("success", false);
-                json.put("error", "passwords_dont_match");
+                success = false;
+                error = PasswordResponse.Error.PASSWORDS_DONT_MATCH;
                 break;
             case "Note: Your new password was saved.":
-                json.put("success", true);
+                success = true;
+                error = null;
                 break;
             default:
                 Log.w(TAG, "Unrecognized result string: " + table.text());
                 // if the text is green then the password change was likely successful
                 if (table.selectFirst("span") != null && table.selectFirst("span").attr("style").contains("color:#00CC00")) {
-                    json.put("success", true);
+                    success = true;
+                    error = null;
                 }
                 else {
-                    json.put("success", false);
-                    json.put("error", "other");
+                    success = false;
+                    error = PasswordResponse.Error.OTHER;
                 }
                 break;
         }
 
-        return json;
+        return new PasswordResponse(success, error);
     }
 
 }

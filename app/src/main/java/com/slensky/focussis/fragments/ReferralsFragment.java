@@ -24,6 +24,7 @@ import org.json.JSONObject;
 import com.slensky.focussis.R;
 import com.slensky.focussis.data.Referral;
 import com.slensky.focussis.data.Referrals;
+import com.slensky.focussis.network.FocusApi;
 import com.slensky.focussis.network.FocusApiSingleton;
 import com.slensky.focussis.util.DateUtil;
 import com.slensky.focussis.util.TableRowAnimationController;
@@ -63,8 +64,7 @@ public class ReferralsFragment extends NetworkTabAwareFragment {
         return null;
     }
 
-    protected void onSuccess(JSONObject response) {
-        Referrals referrals = new Referrals(response);
+    protected void onSuccess(Referrals referrals) {
         List<Referral> refList = referrals.getReferrals();
         Collections.reverse(refList);
         View view = getView();
@@ -170,9 +170,9 @@ public class ReferralsFragment extends NetworkTabAwareFragment {
 
     @Override
     protected void makeRequest() {
-        api.getReferrals(new Response.Listener<JSONObject>() {
+        api.getReferrals(new FocusApi.Listener<Referrals>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(Referrals response) {
                 onSuccess(response);
             }
         }, new Response.ErrorListener() {

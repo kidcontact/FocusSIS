@@ -1,0 +1,117 @@
+{
+  "assignments": [
+    {
+      "assigned": "2018-11-27T00:00:00.000-05:00",
+      "due": "2018-11-27T00:00:00.000-05:00",
+      "isCustomAssignment": false,
+      "isEditedAssignment": false,
+      "lastModified": "2018-11-28T10:31:00.000-05:00",
+      "markingPeriodId": "462",
+      "maxGrade": -1,
+      "name": "oil pastel tie-dyes",
+      "percentGrade": -1,
+      "status": "PASS",
+      "studentGrade": -1.0
+    },
+    {
+      "assigned": "2018-10-16T00:00:00.000-04:00",
+      "description": "** one ATC for Ohio School trade must becompleted by 11/13",
+      "due": "2018-11-13T00:00:00.000-05:00",
+      "isCustomAssignment": false,
+      "isEditedAssignment": false,
+      "lastModified": "2018-11-28T10:30:00.000-05:00",
+      "markingPeriodId": "462",
+      "maxGrade": -1,
+      "name": "Artist Trading Cards",
+      "percentGrade": -1,
+      "status": "PASS",
+      "studentGrade": -1.0
+    },
+    {
+      "assigned": "2018-10-02T00:00:00.000-04:00",
+      "due": "2018-10-09T00:00:00.000-04:00",
+      "isCustomAssignment": false,
+      "isEditedAssignment": false,
+      "lastModified": "2018-10-30T08:09:00.000-04:00",
+      "markingPeriodId": "462",
+      "maxGrade": -1,
+      "name": "Super Hero w/ watercolor background and bio",
+      "percentGrade": -1,
+      "status": "PASS",
+      "studentGrade": -1.0
+    },
+    {
+      "assigned": "2018-09-25T00:00:00.000-04:00",
+      "due": "2018-09-25T00:00:00.000-04:00",
+      "isCustomAssignment": false,
+      "isEditedAssignment": false,
+      "lastModified": "2018-10-30T08:10:00.000-04:00",
+      "markingPeriodId": "462",
+      "maxGrade": -1,
+      "name": "Watercolor Techniques",
+      "percentGrade": -1,
+      "status": "PASS",
+      "studentGrade": -1.0
+    },
+    {
+      "assigned": "2018-09-11T00:00:00.000-04:00",
+      "due": "2018-09-18T00:00:00.000-04:00",
+      "isCustomAssignment": false,
+      "isEditedAssignment": false,
+      "lastModified": "2018-10-30T08:09:00.000-04:00",
+      "markingPeriodId": "462",
+      "maxGrade": -1,
+      "name": "Super Hero Self-Portrait",
+      "percentGrade": -1,
+      "status": "PASS",
+      "studentGrade": -1.0
+    },
+    {
+      "assigned": "2018-08-28T00:00:00.000-04:00",
+      "due": "2018-09-04T00:00:00.000-04:00",
+      "isCustomAssignment": false,
+      "isEditedAssignment": false,
+      "lastModified": "2018-10-30T08:09:00.000-04:00",
+      "markingPeriodId": "462",
+      "maxGrade": -1,
+      "name": "Name Tent",
+      "percentGrade": -1,
+      "status": "PASS",
+      "studentGrade": -1.0
+    }
+  ],
+  "id": "11744",
+  "name": "Course 3",
+  "percentGrade": -1,
+  "period": "1",
+  "teacher": "Teacher 3",
+  "currentMarkingPeriod": {
+    "id": "462",
+    "name": "Sem1GradeBook",
+    "selected": true,
+    "year": 2018
+  },
+  "markingPeriodYears": [
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019
+  ],
+  "markingPeriods": [
+    {
+      "id": "462",
+      "name": "Sem1GradeBook",
+      "selected": true,
+      "year": 2018
+    },
+    {
+      "id": "461",
+      "name": "Sem2GradeBook",
+      "selected": false,
+      "year": 2018
+    }
+  ]
+}

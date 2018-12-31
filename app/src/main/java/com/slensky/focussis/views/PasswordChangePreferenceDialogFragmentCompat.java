@@ -16,6 +16,7 @@ import android.widget.EditText;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.slensky.focussis.data.PasswordResponse;
+import com.slensky.focussis.network.FocusApi;
 import com.slensky.focussis.network.FocusApiSingleton;
 
 import org.json.JSONObject;
@@ -123,12 +124,11 @@ public class PasswordChangePreferenceDialogFragmentCompat extends PreferenceDial
             FocusApiSingleton.getApi().changePassword(currentPassword.getText().toString(),
                     newPassword.getText().toString(),
                     verifyNewPassword.getText().toString(),
-                    new Response.Listener<JSONObject>() {
+                    new FocusApi.Listener<PasswordResponse>() {
                         @Override
-                        public void onResponse(JSONObject response) {
+                        public void onResponse(PasswordResponse passwordResponse) {
                             //resultDialog.show();
                             progressDialog.dismiss();
-                            PasswordResponse passwordResponse = new PasswordResponse(response);
                             if (passwordResponse.isSuccess()) {
                                 loginPrefsEditor.remove(ctx.getString(com.slensky.focussis.R.string.login_prefs_password));
                                 loginPrefsEditor.apply();

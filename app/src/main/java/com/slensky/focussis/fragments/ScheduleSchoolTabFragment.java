@@ -134,7 +134,6 @@ public class ScheduleSchoolTabFragment extends Fragment {
                         scrollView.addView(bellSchedules[i]);
                     }
                     else {
-                        // TODO: generalize for different schools
                         bellSchedules[i] = inflater.inflate(scheduleLayouts[i], scrollView, false);
                         scrollView.addView(bellSchedules[i]);
                     }

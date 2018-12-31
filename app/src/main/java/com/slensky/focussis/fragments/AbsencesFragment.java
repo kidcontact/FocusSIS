@@ -32,6 +32,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.slensky.focussis.R;
 import com.slensky.focussis.data.Absences;
+import com.slensky.focussis.network.FocusApi;
 import com.slensky.focussis.network.FocusApiSingleton;
 import com.slensky.focussis.util.TableRowAnimationController;
 import com.slensky.focussis.views.AbsenceLabelView;
@@ -80,8 +81,7 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
         return null;
     }
 
-    protected void onSuccess(JSONObject response) {
-        Absences absences = new Absences(response);
+    protected void onSuccess(Absences absences) {
         View view = getView();
         if (view != null) {
             final ScrollView scrollView = view.findViewById(R.id.scrollview_absences);
@@ -227,9 +227,9 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
 
     @Override
     protected void makeRequest() {
-        Request request = api.getAbsences(new Response.Listener<JSONObject>() {
+        Request request = api.getAbsences(new FocusApi.Listener<Absences>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(Absences response) {
                 onSuccess(response);
             }
         }, new Response.ErrorListener() {

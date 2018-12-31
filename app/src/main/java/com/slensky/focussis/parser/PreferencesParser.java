@@ -1,5 +1,7 @@
 package com.slensky.focussis.parser;
 
+import com.slensky.focussis.data.FocusPreferences;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -14,12 +16,10 @@ public class PreferencesParser extends FocusPageParser {
     private final static String TAG = "PreferencesParser";
 
     @Override
-    public JSONObject parse(String html) throws JSONException {
-        JSONObject json = new JSONObject();
+    public FocusPreferences parse(String html) {
         Document preferences = Jsoup.parse(html);
         Element englishLanguageInput = preferences.selectFirst("input[name=values[Preferences][LANGUAGE]][value=en_US]");
-        json.put("english_language", englishLanguageInput.hasAttr("checked"));
-        return json;
+        return new FocusPreferences(englishLanguageInput.hasAttr("checked"));
     }
 
 }

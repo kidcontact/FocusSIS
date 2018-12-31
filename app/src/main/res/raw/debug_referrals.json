@@ -1,39 +1,29 @@
 {
-  "referrals": {
-    "3709": {
-      "violation": "Skipping class",
-      "other_violation": "Slept through the first part of class (a fellow student went to wake him up at my request). ",
-      "id": "3709",
-      "creation_date": "2017-10-04",
+  "referrals": [
+    {
+      "creationDate": "2018-11-05T00:00:00.000-05:00",
       "display": true,
-      "entry_date": "2017-10-04",
-      "last_updated": "2017-10-04",
-      "notification_sent": false,
-      "processed": true,
-      "suspension_begin": "null",
-      "suspension_end": "null",
-      "school_year": 2017,
-      "school": "Academy for Science and Design",
-      "teacher": "Stephanie Dumoski",
+      "entryDate": "2018-11-05T00:00:00.000-05:00",
+      "grade": 6,
+      "id": "3122",
+      "lastUpdated": "2018-11-05T00:00:00.000-05:00",
       "name": "Debug",
-      "grade": 12
+      "notificationSent": true,
+      "otherViolation": "Playing video games on laptop",
+      "processed": true,
+      "school": "Academy for Science and Design - 6",
+      "schoolYear": 2018,
+      "teacher": "Teacher 4",
+      "violation": "Computer misuse"
     }
+  ],
+  "currentMarkingPeriod": {
+    "id": "462",
+    "name": "Sem1GradeBook",
+    "selected": true,
+    "year": 2018
   },
-  "mps": {
-    "349": {
-      "id": "349",
-      "name": "Sem1GradeBook",
-      "year": 2017
-    },
-    "350": {
-      "id": "350",
-      "name": "Sem2Gradebook",
-      "year": 2017,
-      "selected": true
-    }
-  },
-  "mp_years": [
-    2012,
+  "markingPeriodYears": [
     2013,
     2014,
     2015,
@@ -41,5 +31,19 @@
     2017,
     2018,
     2019
+  ],
+  "markingPeriods": [
+    {
+      "id": "462",
+      "name": "Sem1GradeBook",
+      "selected": true,
+      "year": 2018
+    },
+    {
+      "id": "461",
+      "name": "Sem2GradeBook",
+      "selected": false,
+      "year": 2018
+    }
   ]
 }

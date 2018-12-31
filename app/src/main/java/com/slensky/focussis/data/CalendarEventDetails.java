@@ -32,102 +32,7 @@ public class CalendarEventDetails implements GoogleCalendarEvent {
     private final String courseTeacher;
     private final ScheduleCourse.Term courseTerm;
 
-    public CalendarEventDetails(JSONObject eventJSON) {
-        DateTime date;
-        String id;
-        String school;
-        String title;
-        CalendarEvent.EventType type;
-        String notes;
-        String courseDays;
-        String courseName;
-        String coursePeriod;
-        String courseSection = null;
-        String courseTeacher;
-        ScheduleCourse.Term courseTerm;
-
-        try {
-            date = new DateTime(eventJSON.getString("date"));
-        } catch (JSONException e) {
-            Log.e(TAG, "Error getting date");
-            date = null;
-        }
-
-        try {
-            id = eventJSON.getString("id");
-        } catch (JSONException e) {
-            Log.e(TAG, "Error getting event id");
-            id = null;
-        }
-
-        try {
-            school = eventJSON.getString("school");
-        } catch (JSONException e) {
-            Log.e(TAG, "Error getting school");
-            school = null;
-        }
-
-        try {
-            title = eventJSON.getString("title");
-        } catch (JSONException e) {
-            Log.e(TAG, "Error getting title");
-            title = null;
-        }
-
-        try {
-            type = CalendarEvent.stringToEventType(eventJSON.getString("type"));
-        } catch (JSONException e) {
-            Log.e(TAG, "Error getting type");
-            type = null;
-        }
-
-        if (type == CalendarEvent.EventType.ASSIGNMENT) {
-            try {
-                notes = eventJSON.getString("notes");
-            } catch (JSONException e) {
-                Log.w(TAG, "Error getting assignment notes, maybe it has none?");
-                notes = null;
-            }
-            try {
-                JSONObject courseJSON = eventJSON.getJSONObject("course");
-                courseDays = courseJSON.getString("days");
-                courseName = courseJSON.getString("name");
-                if (courseJSON.has("period")) {
-                    coursePeriod = courseJSON.getString("period");
-                    courseSection = null;
-                }
-                else {
-                    courseSection = courseJSON.getString("section");
-                    coursePeriod = "0";
-                }
-
-                courseTeacher = courseJSON.getString("teacher");
-                if (courseJSON.has("term")) {
-                    courseTerm = TermUtil.stringToTerm(courseJSON.getString("term"));
-                }
-                else {
-                    courseTerm = ScheduleCourse.Term.YEAR;
-                }
-
-            } catch (JSONException e) {
-                Log.e(TAG, "Error getting/parsing course object from assignment");
-                courseDays = null;
-                courseName = null;
-                coursePeriod = "0";
-                courseSection = null;
-                courseTeacher = null;
-                courseTerm = null;
-            }
-        }
-        else {
-            notes = null;
-            courseDays = null;
-            courseName = null;
-            coursePeriod = null;
-            courseTeacher = null;
-            courseTerm = null;
-        }
-
+    public CalendarEventDetails(DateTime date, String id, String school, String title, CalendarEvent.EventType type, String notes, String courseDays, String courseName, String coursePeriod, String courseSection, String courseTeacher, ScheduleCourse.Term courseTerm) {
         this.date = date;
         this.id = id;
         this.school = school;
@@ -179,7 +84,7 @@ public class CalendarEventDetails implements GoogleCalendarEvent {
     }
 
     public boolean hasPeriod() {
-        return courseSection == null;
+        return coursePeriod != null;
     }
 
     public String getCoursePeriod() {

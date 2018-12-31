@@ -3,6 +3,7 @@ package com.slensky.focussis.parser;
 import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.util.Pair;
 
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -11,11 +12,13 @@ import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import com.slensky.focussis.data.MarkingPeriod;
 import com.slensky.focussis.data.Student;
 import com.slensky.focussis.util.JSONUtil;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -123,8 +126,8 @@ public class StudentParser extends FocusPageParser {
             throw new FocusParseException("Parsing student page failed, could not find student API methods");
         }
 
-        // Student is a marking period page, but the information is unneeded; ignore for now
-        return new Student(id, grade, birthdate, pictureUrl, apiUrl, methods);
+        Pair<List<MarkingPeriod>, List<Integer>> mp = getMarkingPeriods(html);
+        return new Student(mp.first, mp.second, id, grade, birthdate, pictureUrl, apiUrl, methods);
     }
 
 }

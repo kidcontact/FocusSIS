@@ -41,6 +41,7 @@ import com.android.volley.VolleyError;
 import com.slensky.focussis.R;
 import com.slensky.focussis.activities.MainActivity;
 import com.slensky.focussis.data.GoogleCalendarEvent;
+import com.slensky.focussis.network.FocusApi;
 import com.slensky.focussis.network.FocusApiSingleton;
 import com.slensky.focussis.util.LayoutUtil;
 import com.slensky.focussis.util.Syncable;
@@ -165,8 +166,8 @@ public class CalendarFragment extends NetworkTabAwareFragment implements Syncabl
         return view;
     }
 
-    protected void onSuccess(JSONObject response) {
-        calendar = new Calendar(response);
+    protected void onSuccess(Calendar response) {
+        calendar = response;
         final View view = getView();
         if (view != null) {
             calendarView.removeDecorator(enableDecorator);
@@ -308,9 +309,9 @@ public class CalendarFragment extends NetworkTabAwareFragment implements Syncabl
                                                     changeColorBack.start();
                                                     final MaterialDialog dialog = createEventDetailDialog(e);
                                                     dialog.show();
-                                                    api.getCalendarEvent(e.getId(), e.getType(), new Response.Listener<JSONObject>() {
+                                                    api.getCalendarEvent(e.getId(), e.getType(), new FocusApi.Listener<CalendarEventDetails>() {
                                                         @Override
-                                                        public void onResponse(JSONObject response) {
+                                                        public void onResponse(CalendarEventDetails response) {
                                                             onEventRequestSuccess(response, dialog);
                                                         }
                                                     }, new Response.ErrorListener() {
@@ -380,9 +381,9 @@ public class CalendarFragment extends NetworkTabAwareFragment implements Syncabl
 
                                                     final MaterialDialog dialog = createEventDetailDialog(e);
                                                     dialog.show();
-                                                    api.getCalendarEvent(e.getId(), e.getType(), new Response.Listener<JSONObject>() {
+                                                    api.getCalendarEvent(e.getId(), e.getType(), new FocusApi.Listener<CalendarEventDetails>() {
                                                         @Override
-                                                        public void onResponse(JSONObject response) {
+                                                        public void onResponse(CalendarEventDetails response) {
                                                             onEventRequestSuccess(response, dialog);
                                                         }
                                                     }, new Response.ErrorListener() {
@@ -449,9 +450,9 @@ public class CalendarFragment extends NetworkTabAwareFragment implements Syncabl
     @Override
     protected void makeRequest() {
         calendar = null;
-        api.getCalendar(year, month + 1, new Response.Listener<JSONObject>() {  // month is 0 indexed in java calendar
+        api.getCalendar(year, month + 1, new FocusApi.Listener<Calendar>() {  // month is 0 indexed in java calendar
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(Calendar response) {
                 onSuccess(response);
             }
         }, new Response.ErrorListener() {
@@ -509,9 +510,8 @@ public class CalendarFragment extends NetworkTabAwareFragment implements Syncabl
         return builder.build();
     }
 
-    private void onEventRequestSuccess(JSONObject response, MaterialDialog dialog) {
+    private void onEventRequestSuccess(CalendarEventDetails eventDetails, MaterialDialog dialog) {
         Log.d(TAG, "Calendar event request success");
-        CalendarEventDetails eventDetails = new CalendarEventDetails(response);
         eventDetailsForCurrentDialog = eventDetails;
         TextView date = (TextView) dialog.findViewById(com.slensky.focussis.R.id.text_event_date);
         date.setText(Html.fromHtml("<b>" + getString(com.slensky.focussis.R.string.calendar_event_date) + ": </b>"
@@ -536,12 +536,11 @@ public class CalendarFragment extends NetworkTabAwareFragment implements Syncabl
                         + teacherNames[1] + ", " + teacherNames[0]));
             }
             TextView section = (TextView) dialog.findViewById(com.slensky.focussis.R.id.text_event_section);
-            String sectionStr = " - ";
+            String sectionStr = "";
             if (eventDetails.hasPeriod()) {
-                sectionStr = "Period " + eventDetails.getCoursePeriod() + sectionStr;
-            }
-            else {
-                sectionStr = eventDetails.getCourseSection() + sectionStr;
+                sectionStr = "Period " + eventDetails.getCoursePeriod() + " - ";
+            } else {
+                sectionStr = eventDetails.getCourseSection() + " - ";
             }
             if (eventDetails.getCourseTerm() != ScheduleCourse.Term.YEAR) {
                 sectionStr += TermUtil.termToStringAbbr(eventDetails.getCourseTerm()) + " - ";
@@ -813,11 +812,10 @@ public class CalendarFragment extends NetworkTabAwareFragment implements Syncabl
                 calendars.add(CalendarFragment.this.calendar);
             }
             else {
-                requests.add(api.getCalendar(year, month + 1, new Response.Listener<JSONObject>() {
+                requests.add(api.getCalendar(year, month + 1, new FocusApi.Listener<Calendar>() {
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onResponse(Calendar calendar) {
                         progress.incrementProgress(1);
-                        Calendar calendar = new Calendar(response);
                         calendars.add(calendar);
                     }
                 }, new Response.ErrorListener() {
@@ -913,11 +911,10 @@ public class CalendarFragment extends NetworkTabAwareFragment implements Syncabl
         progress.show();
 
         for (final CalendarEvent e : assignments) {
-            requests.add(api.getCalendarEvent(e.getId(), CalendarEvent.EventType.ASSIGNMENT, new Response.Listener<JSONObject>() {
+            requests.add(api.getCalendarEvent(e.getId(), CalendarEvent.EventType.ASSIGNMENT, new FocusApi.Listener<CalendarEventDetails>() {
                 @Override
-                public void onResponse(JSONObject response) {
+                public void onResponse(CalendarEventDetails details) {
                     progress.incrementProgress(1);
-                    CalendarEventDetails details = new CalendarEventDetails(response);
                     assignmentDetails.add(details);
                 }
             }, new Response.ErrorListener() {

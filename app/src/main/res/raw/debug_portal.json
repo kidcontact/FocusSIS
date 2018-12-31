@@ -9,117 +9,131 @@
       "url": "Modules.php?modname=Users\/Preferences.php&system_tab=&tab=notifications"
     }
   ],
-  "courses": {
-    "11458": {
-      "id": "11458",
-      "percent_grade": 96,
-      "letter_grade": "A",
-      "teacher_email": "stephanie.dumoski@asdnh.org",
-      "name": "Advanced Calculus BC",
-      "period": 2,
-      "days": "TWF",
-      "teacher": "Stephanie Dumoski"
+  "courses": [
+    {
+      "assignments": [
+
+      ],
+      "id": "11736",
+      "name": "Course 1",
+      "percentGrade": -1,
+      "period": "1",
+      "teacher": "Teacher 1",
+      "teacherEmail": "teacher1@asdnh.org"
     },
-    "11401": {
-      "id": "11401",
-      "percent_grade": 93,
-      "letter_grade": "A",
-      "teacher_email": "abbas.farazdel@asdnh.org",
-      "name": "Advanced Physics",
-      "period": 3,
-      "days": "MWH",
-      "teacher": "Abbas Farazdel"
-    },
-    "1": {
-      "id": "1",
-      "percent_grade": 100,
-      "letter_grade": "A+",
-      "teacher_email": "samina.iqbal@asdnh.org",
-      "name": "Web Design II",
-      "period": 5,
-      "days": "MWH",
-      "teacher": "Samina Iqbal"
-    },
-    "11574": {
-      "id": "11574",
-      "percent_grade": 97,
-      "letter_grade": "A+",
-      "teacher_email": "patricia.sockey@asdnh.org",
-      "name": "Senior Writing Seminar",
-      "period": 6,
-      "days": "TWF",
-      "teacher": "Patricia Ann Sockey",
+    {
       "assignments": [
         {
-          "name": "Read White Noise Ch 22-31",
-          "due": "2018-05-04T00:00"
-        },
-        {
-          "name": "Finish White Noise",
-          "due": "2018-05-07T00:00"
+          "courseName": "Course 2",
+          "coursePeriod": "1",
+          "courseTeacher": "Teacher 2",
+          "courseTeacherEmail": "teacher2@asdnh.org",
+          "customAssignment": false,
+          "descriptionSet": false,
+          "due": "2019-01-07T00:00:00.000-05:00",
+          "isAdvisory": false,
+          "name": "Assignment 1"
         }
-      ]
+      ],
+      "id": "11759",
+      "letterGrade": "A",
+      "name": "Course 2",
+      "percentGrade": 96,
+      "period": "1",
+      "teacher": "Teacher 2",
+      "teacherEmail": "teacher2@asdnh.org"
     },
-    "-1": {
-      "period": 0,
-      "id": "-1",
-      "name": "Advisory",
-      "days": "W",
-      "teacher": "Patricia Ann Sockey",
-      "teacher_email": "patricia.sockey@asdnh.org",
+    {
       "assignments": [
-        {
-          "name": "Complete Rough Draft",
-          "due": "2018-05-09T00:00"
-        }
-      ]
-    }
-  },
-  "events": [
-    {
-      "description": "Teacher Workday - No School",
-      "date": "2018-05-16T00:00:00"
+
+      ],
+      "id": "11744",
+      "name": "Course 3",
+      "percentGrade": -1,
+      "period": "1",
+      "teacher": "Teacher 3",
+      "teacherEmail": "teacher3@asdnh.org"
     },
     {
-      "description": "SPARK Conference",
-      "date": "2018-05-23T00:00:00"
+      "assignments": [
+
+      ],
+      "id": "11756",
+      "letterGrade": "A+",
+      "name": "Course 4",
+      "percentGrade": 97,
+      "period": "2",
+      "teacher": "Teacher 4",
+      "teacherEmail": "teacher4@asdnh.org"
     },
     {
-      "description": "Memorial Day - No School",
-      "date": "2018-05-28T00:00:00"
+      "assignments": [
+
+      ],
+      "id": "11749",
+      "letterGrade": "A",
+      "name": "Course 5",
+      "percentGrade": 93,
+      "period": "3",
+      "teacher": "Teacher 5",
+      "teacherEmail": "teacher5@asdnh.org"
     },
     {
-      "description": "Final Exams",
-      "date": "2018-06-11T00:00:00"
+      "assignments": [
+
+      ],
+      "id": "11754",
+      "letterGrade": "A",
+      "name": "Course 6",
+      "percentGrade": 95,
+      "period": "4",
+      "teacher": "Teacher 6",
+      "teacherEmail": "teacher6@asdnh.org"
     },
     {
-      "description": "Final Exams",
-      "date": "2018-06-12T00:00:00"
-    },
-    {
-      "description": "Final Exams",
-      "date": "2018-06-13T00:00:00"
-    },
-    {
-      "description": "Final Exams",
-      "date": "2018-06-14T00:00:00"
+      "assignments": [
+
+      ],
+      "id": "11733",
+      "letterGrade": "A+",
+      "name": "Course 7",
+      "percentGrade": 98,
+      "period": "5",
+      "teacher": "Teacher 7",
+      "teacherEmail": "teacher7@asdnh.org"
     }
   ],
-  "mps": {
-    "349": {
-      "id": "349",
-      "name": "Sem1GradeBook",
-      "year": 2017
+  "events": [
+    {
+      "date": "2018-12-25T00:00:00.000-05:00",
+      "description": "No School - Holiday Recess"
     },
-    "350": {
-      "id": "350",
-      "name": "Sem2Gradebook",
-      "year": 2017,
-      "selected": true
+    {
+      "date": "2018-12-26T00:00:00.000-05:00",
+      "description": "No School - Holiday Recess"
+    },
+    {
+      "date": "2018-12-27T00:00:00.000-05:00",
+      "description": "No School - Holiday Recess"
+    },
+    {
+      "date": "2018-12-31T00:00:00.000-05:00",
+      "description": "No School - Holiday Recess"
+    },
+    {
+      "date": "2019-01-01T00:00:00.000-05:00",
+      "description": "No School - Holiday Recess"
+    },
+    {
+      "date": "2019-01-02T00:00:00.000-05:00",
+      "description": "No School - Holiday Recess"
+    },
+    {
+      "date": "2019-01-09T00:00:00.000-05:00",
+      "description": "Teacher Workshop Day"
     }
-  },
-  "mp_years": [
-    2012,
+  ],
+  "markingPeriodYears": [
     2013,
     2014,
     2015,
@@ -127,5 +141,19 @@
     2017,
     2018,
     2019
+  ],
+  "markingPeriods": [
+    {
+      "id": "462",
+      "name": "Sem1GradeBook",
+      "selected": true,
+      "year": 2018
+    },
+    {
+      "id": "461",
+      "name": "Sem2GradeBook",
+      "selected": false,
+      "year": 2018
+    }
   ]
 }

@@ -8,11 +8,24 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
 import com.slensky.focussis.R;
+import com.slensky.focussis.data.Absences;
+import com.slensky.focussis.data.Address;
+import com.slensky.focussis.data.Calendar;
 import com.slensky.focussis.data.CalendarEvent;
+import com.slensky.focussis.data.CalendarEventDetails;
+import com.slensky.focussis.data.Course;
+import com.slensky.focussis.data.Demographic;
+import com.slensky.focussis.data.FinalGrades;
 import com.slensky.focussis.data.FinalGradesPage;
 import com.slensky.focussis.data.FocusPreferences;
+import com.slensky.focussis.data.PasswordResponse;
+import com.slensky.focussis.data.Portal;
+import com.slensky.focussis.data.Referrals;
+import com.slensky.focussis.data.Schedule;
 import com.slensky.focussis.data.Student;
+import com.slensky.focussis.util.GsonSingleton;
 import com.slensky.focussis.util.JSONUtil;
 
 import org.json.JSONException;
@@ -46,19 +59,31 @@ public class FocusDebugApi extends FocusApi {
         super(username, password, context);
         dummyRequest = new StringRequest(Request.Method.GET, null, null, null);
         handler = new Handler(context.getMainLooper());
-        // TODO: FIX
-//        try {
-//             student = new Student(readJSON(R.raw.debug_student));
-//        } catch (JSONException e) {
-//            Log.e(TAG, "JSONException while creating student from debug data");
-//            e.printStackTrace();
-//        }
+    }
+
+    private String readResource(int id) {
+        InputStream is = context.getResources().openRawResource(id);
+        Writer writer = new StringWriter();
+        char[] buffer = new char[1024];
         try {
-            finalGradesPage = new FinalGradesPage(readJSON(R.raw.debug_final_grades));
-        } catch (JSONException e) {
-            Log.e(TAG, "JSONException while creating final grades page from debug data");
+            Reader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            int n;
+            while ((n = reader.read(buffer)) != -1) {
+                writer.write(buffer, 0, n);
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "IOException reading JSON file");
             e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                Log.e(TAG, "IOException closing JSON file");
+                e.printStackTrace();
+            }
         }
+
+        return writer.toString();
     }
 
     private JSONObject readJSON(int id) {
@@ -125,7 +150,7 @@ public class FocusDebugApi extends FocusApi {
     }
 
     @Override
-    public Request login(final Response.Listener<Boolean> listener, Response.ErrorListener errorListener) {
+    public Request login(final Listener<Boolean> listener, Response.ErrorListener errorListener) {
         waitForFakeLoad(new Runnable() {
             @Override
             public void run() {
@@ -137,7 +162,7 @@ public class FocusDebugApi extends FocusApi {
     }
 
     @Override
-    public Request logout(final Response.Listener<Boolean> listener, Response.ErrorListener errorListener) {
+    public Request logout(final Listener<Boolean> listener, Response.ErrorListener errorListener) {
         waitForFakeLoad(new Runnable() {
             @Override
             public void run() {
@@ -149,172 +174,158 @@ public class FocusDebugApi extends FocusApi {
     }
 
     @Override
-    public Request getPortal(final Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public Request getPortal(final Listener<Portal> listener, Response.ErrorListener errorListener) {
         waitForFakeLoad(new Runnable() {
             @Override
             public void run() {
-                listener.onResponse(readJSON(R.raw.debug_portal));
+                listener.onResponse(GsonSingleton.getInstance().fromJson(readResource(R.raw.debug_portal), Portal.class));
             }
         });
         return dummyRequest;
     }
 
     @Override
-    public Request getCourse(final String id, final Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public Request getCourse(final String id, final Listener<Course> listener, Response.ErrorListener errorListener) {
         waitForFakeLoad(new Runnable() {
             @Override
             public void run() {
-                listener.onResponse(readJSON(getIdForRawFile("debug_course_" + id)));
+                listener.onResponse(GsonSingleton.getInstance().fromJson(readResource(getIdForRawFile("debug_course_" + id)), Course.class));
             }
         });
         return dummyRequest;
     }
 
     @Override
-    public Request getSchedule(final Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public Request getSchedule(final Listener<Schedule> listener, Response.ErrorListener errorListener) {
         waitForFakeLoad(new Runnable() {
             @Override
             public void run() {
-                listener.onResponse(readJSON(R.raw.debug_schedule));
+                listener.onResponse(GsonSingleton.getInstance().fromJson(readResource(R.raw.debug_schedule), Schedule.class));
             }
         });
         return dummyRequest;
     }
 
     @Override
-    public Request getCalendar(int year, int month, final Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public Request getCalendar(int year, int month, final Listener<Calendar> listener, Response.ErrorListener errorListener) {
         waitForFakeLoad(new Runnable() {
             @Override
             public void run() {
-                listener.onResponse(readJSON(R.raw.debug_calendar));
+                listener.onResponse(GsonSingleton.getInstance().fromJson(readResource(R.raw.debug_calendar), Calendar.class));
             }
         });
         return dummyRequest;
     }
 
     @Override
-    public Request getCalendarEvent(final String id, final CalendarEvent.EventType eventType, final Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public Request getCalendarEvent(final String id, final CalendarEvent.EventType eventType, final Listener<CalendarEventDetails> listener, Response.ErrorListener errorListener) {
         waitForFakeLoad(new Runnable() {
             @Override
             public void run() {
                 if (eventType == CalendarEvent.EventType.ASSIGNMENT) {
-                    listener.onResponse(readJSON(getIdForRawFile("debug_calendar_assignment_" + id)));
+                    listener.onResponse(GsonSingleton.getInstance().fromJson(readResource(R.raw.debug_calendar_assignment_1), CalendarEventDetails.class));
                 }
                 else if (eventType == CalendarEvent.EventType.OCCASION) {
-                    listener.onResponse(readJSON(getIdForRawFile("debug_calendar_event_" + id)));
+                    listener.onResponse(GsonSingleton.getInstance().fromJson(readResource(R.raw.debug_calendar_event_1), CalendarEventDetails.class));
                 }
             }
         });
         return dummyRequest;
     }
 
-    public void getDemographic(final Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    @Override
+    public void getDemographic(final Listener<Demographic> listener, Response.ErrorListener errorListener) {
         waitForFakeLoad(new Runnable() {
             @Override
             public void run() {
-                try {
-                    listener.onResponse(JSONUtil.concatJson(readJSON(R.raw.debug_student), readJSON(R.raw.debug_demographic)));
-                } catch (JSONException e) {
-                    Log.e(TAG, "JSONException concatenating student page JSON");
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    public void getAddress(final Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-        waitForFakeLoad(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    listener.onResponse(JSONUtil.concatJson(readJSON(R.raw.debug_student), readJSON(R.raw.debug_address)));
-                } catch (JSONException e) {
-                    Log.e(TAG, "JSONException concatenating student page JSON");
-                    e.printStackTrace();
-                }
+                listener.onResponse(GsonSingleton.getInstance().fromJson(readResource(R.raw.debug_demographic), Demographic.class));
             }
         });
     }
 
     @Override
-    public Request getReferrals(final Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public void getAddress(final Listener<Address> listener, Response.ErrorListener errorListener) {
         waitForFakeLoad(new Runnable() {
             @Override
             public void run() {
-                listener.onResponse(readJSON(R.raw.debug_referrals));
+                listener.onResponse(GsonSingleton.getInstance().fromJson(readResource(R.raw.debug_address), Address.class));
+            }
+        });
+    }
+
+    @Override
+    public Request getReferrals(final Listener<Referrals> listener, Response.ErrorListener errorListener) {
+        waitForFakeLoad(new Runnable() {
+            @Override
+            public void run() {
+                listener.onResponse(GsonSingleton.getInstance().fromJson(readResource(R.raw.debug_referrals), Referrals.class));
             }
         });
         return dummyRequest;
     }
 
     @Override
-    public Request getAbsences(final Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public Request getAbsences(final Listener<Absences> listener, Response.ErrorListener errorListener) {
         waitForFakeLoad(new Runnable() {
             @Override
             public void run() {
-                listener.onResponse(readJSON(R.raw.debug_absences));
+                listener.onResponse(GsonSingleton.getInstance().fromJson(readResource(R.raw.debug_absences), Absences.class));
             }
         });
         return dummyRequest;
     }
 
     @Override
-    public Request getFinalGrades(final FinalGradesType type, final Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public Request getFinalGrades(final FinalGradesType type, final Listener<FinalGrades> listener, Response.ErrorListener errorListener) {
         waitForFakeLoad(new Runnable() {
             @Override
             public void run() {
-                JSONObject gradePage = readJSON(R.raw.debug_final_grades);
-                JSONObject grades = null;
+                int gradesId = -1;
                 switch (type) {
                     case COURSE_HISTORY:
-                        grades = readJSON(R.raw.debug_final_grades_course_history);
+                        gradesId = R.raw.debug_final_grades_course_history;
                         break;
                     case CURRENT_SEMESTER:
-                        grades = readJSON(R.raw.debug_final_grades_current_semester);
+                        gradesId = R.raw.debug_final_grades_current_semester;
                         break;
                     case CURRENT_SEMESTER_EXAMS:
-                        grades = readJSON(R.raw.debug_final_grades_current_semester_exams);
+                        gradesId = R.raw.debug_final_grades_current_semester_exams;
                         break;
                     case ALL_SEMESTERS:
-                        grades = readJSON(R.raw.debug_final_grades_all_semesters);
+                        gradesId = R.raw.debug_final_grades_all_semesters;
                         break;
                     case ALL_SEMESTERS_EXAMS:
-                        grades = readJSON(R.raw.debug_final_grades_all_semesters_exams);
+                        gradesId = R.raw.debug_final_grades_all_semesters_exams;
                         break;
                 }
-                try {
-                    listener.onResponse(JSONUtil.concatJson(gradePage, grades));
-                } catch (JSONException e) {
-                    Log.e(TAG, "JSONException concatenating final grades page JSON");
-                    e.printStackTrace();
-                }
+                listener.onResponse(GsonSingleton.getInstance().fromJson(readResource(gradesId), FinalGrades.class));
             }
         });
         return dummyRequest;
     }
 
     @Override
-    public Request getPreferences(final Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public Request getPreferences(final Listener<FocusPreferences> listener, Response.ErrorListener errorListener) {
         waitForFakeLoad(new Runnable() {
             @Override
             public void run() {
-                listener.onResponse(readJSON(R.raw.debug_preferences));
+                listener.onResponse(GsonSingleton.getInstance().fromJson(readResource(R.raw.debug_preferences), FocusPreferences.class));
             }
         });
         return dummyRequest;
     }
 
     @Override
-    public Request setPreferences(FocusPreferences preferences, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public Request setPreferences(FocusPreferences preferences, Listener<FocusPreferences> listener, Response.ErrorListener errorListener) {
         throw new UnsupportedOperationException("Cannot set preferences on debug API");
     }
 
     @Override
-    public Request changePassword(String currentPassword, String newPassword, String verifyNewPassword, final Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public Request changePassword(String currentPassword, String newPassword, String verifyNewPassword, final Listener<PasswordResponse> listener, Response.ErrorListener errorListener) {
         waitForFakeLoad(new Runnable() {
             @Override
             public void run() {
-                listener.onResponse(readJSON(R.raw.debug_change_password));
+                listener.onResponse(GsonSingleton.getInstance().fromJson(readResource(R.raw.debug_change_password), PasswordResponse.class));
             }
         });
         return dummyRequest;
@@ -358,11 +369,6 @@ public class FocusDebugApi extends FocusApi {
     @Override
     public boolean hasSession() {
         return true;
-    }
-
-    @Override
-    public Student getStudent() {
-        return super.getStudent();
     }
 
 }

@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,7 +17,7 @@ import java.util.Map;
  * (represents the Student page in Focus, not the actual student)
  */
 
-public class Student {
+public class Student extends MarkingPeriodPage {
 
     private final String id;
     private final int grade;
@@ -27,7 +28,8 @@ public class Student {
     private final String apiUrl;
     private final Map<String, Map<String, String>> methods;
 
-    public Student(String id, int grade, DateTime birthdate, String pictureUrl, String apiUrl, Map<String, Map<String, String>> methods) {
+    public Student(List<MarkingPeriod> markingPeriods, List<Integer> markingPeriodYears, String id, int grade, DateTime birthdate, String pictureUrl, String apiUrl, Map<String, Map<String, String>> methods) {
+        super(markingPeriods, markingPeriodYears);
         this.id = id;
         this.grade = grade;
         this.birthdate = birthdate;

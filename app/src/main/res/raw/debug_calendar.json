@@ -1,77 +1,495 @@
 {
-  "month": 5,
-  "year": 2018,
-  "events": {
-    "116701": {
-      "name": "Don DeLillo documentary response paper",
-      "id": "116701",
-      "type": "assignment",
-      "date": "2018-05-02T14:32"
+  "events": [
+    {
+      "date": "2018-12-03T00:00:00.000-05:00",
+      "id": "125136",
+      "name": "A Christmas Carol Book Check",
+      "type": "ASSIGNMENT"
     },
-    "116142": {
-      "name": "APhw2.16: Ch28",
-      "id": "116142",
-      "type": "assignment",
-      "date": "2018-05-03T14:32"
+    {
+      "date": "2018-12-03T00:00:00.000-05:00",
+      "id": "124472",
+      "name": "Christmas Carol Flashcards",
+      "type": "ASSIGNMENT"
     },
-    "116703": {
-      "name": "Read White Noise Ch 22-31",
-      "id": "116703",
-      "type": "assignment",
-      "date": "2018-05-04T14:32"
+    {
+      "date": "2018-12-03T00:00:00.000-05:00",
+      "id": "124784",
+      "name": "Topic 2: Lesson 3: Air Masses: In-text Assignments p. 66 to p. 72 (Textbook)",
+      "type": "ASSIGNMENT"
     },
-    "116705": {
-      "name": "Finish White Noise",
-      "id": "116705",
-      "type": "assignment",
-      "date": "2018-05-07T14:32"
+    {
+      "date": "2018-12-03T00:00:00.000-05:00",
+      "id": "125003",
+      "name": "4.6 1-11 all, 29-34 all; see details",
+      "type": "ASSIGNMENT"
     },
-    "103040": {
-      "name": "Complete Rough Draft",
-      "id": "103040",
-      "type": "assignment",
-      "date": "2018-05-09T14:32"
+    {
+      "date": "2018-12-03T00:00:00.000-05:00",
+      "id": "124635",
+      "name": "Fireworks - Chapter 3",
+      "type": "ASSIGNMENT"
     },
-    "117039": {
-      "name": "APhw2.17: 2013APCE&M FRQ",
-      "id": "117039",
-      "type": "assignment",
-      "date": "2018-05-10T14:32"
+    {
+      "date": "2018-12-03T00:00:00.000-05:00",
+      "id": "124615",
+      "name": "Dancing on the Stage Game - Chapter 3",
+      "type": "ASSIGNMENT"
     },
-    "742": {
-      "name": "Teacher Workday - No School",
-      "id": "742",
-      "type": "occasion",
-      "date": "2018-05-16T14:32"
+    {
+      "date": "2018-12-03T00:00:00.000-05:00",
+      "id": "124610",
+      "name": "Chapter 3 - Scratch Questions",
+      "type": "ASSIGNMENT"
     },
-    "744": {
+    {
+      "date": "2018-12-04T00:00:00.000-05:00",
+      "id": "125074",
+      "name": "Topic 2: Lesson 3: Air Masses: Video: Three Types of Fronts (Pearson Realize)",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-04T00:00:00.000-05:00",
+      "id": "125069",
+      "name": "Topic 2: Lesson 3: Air Masses: Interactivity: When Air Masses Collide (Pearson Realize)",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-04T00:00:00.000-05:00",
+      "id": "125064",
+      "name": "Topic 2: Lesson 3: Air Masses: Interactivity: Mapping Out the Weather (Pearson Realize)",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-04T00:00:00.000-05:00",
+      "id": "125121",
+      "name": "Practice test 1-33 odd",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-04T00:00:00.000-05:00",
+      "id": "125163",
+      "name": "Binder Check",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-04T00:00:00.000-05:00",
+      "id": "124620",
+      "name": "Chapter 4 - Scratch Questions",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-05T00:00:00.000-05:00",
+      "id": "881",
+      "name": "Teacher Workshop Day",
+      "type": "OCCASION"
+    },
+    {
+      "date": "2018-12-06T00:00:00.000-05:00",
+      "id": "125084",
+      "name": "Topic 2: Lesson 3: Air Masses: Scaffolded Notes",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-06T00:00:00.000-05:00",
+      "id": "125079",
+      "name": "Topic 2: Lesson 3: Air Masses: Lesson 3 Check \u0026 Quest Check-In (p. 73 textbook)",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-06T00:00:00.000-05:00",
+      "id": "125199",
+      "name": "Study Guide Problems",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-06T00:00:00.000-05:00",
+      "id": "124630",
+      "name": "Flowers - Chapter 4",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-06T00:00:00.000-05:00",
+      "id": "124625",
+      "name": "Pressure Under Water Game - Chapter 4",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-07T00:00:00.000-05:00",
+      "id": "124482",
+      "name": "Field trip Permission Slip",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-07T00:00:00.000-05:00",
+      "id": "124487",
+      "name": "A Christmas Carol WOW Quiz",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-07T00:00:00.000-05:00",
+      "id": "125099",
+      "name": "Topic 2: Lesson 3: Air Masses: OPEN notebook Quiz (Pearson Realize)",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-07T00:00:00.000-05:00",
+      "id": "125094",
+      "name": "Topic 2: Lesson 3: Air Masses: Writing Connection (Writing Rubric)",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-07T00:00:00.000-05:00",
+      "id": "125089",
+      "name": "Topic 2: Lesson 3: Air Masses: Writing Connection",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-07T00:00:00.000-05:00",
+      "id": "125054",
+      "name": "Ch 4 Test",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-07T00:00:00.000-05:00",
+      "id": "124763",
+      "name": "Email Assignment 15",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-07T00:00:00.000-05:00",
+      "id": "124640",
+      "name": "Chapter 3/4 Scratch Quiz",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-10T00:00:00.000-05:00",
+      "id": "125174",
+      "name": "Stave 3 Quiz",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-10T00:00:00.000-05:00",
+      "id": "125312",
+      "name": "Celebration worksheet",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-10T00:00:00.000-05:00",
+      "id": "125614",
+      "name": "Book Check #3 Responsibility",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-10T00:00:00.000-05:00",
+      "id": "123409",
+      "name": "Book Check #3",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-10T00:00:00.000-05:00",
+      "id": "123414",
+      "name": "Book Information Mini Poster #2",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-10T00:00:00.000-05:00",
+      "id": "125109",
+      "name": "Topic 2: Lesson 4: Predicting the Weather: Video: Weather Satellites (Pearson Realize)",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-10T00:00:00.000-05:00",
+      "id": "125168",
+      "name": "Gods and Goddesses of Egypt",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-10T00:00:00.000-05:00",
+      "id": "124660",
+      "name": "Clone ID \u0026 Clone Global Var",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-10T00:00:00.000-05:00",
+      "id": "124655",
+      "name": "Dice Simulator Game - Chapter 5",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-10T00:00:00.000-05:00",
+      "id": "124650",
+      "name": "Chapter 5 - Scratch Questions",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-11T00:00:00.000-05:00",
+      "id": "125404",
+      "name": "TFK - America Votes",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-11T00:00:00.000-05:00",
+      "id": "125631",
+      "name": "Christmas Carol book Check #2",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-11T00:00:00.000-05:00",
+      "id": "125315",
+      "name": "TWO Challenging Questions for Kevin Skarupa (Weather related) - On a Notecard",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-11T00:00:00.000-05:00",
+      "id": "125104",
+      "name": "Topic 2: Lesson 4: Predicting the Weather: In-text Assignments (Textbook)",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-11T00:00:00.000-05:00",
+      "id": "125568",
+      "name": "5.1 1-17 odd, 34-36 all",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-11T00:00:00.000-05:00",
+      "id": "125484",
+      "name": "Egypt Ch 4-1 Questions",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-11T00:00:00.000-05:00",
+      "id": "124665",
+      "name": "Whac-A-Mole - Chapter 5",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-12T00:00:00.000-05:00",
+      "id": "125327",
+      "name": "Topic 2: Lesson 4: Predicting Weather Changes: Check \u0026 Quest Check-in p.80 (Textbook)",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-12T00:00:00.000-05:00",
+      "id": "125320",
+      "name": "Topic 2: Lesson 4: Predicting Weather Changes: Scaffolded Notes (classwork)",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-12T00:00:00.000-05:00",
+      "id": "125626",
+      "name": "BRING DEVICE TO CLASS WEDNESDAY",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-12T00:00:00.000-05:00",
+      "id": "125723",
+      "name": "5.2 1-25 odd",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-12T00:00:00.000-05:00",
+      "id": "124670",
+      "name": "Chapter 6 - Scratch Questions",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-13T00:00:00.000-05:00",
+      "id": "124001",
+      "name": "Holiday Card",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-13T00:00:00.000-05:00",
+      "id": "125579",
+      "name": "Stave 4 and 5 Quiz",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-13T00:00:00.000-05:00",
+      "id": "125348",
+      "name": "Topic 2: Lesson 4: Interactivity: Using Air Masses to Predict Weather (Pearson Realize)",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-13T00:00:00.000-05:00",
+      "id": "125343",
+      "name": "Topic 2: Lesson 4: Quest Check-In Interactivity: Predicting Severe Weather (Pearson Realize)",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-13T00:00:00.000-05:00",
+      "id": "125332",
+      "name": "Topic 2: Lesson 4: Predicting Weather Changes: Writing Connection",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-13T00:00:00.000-05:00",
+      "id": "125337",
+      "name": "Topic 2: Lesson 4: Predicting Weather Changes: Writing Connection: Writing Rubric",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-13T00:00:00.000-05:00",
+      "id": "125573",
+      "name": "Egypt Ch 4-2 Questions",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-13T00:00:00.000-05:00",
+      "id": "124768",
+      "name": "Email Assignment 16",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-13T00:00:00.000-05:00",
+      "id": "124675",
+      "name": "Guess My Coordinates Game - Chapter 6",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-14T00:00:00.000-05:00",
+      "id": "125589",
+      "name": "New Year\u0027s Resolution Mini Poster",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-14T00:00:00.000-05:00",
+      "id": "125373",
+      "name": "Topic 2: Lesson 4: Watch Career Video: Meteorologist (Pearson Realize) (IN CLASS ONLY)",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-14T00:00:00.000-05:00",
+      "id": "125368",
+      "name": "Topic 2: Lesson 4: Careers- Meteorologist: Watching the Clouds Go By, Textbook p. 81 (IN CLASS ONLY)",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-14T00:00:00.000-05:00",
+      "id": "125360",
+      "name": "Topic 2: Lesson 4: OPEN NOTEBOOK Quiz: Predicting Weather Changes (Pearson Realize)",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-14T00:00:00.000-05:00",
+      "id": "125353",
+      "name": "Topic 2: Lesson 4: Predicting Weather Changes: Interactivity: Weather Predicting (Pearson Realize)",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-14T00:00:00.000-05:00",
+      "id": "125728",
+      "name": "5.3 1-25 odd and 48-51 ALL",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-14T00:00:00.000-05:00",
+      "id": "124680",
+      "name": "Chapter 5/6 Scratch Quiz",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-17T00:00:00.000-05:00",
+      "id": "125594",
+      "name": "Influential Character Paragraph and Baseball Card",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-17T00:00:00.000-05:00",
+      "id": "125283",
+      "name": "Topic 2: Weather in the Atmosphere (Pearson Realize) Semi- Big TEST",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-17T00:00:00.000-05:00",
+      "id": "125834",
+      "name": "Mid Ch Quiz All",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-17T00:00:00.000-05:00",
+      "id": "124753",
+      "name": "Final Scratch Assessment",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-17T00:00:00.000-05:00",
+      "id": "124585",
+      "name": "Binder check 12/17/18",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-17T00:00:00.000-05:00",
+      "id": "124645",
+      "name": "Final Scratch Project",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-19T00:00:00.000-05:00",
+      "id": "882",
       "name": "SPARK Conference",
-      "id": "744",
-      "type": "occasion",
-      "date": "2018-05-23T14:32"
+      "type": "OCCASION"
     },
-    "743": {
-      "name": "Memorial Day - No School",
-      "id": "743",
-      "type": "occasion",
-      "date": "2018-05-28T14:32"
-    }
-  },
-  "mps": {
-    "349": {
-      "id": "349",
-      "name": "Sem1GradeBook",
-      "year": 2017
+    {
+      "date": "2018-12-20T00:00:00.000-05:00",
+      "id": "883",
+      "name": "No School - Holiday Recess",
+      "type": "OCCASION"
     },
-    "350": {
-      "id": "350",
-      "name": "Sem2Gradebook",
-      "year": 2017,
-      "selected": true
+    {
+      "date": "2018-12-20T00:00:00.000-05:00",
+      "id": "122640",
+      "name": "December Participation",
+      "type": "ASSIGNMENT"
+    },
+    {
+      "date": "2018-12-21T00:00:00.000-05:00",
+      "id": "884",
+      "name": "No School - Holiday Recess",
+      "type": "OCCASION"
+    },
+    {
+      "date": "2018-12-24T00:00:00.000-05:00",
+      "id": "885",
+      "name": "No School - Holiday Recess",
+      "type": "OCCASION"
+    },
+    {
+      "date": "2018-12-25T00:00:00.000-05:00",
+      "id": "886",
+      "name": "No School - Holiday Recess",
+      "type": "OCCASION"
+    },
+    {
+      "date": "2018-12-26T00:00:00.000-05:00",
+      "id": "887",
+      "name": "No School - Holiday Recess",
+      "type": "OCCASION"
+    },
+    {
+      "date": "2018-12-27T00:00:00.000-05:00",
+      "id": "888",
+      "name": "No School - Holiday Recess",
+      "type": "OCCASION"
+    },
+    {
+      "date": "2018-12-31T00:00:00.000-05:00",
+      "id": "889",
+      "name": "No School - Holiday Recess",
+      "type": "OCCASION"
     }
+  ],
+  "month": 12,
+  "year": 2018,
+  "currentMarkingPeriod": {
+    "id": "462",
+    "name": "Sem1GradeBook",
+    "selected": true,
+    "year": 2018
   },
-  "mp_years": [
-    2012,
+  "markingPeriodYears": [
     2013,
     2014,
     2015,
@@ -79,5 +497,19 @@
     2017,
     2018,
     2019
+  ],
+  "markingPeriods": [
+    {
+      "id": "462",
+      "name": "Sem1GradeBook",
+      "selected": true,
+      "year": 2018
+    },
+    {
+      "id": "461",
+      "name": "Sem2GradeBook",
+      "selected": false,
+      "year": 2018
+    }
   ]
 }

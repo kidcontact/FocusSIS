@@ -1,6 +1,7 @@
 package com.slensky.focussis.fragments;
 
 import android.animation.LayoutTransition;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -55,6 +56,7 @@ import com.slensky.focussis.activities.MainActivity;
 import com.slensky.focussis.data.Course;
 import com.slensky.focussis.data.CourseCategory;
 import com.slensky.focussis.R;
+import com.slensky.focussis.network.FocusApi;
 import com.slensky.focussis.network.FocusApiSingleton;
 import com.slensky.focussis.util.CourseAssignmentFileHandler;
 import com.slensky.focussis.util.DateUtil;
@@ -76,6 +78,7 @@ import java.util.List;
  * Created by slensky on 4/3/17.
  */
 
+@SuppressLint("RestrictedApi")
 public class CourseFragment extends NetworkFragment {
     private static final String TAG = "CourseFragment";
 
@@ -114,8 +117,8 @@ public class CourseFragment extends NetworkFragment {
         }
     }
 
-    protected void onSuccess(JSONObject response) {
-        course = new Course(response);
+    protected void onSuccess(Course response) {
+        course = response;
 
         if (getView() != null) {
             final LayoutInflater inflater = LayoutInflater.from(getContext());
@@ -171,7 +174,10 @@ public class CourseFragment extends NetworkFragment {
             TableLayout courseCategories = (TableLayout) view.findViewById(R.id.tablelayout_course_categories);
             courseCategories.removeAllViews();
 
-            if (course.getPeriod().equals("advisory")) {
+            if (course.getPeriod() == null) {
+                courseName.setText(course.getName());
+            }
+            else if (course.getPeriod().equals("advisory")) {
                 courseName.setText("Advisory - " + course.getName());
             }
             else {
@@ -1188,9 +1194,9 @@ public class CourseFragment extends NetworkFragment {
             fab.setVisibility(View.GONE);
         }
 
-        api.getCourse(this.id, new Response.Listener<JSONObject>() {
+        api.getCourse(this.id, new FocusApi.Listener<Course>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(Course response) {
                 onSuccess(response);
             }
         }, new Response.ErrorListener() {

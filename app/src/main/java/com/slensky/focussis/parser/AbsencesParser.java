@@ -1,15 +1,22 @@
 package com.slensky.focussis.parser;
 
 import android.util.Log;
+import android.util.Pair;
 
 import com.joestelmach.natty.DateGroup;
 
+import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import com.slensky.focussis.data.AbsenceDay;
+import com.slensky.focussis.data.AbsencePeriod;
+import com.slensky.focussis.data.Absences;
+import com.slensky.focussis.data.MarkingPeriod;
 import com.slensky.focussis.util.DateUtil;
 import com.slensky.focussis.util.JSONUtil;
 
@@ -26,30 +33,27 @@ public class AbsencesParser extends FocusPageParser {
     private static final String TAG = "AbsencesParser";
 
     @Override
-    public JSONObject parse(String html) throws JSONException {
-        JSONObject json = new JSONObject();
+    public Absences parse(String html) {
         Document absences = Jsoup.parse(html);
-
         Element table = absences.select("table.WhiteDrawHeader").get(1);
         Pattern r = Pattern.compile("Absent: ([0-9]+) periods \\(during ([0-9]+) days\\) A Absent ([0-9]+) periods D Dismissed ([0-9]+) periods E Excused Absence ([0-9]+) periods -- ([0-9]+) days Other Marks: ([0-9]+) periods \\(during ([0-9]+) days\\) L Late ([0-9]+) periods T Tardy ([0-9]+) periods M Misc. Activity ([0-9]+) periods O Off Site/Field Trip ([0-9]+) periods");
         Matcher m = r.matcher(table.text());
-        if (m.find()) {
-            json.put("periods_absent", Integer.parseInt(m.group(1)));
-            json.put("days_partially_absent", Integer.parseInt(m.group(2)));
-            json.put("periods_absent_unexcused", Integer.parseInt(m.group(3)));
-            json.put("periods_dismissed", Integer.parseInt(m.group(4)));
-            json.put("periods_absent_excused", Integer.parseInt(m.group(5)));
-            json.put("days_absent_excused", Integer.parseInt(m.group(6)));
-            json.put("periods_other_marks", Integer.parseInt(m.group(7)));
-            json.put("days_other_marks", Integer.parseInt(m.group(8)));
-            json.put("periods_late", Integer.parseInt(m.group(9)));
-            json.put("periods_tardy", Integer.parseInt(m.group(10)));
-            json.put("periods_misc", Integer.parseInt(m.group(11)));
-            json.put("periods_offsite", Integer.parseInt(m.group(12)));
+        if (!m.find()) {
+            throw new FocusParseException("Regex pattern could not be matched on " + table.text());
         }
-        else {
-            Log.e(TAG, "Regex failed to match table text: " + table.text());
-        }
+
+        int periodsAbsent = Integer.parseInt(m.group(1));
+        int daysPartiallyAbsent = Integer.parseInt(m.group(2));
+        int periodsAbsentUnexcused = Integer.parseInt(m.group(3));
+        int periodsDismissed = Integer.parseInt(m.group(4));
+        int periodsAbsentExcused = Integer.parseInt(m.group(5));
+        int daysAbsentExcused = Integer.parseInt(m.group(6));
+        int periodsOtherMarks = Integer.parseInt(m.group(7));
+        int daysOtherMarks = Integer.parseInt(m.group(8));
+        int periodsLate = Integer.parseInt(m.group(9));
+        int periodsTardy = Integer.parseInt(m.group(10));
+        int periodsMisc = Integer.parseInt(m.group(11));
+        int periodsOffsite = Integer.parseInt(m.group(12));
 
         int start, end;
         String key1 = "Total Full Days Possible: ";
@@ -59,19 +63,19 @@ public class AbsencesParser extends FocusPageParser {
 
         start = absences.text().indexOf(key1) + key1.length();
         end = start + absences.text().substring(start).indexOf(key2);
-        json.put("days_possible", Float.parseFloat(absences.text().substring(start, end)));
+        float daysPossible = Float.parseFloat(absences.text().substring(start, end));
 
         start = absences.text().indexOf(key2) + key2.length();
         end = start + absences.text().substring(start).indexOf(key3);
         String attended = absences.text().substring(start, end);
-        json.put("days_attended", Float.parseFloat(attended.substring(0, attended.indexOf(" "))));
-        json.put("days_attended_percent", Math.round(Float.parseFloat(attended.substring(attended.indexOf("(") + 1, attended.indexOf("%"))) * 100) / 100.0);
+        float daysAttended = Float.parseFloat(attended.substring(0, attended.indexOf(" ")));
+        double daysAttendedPercent = Math.round(Float.parseFloat(attended.substring(attended.indexOf("(") + 1, attended.indexOf("%"))) * 100) / 100.0;
 
         start = absences.text().indexOf(key3) + key3.length();
         end = start + absences.text().substring(start).indexOf(key4);
         String absent = absences.text().substring(start, end);
-        json.put("days_absent", Float.parseFloat(absent.substring(0, absent.indexOf(" "))));
-        json.put("days_absent_percent", Math.round(Float.parseFloat(absent.substring(absent.indexOf("(") + 1, absent.indexOf("%"))) * 100) / 100.0);
+        float daysAbsent = Float.parseFloat(absent.substring(0, absent.indexOf(" ")));
+        double daysAbsentPercent = Math.round(Float.parseFloat(absent.substring(absent.indexOf("(") + 1, absent.indexOf("%"))) * 100) / 100.0;
 
         Elements headers = absences.select("td.LO_header");
         List<String> periodNames = new ArrayList<>();
@@ -84,82 +88,87 @@ public class AbsencesParser extends FocusPageParser {
             }
         }
 
-        JSONObject missed = new JSONObject();
+        List<AbsenceDay> absenceDays = new ArrayList<>();
         int count = 1;
         Element tr = absences.getElementById("LOy_row" + Integer.toString(count));
         while (tr != null) {
             Elements fields = tr.select("td.LO_field");
 
             if (!fields.isEmpty()) {
-                JSONObject a = new JSONObject();
                 List<DateGroup> groups = DateUtil.nattyDateParser.parse(fields.get(0).text());
-                String date = DateUtil.ISO_DATE_FORMATTER.format(groups.get(0).getDates().get(0));
-                a.put("date", date);
-                a.put("status", fields.get(1).text().toLowerCase().split(" ")[0]);
+                DateTime date = new DateTime(groups.get(0).getDates().get(0));
+                Absences.Status dayStatus = Absences.Status.ABSENT;
+                if (fields.get(1).text().toLowerCase().split(" ")[0].equals("present")) {
+                    dayStatus = Absences.Status.PRESENT;
+                }
 
-                JSONObject periods = new JSONObject();
+                List<AbsencePeriod> periods = new ArrayList<>();
                 for (int i = 0; i < periodNames.size(); i++) {
                     Element p = fields.get(i + 2);
-                    String n = periodNames.get(i);
-                    JSONObject c = new JSONObject();
-                    c.put("period", n);
+                    String period = periodNames.get(i);
+
+                    String name = null;
+                    String teacher = null;
+                    DateTime lastUpdated = null;
+                    String lastUpdatedBy = null;
 
                     Element tooltip = p.selectFirst("div");
                     if (tooltip != null) {
+
                         String[] data = tooltip.attr("data-tooltip").split("<BR>");
                         HyphenatedCourseInformation courseInfo = parseHyphenatedCourseInformation(data[0], true, false);
-                        c.put("name", courseInfo.getCourseName());
+                        name = courseInfo.getCourseName();
 
                         // courses on this page apparently do not always include meeting days
                         // c.put("days", courseInfo.getMeetingDays());
 
-                        c.put("teacher", courseInfo.getTeacher());
+                        teacher = courseInfo.getTeacher();
 
                         groups = DateUtil.nattyDateParser.parse(data[1].substring("Last Modified: ".length()));
-                        String lastUpdated = DateUtil.ISO_DATE_FORMATTER.format(groups.get(0).getDates().get(0));
-                        c.put("last_updated", lastUpdated);
-                        String[] name = data[2].trim().split(", ");
-                        c.put("last_updated_by", name[1] + ' ' + name[0]);
+                        lastUpdated = new DateTime(groups.get(0).getDates().get(0));
+                        String[] lastUpdatedBySplit = data[2].trim().split(", ");
+                        lastUpdatedBy = lastUpdatedBySplit[1] + ' ' + lastUpdatedBySplit[0];
                     }
 
+                    Absences.Status status;
                     String s = p.text().trim().toLowerCase();
                     if (s.isEmpty()) {
-                        continue; //c.put("status", "unset");
+                        continue;
                     }
                     else if (s.equals("-")) {
                         continue; // possibly inserted for periods that don't happen that day?
                     }
                     else if (s.equals("a")) {
-                        c.put("status", "absent");
+                        status = Absences.Status.ABSENT;
                     }
                     else if (s.equals("e")) {
-                        c.put("status", "excused");
+                        status = Absences.Status.EXCUSED;
                     }
                     else if (s.equals("l")) {
-                        c.put("status", "late");
+                        status = Absences.Status.LATE;
                     }
                     else if (s.equals("t")) {
-                        c.put("status", "tardy");
+                        status = Absences.Status.TARDY;
                     }
                     else if (s.equals("o")) {
-                        c.put("status", "offsite");
+                        status = Absences.Status.OFFSITE;
                     }
                     else {
-                        c.put("status", "misc");
+                        status = Absences.Status.MISC;
                     }
 
-                    periods.put(n, c);
+                    periods.add(new AbsencePeriod(lastUpdated, lastUpdatedBy, name, period, status, teacher));
                 }
-                a.put("periods", periods);
-                missed.put(a.getString("date"), a);
+
+                absenceDays.add(new AbsenceDay(date, periods, dayStatus));
             }
 
             count += 1;
             tr = absences.getElementById("LOy_row" + Integer.toString(count));
         }
-        json.put("absences", missed);
 
-        return JSONUtil.concatJson(json, getMarkingPeriods(html));
+        Pair<List<MarkingPeriod>, List<Integer>> mp = getMarkingPeriods(html);
+        return new Absences(mp.first, mp.second, absenceDays, daysPossible, daysAbsent, daysAbsentPercent, daysAttended, daysAttendedPercent, periodsAbsent, periodsAbsentUnexcused, periodsAbsentExcused, periodsDismissed, periodsOtherMarks, periodsLate, periodsTardy, periodsMisc, periodsOffsite, daysPartiallyAbsent, daysAbsentExcused, daysOtherMarks);
     }
 
 }

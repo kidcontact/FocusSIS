@@ -1,3 +1,44 @@
 {
-  "grades": {}
+  "finalGrades": [
+
+  ],
+  "finalGradesPage": {
+    "commentCodes": "01. Consistently brings required materials to class.\n02. Seldom brings required materials to class.\n03. Contributions to classroom discussions positively impact learning.\n04. Contributions to classroom discussions negatively impact learning.\n05. Consistently makes real-world connections to course material.\n06. Seldom makes real-world connections to course material.\n07. Eager to attempt challenging or unfamiliar problems.\n08. Hesitant to attempt challenging or unfamiliar problems.\n09. Presentation of work is consistently high-quality; appearance of work is neat and clear.\n10. Presentation of work is seldom high-quality; appearance of work is often messy and difficult to foll\n11. Absences from class impacted learning.\n12. Grade is largely a result of failure to complete work.\n13. Organization of course materials (notebook, binder, etc) positively impacts learning.\n14. Course materials (notebook, binder, etc) are disorganized which negatively impacts learning.\n15. Consistently demonstrates a strong effort on course work.\n16. Seldom demonstrates a strong effort on course work\n17. Would benefit from more thorough attention to content when completing homework.\n18. Consistently demonstrates creative approach to problem-solving.\n19. Classroom behavior negatively impacts learning.\n20. Consistently works well in group settings.",
+    "creditsEarned": "0.00",
+    "currentSemesterName": "Semester 1",
+    "currentSemesterTargetMarkingPeriod": "460",
+    "gpa": "N/A",
+    "hmacSecret": "f0d286c842223b8d2be2c912896ef07b26b85820",
+    "studentId": "2701",
+    "weightedGpa": "N/A",
+    "currentMarkingPeriod": {
+      "id": "462",
+      "name": "Sem1GradeBook",
+      "selected": true,
+      "year": 2018
+    },
+    "markingPeriodYears": [
+      2013,
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019
+    ],
+    "markingPeriods": [
+      {
+        "id": "462",
+        "name": "Sem1GradeBook",
+        "selected": true,
+        "year": 2018
+      },
+      {
+        "id": "461",
+        "name": "Sem2GradeBook",
+        "selected": false,
+        "year": 2018
+      }
+    ]
+  }
 }

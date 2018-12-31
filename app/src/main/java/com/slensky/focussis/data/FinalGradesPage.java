@@ -3,6 +3,8 @@ package com.slensky.focussis.data;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 /**
  * Created by slensky on 4/1/18.
  */
@@ -22,26 +24,19 @@ public class FinalGradesPage extends MarkingPeriodPage {
     private final String gpa;
     private final String weightedGpa;
     private final String creditsEarned;
-    private final JSONObject json;
 
-    public FinalGradesPage(JSONObject finalGradesPage) throws JSONException {
-        super(finalGradesPage);
-        this.json = finalGradesPage;
-        this.studentId = finalGradesPage.getString("student_id");
-        this.hmacSecret = finalGradesPage.getString("hmac_secret");
-        this.currentSemesterName = finalGradesPage.getString("current_sem_name");
-        this.currentSemesterTargetMarkingPeriod = finalGradesPage.getString("current_sem_target_mp");
-        if (finalGradesPage.has("current_sem_exams_name")) { // if the page has the current exam name, it is assumed to have an associated mp
-            this.currentSemesterExamsName = finalGradesPage.getString("current_sem_exams_name");
-            this.currentSemesterExamsTargetMarkingPeriod = finalGradesPage.getString("current_sem_exams_target_mp");
-        } else {
-            this.currentSemesterExamsName = null;
-            this.currentSemesterExamsTargetMarkingPeriod = null;
-        }
-        this.commentCodes = finalGradesPage.getString("comment_codes");
-        this.gpa = finalGradesPage.getString("gpa");
-        this.weightedGpa = finalGradesPage.getString("weighted_gpa");
-        this.creditsEarned = finalGradesPage.getString("credits_earned");
+    public FinalGradesPage(List<MarkingPeriod> markingPeriods, List<Integer> markingPeriodYears, String studentId, String hmacSecret, String currentSemesterName, String currentSemesterTargetMarkingPeriod, String currentSemesterExamsName, String currentSemesterExamsTargetMarkingPeriod, String commentCodes, String gpa, String weightedGpa, String creditsEarned) {
+        super(markingPeriods, markingPeriodYears);
+        this.studentId = studentId;
+        this.hmacSecret = hmacSecret;
+        this.currentSemesterName = currentSemesterName;
+        this.currentSemesterTargetMarkingPeriod = currentSemesterTargetMarkingPeriod;
+        this.currentSemesterExamsName = currentSemesterExamsName;
+        this.currentSemesterExamsTargetMarkingPeriod = currentSemesterExamsTargetMarkingPeriod;
+        this.commentCodes = commentCodes;
+        this.gpa = gpa;
+        this.weightedGpa = weightedGpa;
+        this.creditsEarned = creditsEarned;
     }
 
     public String getStudentId() {
@@ -76,8 +71,15 @@ public class FinalGradesPage extends MarkingPeriodPage {
         return commentCodes;
     }
 
-    public JSONObject getJson() {
-        return json;
+    public String getGpa() {
+        return gpa;
     }
 
+    public String getWeightedGpa() {
+        return weightedGpa;
+    }
+
+    public String getCreditsEarned() {
+        return creditsEarned;
+    }
 }

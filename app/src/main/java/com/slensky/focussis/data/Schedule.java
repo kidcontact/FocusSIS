@@ -19,36 +19,8 @@ public class Schedule extends MarkingPeriodPage {
     private static final String TAG = Schedule.class.getName();
     private final List<ScheduleCourse> courses;
 
-    public Schedule(JSONObject scheduleJSON) {
-        super(scheduleJSON);
-        List<ScheduleCourse> courses;
-        try {
-            JSONArray coursesJSON = scheduleJSON.getJSONArray("courses");
-            courses = new ArrayList<>();
-
-            for (int i = 0; i < coursesJSON.length(); i ++) {
-                JSONObject courseJSON = coursesJSON.getJSONObject(i);
-                ScheduleCourse.Term term = TermUtil.stringToTerm(courseJSON.getString("term"));
-                int period;
-                if (courseJSON.has("period")) {
-                    period = courseJSON.getInt("period");
-                }
-                else {
-                    period = 0;
-                }
-                courses.add(new ScheduleCourse(
-                        courseJSON.getString("days"),
-                        courseJSON.getString("name"),
-                        period,
-                        courseJSON.getString("room"),
-                        courseJSON.getString("teacher"),
-                        term));
-            }
-        } catch (JSONException e) {
-            courses = null;
-            Log.e(TAG, "Error parsing schedule courses");
-        }
-
+    public Schedule(List<MarkingPeriod> markingPeriods, List<Integer> markingPeriodYears, List<ScheduleCourse> courses) {
+        super(markingPeriods, markingPeriodYears);
         this.courses = courses;
     }
 

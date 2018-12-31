@@ -14,14 +14,7 @@ public class FocusPreferences {
 
     private boolean englishLanguage;
 
-    public FocusPreferences(JSONObject preferences) {
-        boolean englishLanguage = false;
-        try {
-            englishLanguage = preferences.getBoolean("english_language");
-        } catch (JSONException e) {
-            Log.e(TAG, "english_language not found in JSON!");
-            e.printStackTrace();
-        }
+    public FocusPreferences(boolean englishLanguage) {
         this.englishLanguage = englishLanguage;
     }
 

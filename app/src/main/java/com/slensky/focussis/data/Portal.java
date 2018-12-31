@@ -1,5 +1,6 @@
 package com.slensky.focussis.data;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.slensky.focussis.util.SchoolSingleton;
@@ -22,94 +23,13 @@ public class Portal extends MarkingPeriodPage {
 
     private final List<PortalCourse> courses;
     private final List<PortalEvent> events;
-    private final PortalAlert[] alerts;
+    private final List<PortalAlert> alerts;
 
-    public Portal(JSONObject portalJSON) {
-        super(portalJSON);
-        List<PortalCourse> courses;
-        List<PortalEvent> events;
-        PortalAlert[] alerts;
-
-        try {
-            JSONObject coursesJSON = portalJSON.getJSONObject("courses");
-            Iterator<String> coursesIterator = coursesJSON.keys();
-            courses = new ArrayList<PortalCourse>();
-
-            while (coursesIterator.hasNext()) {
-                JSONObject courseJSON = coursesJSON.getJSONObject(coursesIterator.next());
-
-                String id = courseJSON.getString("id");
-                String name = courseJSON.getString("name");
-                String teacher = courseJSON.getString("teacher");
-                String teacherEmail;
-                if (courseJSON.has("teacher_email")) {
-                    teacherEmail = courseJSON.getString("teacher_email");
-                }
-                else {
-                    teacherEmail = SchoolSingleton.getInstance().getSchool().getTeacherEmailFromName(teacher);
-                    Log.e(TAG, "Portal course JSON does not have teacher email for " + name + ", falling back to " + teacherEmail);
-                }
-                String period = courseJSON.getString("period");
-                String letterGrade = null;
-                int percentGrade = -1;
-                if (courseJSON.has("letter_grade") && courseJSON.has("percent_grade")) {
-                    letterGrade = courseJSON.getString("letter_grade");
-                    percentGrade = courseJSON.getInt("percent_grade");
-                }
-
-                List<PortalAssignment> assignments = new ArrayList<>();
-                if (courseJSON.has("assignments")) {
-                    JSONArray assignmentsJSON = courseJSON.getJSONArray("assignments");
-                    for (int i = 0; i < assignmentsJSON.length(); i++) {
-                        JSONObject assignmentJSON = assignmentsJSON.getJSONObject(i);
-                        boolean isAdvisory = false;
-                        try {
-                            isAdvisory = Integer.parseInt(period) == 0;
-                        } catch (NumberFormatException e) {
-                            // do nothing
-                        }
-                        assignments.add(new PortalAssignment(assignmentJSON.getString("name"), new DateTime(assignmentJSON.getString("due")), name, period, isAdvisory, teacher, teacherEmail));
-                    }
-                }
-
-                courses.add(new PortalCourse(assignments, id, letterGrade, name, percentGrade, period, teacher, teacherEmail));
-
-            }
-
-        } catch (JSONException e) {
-            courses = null;
-            e.printStackTrace();
-            Log.e(TAG, "Error parsing portal courses");
-        }
-
-        try {
-            JSONArray eventsJSON = portalJSON.getJSONArray("events");
-            events = new ArrayList<PortalEvent>();
-            for (int i = 0; i < eventsJSON.length(); i++) {
-                JSONObject eventJSON = eventsJSON.getJSONObject(i);
-                events.add(new PortalEvent(eventJSON.getString("description"), new DateTime(eventJSON.getString("date"))));
-            }
-        } catch (JSONException e) {
-            events = null;
-            Log.e(TAG, "Error parsing portal events");
-        }
-
-        try {
-            JSONArray alertsJson = portalJSON.getJSONArray("alerts");
-            alerts = new PortalAlert[alertsJson.length()];
-            for (int i = 0; i < alertsJson.length(); i++) {
-                JSONObject a = alertsJson.getJSONObject(i);
-                alerts[i] = new PortalAlert(a.getString("message"), a.getString("url"));
-            }
-        } catch (JSONException e) {
-            alerts = null;
-            Log.w(TAG, "No alerts found in portal JSON");
-        }
-
+    public Portal(@NonNull List<PortalCourse> courses, @NonNull List<PortalEvent> events, @NonNull List<PortalAlert> alerts, List<MarkingPeriod> markingPeriods, List<Integer> markingPeriodYears) {
+        super(markingPeriods, markingPeriodYears);
         this.courses = courses;
         this.events = events;
         this.alerts = alerts;
-
     }
 
     public List<PortalCourse> getCourses() {
@@ -121,14 +41,14 @@ public class Portal extends MarkingPeriodPage {
     }
 
     public boolean hasCourses() {
-        return courses != null;
+        return courses.size() > 0;
     }
 
     public boolean hasEvents() {
-        return events != null;
+        return events.size() > 0;
     }
 
-    public PortalAlert[] getAlerts() {
+    public List<PortalAlert> getAlerts() {
         return alerts;
     }
 

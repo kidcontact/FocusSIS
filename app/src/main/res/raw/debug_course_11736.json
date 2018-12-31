@@ -1,0 +1,39 @@
+{
+  "assignments": [
+
+  ],
+  "id": "11736",
+  "name": "Course 1",
+  "percentGrade": -1,
+  "period": "1",
+  "teacher": "Teacher 1",
+  "currentMarkingPeriod": {
+    "id": "462",
+    "name": "Sem1GradeBook",
+    "selected": true,
+    "year": 2018
+  },
+  "markingPeriodYears": [
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019
+  ],
+  "markingPeriods": [
+    {
+      "id": "462",
+      "name": "Sem1GradeBook",
+      "selected": true,
+      "year": 2018
+    },
+    {
+      "id": "461",
+      "name": "Sem2GradeBook",
+      "selected": false,
+      "year": 2018
+    }
+  ]
+}

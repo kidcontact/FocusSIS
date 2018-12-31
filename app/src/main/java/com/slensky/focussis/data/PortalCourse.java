@@ -12,7 +12,7 @@ import java.util.List;
 
 public class PortalCourse implements Comparable<PortalCourse> {
 
-    private final List<PortalAssignment> assignments;
+    private List<PortalAssignment> assignments;
     private final String id;
     private final String letterGrade;
     private final String name;
@@ -43,6 +43,10 @@ public class PortalCourse implements Comparable<PortalCourse> {
         return assignments;
     }
 
+    public void setAssignments(List<PortalAssignment> assignments) {
+        this.assignments = assignments;
+    }
+
     public String getId() {
         return id;
     }
@@ -60,7 +64,7 @@ public class PortalCourse implements Comparable<PortalCourse> {
     }
 
     public boolean isAdvisory() {
-        return period.equals("0");
+        return period.toLowerCase().equals("advisory") || period.equals("0");
     }
 
     public String getPeriod() {

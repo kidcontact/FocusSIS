@@ -1,6 +1,7 @@
 package com.slensky.focussis.parser;
 
 import android.util.Log;
+import android.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -8,8 +9,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import com.slensky.focussis.data.FinalGradesPage;
+import com.slensky.focussis.data.MarkingPeriod;
 import com.slensky.focussis.util.JSONUtil;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,16 +26,17 @@ public class FinalGradesPageParser extends FocusPageParser {
     private static final String TAG = "FinalGradesPageParser";
 
     @Override
-    public JSONObject parse(String html) throws JSONException {
-        JSONObject json = new JSONObject();
+    public FinalGradesPage parse(String html) {
         Document finalGrades = Jsoup.parse(html);
 
         Pattern r = Pattern.compile("Focus\\.API\\.allowAccess\\(\\s+'(.+?)',\\s+'(.+?)',\\s+'(.+?)',\\s+null\\s+\\|\\|\\s+\"(.+?)\"\\s+\\);");
         Matcher m = r.matcher(html);
-        if (m.find()) {
-            json.put("student_id", m.group(2));
-            json.put("hmac_secret", m.group(3));
+        if (!m.find()) {
+            throw new FocusParseException("Could not match student id/hmac secret in html");
         }
+
+        String studentId = m.group(2);
+        String hmacSecret = m.group(3);
 
         Element ul = finalGrades.getElementById("fg_tabs_ul");
         String currentSemesterName = null;
@@ -63,23 +69,19 @@ public class FinalGradesPageParser extends FocusPageParser {
                     currentSemesterExamsName == null ? "null" : currentSemesterExamsName,
                     currentSemesterExamsTargetMarkingPeriod == null ? "null" : currentSemesterExamsTargetMarkingPeriod));
         }
-        json.put("current_sem_name", currentSemesterName);
-        json.put("current_sem_target_mp", currentSemesterTargetMarkingPeriod);
-        json.put("current_sem_exams_name", currentSemesterExamsName);
-        json.put("current_sem_exams_target_mp", currentSemesterExamsTargetMarkingPeriod);
 
         Element div = finalGrades.getElementById("comment_codes");
         div.select("br").append("\\n");
         String commentCodes = div.text().replace(" \\n", "\\n").replace("\\n", "\n").trim();
-        json.put("comment_codes", commentCodes);
 
         Element content = finalGrades.getElementById("content_-1");
         Elements statsHeaderFields = content.select(".stats_header_field");
-        json.put("gpa", statsHeaderFields.get(0).text());
-        json.put("weighted_gpa", statsHeaderFields.get(1).text());
-        json.put("credits_earned", statsHeaderFields.get(2).text());
+        String gpa = statsHeaderFields.get(0).text();
+        String weightedGpa = statsHeaderFields.get(1).text();
+        String creditsEarned = statsHeaderFields.get(2).text();
 
-        return JSONUtil.concatJson(json, this.getMarkingPeriods(html));
+        Pair<List<MarkingPeriod>, List<Integer>> mp = getMarkingPeriods(html);
+        return new FinalGradesPage(mp.first, mp.second, studentId, hmacSecret, currentSemesterName, currentSemesterTargetMarkingPeriod, currentSemesterExamsName, currentSemesterExamsTargetMarkingPeriod, commentCodes, gpa, weightedGpa, creditsEarned);
     }
 
 }

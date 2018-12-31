@@ -12,4 +12,4 @@ Most likely, problems that occur will be caused by the Focus website updating. T
 
 - If Focus changes the URL to one of their pages, it can be updated in the `networking.URLBuilder` class.
 - To make more detailed changes to networking behavior (for example, if Focus decides to move additional pages to use their internal API), the changes need to be made in the `networking.FocusAPI` class and relevant parser classes.
-- Parsing of HTML and JSON provided by the Focus internal API is done by a variety of classes in the `parser` package. The parsed results are then placed into a standardized JSON format (defined loosely [here](https://github.com/stephanlensky/focus-api)) before being passed to the corrresponding models in the `data` package. If the layout of one of the pages is changed slightly, simply update the HTML parsing in the appropriate Parser class.
+- Parsing of HTML and JSON provided by the Focus internal API is done by a variety of classes in the `parser` package. If the layout of one of the pages is changed slightly, simply update the HTML parsing in the appropriate Parser class.

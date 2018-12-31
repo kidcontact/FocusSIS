@@ -158,8 +158,8 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
         return view;
     }
 
-    protected void onSuccess(JSONObject response) {
-        finalGrades = new FinalGrades(response);
+    protected void onSuccess(FinalGrades response) {
+        finalGrades = response;
         View view = getView();
         if (view != null) {
             final ScrollView scrollView = view.findViewById(R.id.scrollview_finalgrades);
@@ -169,10 +169,10 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
                     header.setText(getString(com.slensky.focussis.R.string.finalgrades_final_grades));
                     break;
                 case CURRENT_SEMESTER:
-                    header.setText(String.format(getString(com.slensky.focussis.R.string.finalgrades_current_sem_final_grades), finalGrades.getCurrentSemesterName()));
+                    header.setText(String.format(getString(com.slensky.focussis.R.string.finalgrades_current_sem_final_grades), finalGrades.getFinalGradesPage().getCurrentSemesterName()));
                     break;
                 case CURRENT_SEMESTER_EXAMS:
-                    header.setText(String.format(getString(com.slensky.focussis.R.string.finalgrades_current_sem_final_exam_grades), finalGrades.getCurrentSemesterName()));
+                    header.setText(String.format(getString(com.slensky.focussis.R.string.finalgrades_current_sem_final_exam_grades), finalGrades.getFinalGradesPage().getCurrentSemesterName()));
                     break;
                 case ALL_SEMESTERS:
                     header.setText(getString(com.slensky.focussis.R.string.finalgrades_all_sem_final_grades));
@@ -183,14 +183,14 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
             }
 
             TextView stats = view.findViewById(com.slensky.focussis.R.id.text_finalgrades_stats);
-            String html = getString(com.slensky.focussis.R.string.finalgrades_gpa, finalGrades.getGpa()) + "<br>" +
-                    getString(com.slensky.focussis.R.string.finalgrades_weighted_gpa, finalGrades.getWeightedGpa()) + "<br>" +
-                    getString(com.slensky.focussis.R.string.finalgrades_credits_earned, finalGrades.getTotalCreditsEarned());
+            String html = getString(com.slensky.focussis.R.string.finalgrades_gpa, finalGrades.getFinalGradesPage().getGpa()) + "<br>" +
+                    getString(com.slensky.focussis.R.string.finalgrades_weighted_gpa, finalGrades.getFinalGradesPage().getWeightedGpa()) + "<br>" +
+                    getString(com.slensky.focussis.R.string.finalgrades_credits_earned, finalGrades.getFinalGradesPage().getCreditsEarned());
             stats.setText(Html.fromHtml(html));
 
             commentCodesDialog = new AlertDialog.Builder(getContext())
                     .setTitle(com.slensky.focussis.R.string.finalgrades_comment_codes_dialog_title)
-                    .setMessage(finalGrades.getCommentCodes())
+                    .setMessage(finalGrades.getFinalGradesPage().getCommentCodes())
                     .setPositiveButton(com.slensky.focussis.R.string.finalgrades_comment_codes_positive_button, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -203,7 +203,7 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
                 int i = 0;
                 for (FocusApi.FinalGradesType t : FocusApi.FinalGradesType.values()) {
                     // not all final grades pages have current semester exams (6th graders/new students don't?)
-                    if (!t.equals(FocusApi.FinalGradesType.CURRENT_SEMESTER_EXAMS) || finalGrades.hasCurrentSemesterExams()) {
+                    if (!t.equals(FocusApi.FinalGradesType.CURRENT_SEMESTER_EXAMS) || finalGrades.getFinalGradesPage().hasCurrentSemesterExams()) {
                         spinnerAdapter.add(finalGradesTypeToString(t));
                         gradeTypeSpinnerPositions.put(i, t);
                         i++;
@@ -427,9 +427,9 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
             case COURSE_HISTORY:
                 return getString(com.slensky.focussis.R.string.finalgrades_course_history);
             case CURRENT_SEMESTER:
-                return finalGrades.getCurrentSemesterName();
+                return finalGrades.getFinalGradesPage().getCurrentSemesterName();
             case CURRENT_SEMESTER_EXAMS:
-                return finalGrades.getCurrentSemesterExamsName();
+                return finalGrades.getFinalGradesPage().getCurrentSemesterExamsName();
             case ALL_SEMESTERS:
                 return getString(com.slensky.focussis.R.string.finalgrades_all_semesters);
             case ALL_SEMESTERS_EXAMS:
@@ -480,9 +480,9 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
 
     @Override
     protected void makeRequest() {
-        api.getFinalGrades(selectedType, new Response.Listener<JSONObject>() {
+        api.getFinalGrades(selectedType, new FocusApi.Listener<FinalGrades>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(FinalGrades response) {
                 onSuccess(response);
             }
         }, new Response.ErrorListener() {

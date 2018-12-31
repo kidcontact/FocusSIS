@@ -14,8 +14,6 @@ import java.util.List;
  */
 
 public class Address {
-
-    private final String TAG = "Address";
     private Student student;
     private final String address;
     private final String apartment;

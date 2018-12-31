@@ -9,6 +9,7 @@ import com.slensky.focussis.data.ScheduleCourse;
 public class TermUtil {
 
     public static ScheduleCourse.Term stringToTerm(String term) {
+        term = term.toLowerCase();
         if (term.equals("q1")) {
             return ScheduleCourse.Term.Q1;
         }

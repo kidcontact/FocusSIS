@@ -733,7 +733,7 @@ public class MainActivity extends AppCompatActivity
                 getString(com.slensky.focussis.R.string.timeout_progress_dialog_message),
                 true);
 
-        api.login(new Response.Listener<Boolean>() {
+        api.login(new FocusApi.Listener<Boolean>() {
             @Override
             public void onResponse(Boolean response) {
                 if (response) {
@@ -796,7 +796,7 @@ public class MainActivity extends AppCompatActivity
         final ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this,
                 null, getString(com.slensky.focussis.R.string.logout_progress_dialog_message), true);
 
-        api.logout(new Response.Listener<Boolean>() {
+        api.logout(new FocusApi.Listener<Boolean>() {
             @Override
             public void onResponse(Boolean response) {
                 Log.d(TAG, "Logout successful");

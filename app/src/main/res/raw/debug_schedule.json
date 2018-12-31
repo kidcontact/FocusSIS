@@ -1,99 +1,103 @@
 {
   "courses": [
     {
-      "name": "Study Period",
-      "period": 1,
-      "teacher": "Jennifer Cava",
-      "days": "MWH",
-      "room": "Jr\/Sr Area",
-      "term": "year"
-    },
-    {
-      "name": "Advanced Calculus BC",
-      "period": 2,
-      "teacher": "Stephanie Dumoski",
-      "days": "TWF",
-      "room": "111",
-      "term": "year"
-    },
-    {
-      "name": "Advanced Physics",
-      "period": 3,
-      "teacher": "Abbas Farazdel",
-      "days": "MWH",
-      "room": "129",
-      "term": "year"
-    },
-    {
-      "name": "Study Period",
-      "period": 4,
-      "teacher": "Jennifer Cava",
-      "days": "TWF",
-      "room": "Jr\/Sr Area",
-      "term": "year"
-    },
-    {
-      "name": "Senior Project",
-      "teacher": "Patricia Ann Sockey",
-      "days": "W",
-      "room": "Jr\/Sr Area",
-      "term": "year"
-    },
-    {
-      "name": "Silver Advisory",
-      "teacher": "Douglass Adam Belley",
       "days": "MTWHF",
-      "room": "Jr\/Sr Area",
-      "term": "year"
+      "name": "Morning Homeroom",
+      "room": "114",
+      "teacher": "Teacher 2",
+      "term": "YEAR"
     },
     {
-      "name": "Study Period",
-      "period": 5,
-      "teacher": "Jennifer Cava",
-      "days": "MWH",
-      "room": "Jr\/Sr Area",
-      "term": "year"
+      "days": "MWF",
+      "name": "Course 2",
+      "room": "114",
+      "teacher": "Teacher 2",
+      "term": "YEAR"
     },
     {
-      "name": "Senior Writing Seminar",
-      "period": 6,
-      "teacher": "Patricia Ann Sockey",
-      "days": "TWF",
-      "room": "150",
-      "term": "year"
+      "days": "H",
+      "name": "Course 1",
+      "period": "1",
+      "room": "114",
+      "teacher": "Teacher 1",
+      "term": "YEAR"
     },
     {
-      "name": "Study Period",
-      "period": 7,
-      "teacher": "Jennifer Cava",
-      "days": "MWH",
-      "room": "Jr\/Sr Area",
-      "term": "year"
+      "days": "T",
+      "name": "Course 3",
+      "period": "1",
+      "room": "190",
+      "teacher": "Teacher 3",
+      "term": "YEAR"
     },
     {
-      "name": "Study Period",
-      "period": 8,
-      "teacher": "Jennifer Cava",
-      "days": "TWF",
-      "room": "Jr\/Sr Area",
-      "term": "year"
+      "days": "MTWHF",
+      "name": "Course 4",
+      "period": "2",
+      "room": "115",
+      "teacher": "Teacher 4",
+      "term": "YEAR"
+    },
+    {
+      "days": "MTWHF",
+      "name": "Course 5",
+      "period": "3",
+      "room": "118",
+      "teacher": "Teacher 5",
+      "term": "YEAR"
+    },
+    {
+      "days": "MTWHF",
+      "name": "Course 6",
+      "period": "4",
+      "room": "116",
+      "teacher": "Teacher 6",
+      "term": "YEAR"
+    },
+    {
+      "days": "MTWHF",
+      "name": "Course 7",
+      "period": "5",
+      "room": "117",
+      "teacher": "Teacher 2",
+      "term": "YEAR"
+    },
+    {
+      "days": "TH",
+      "name": "Course 2",
+      "room": "114",
+      "teacher": "Teacher 2",
+      "term": "YEAR"
+    },
+    {
+      "days": "W",
+      "name": "Advisory",
+      "room": "114",
+      "teacher": "Teacher 2",
+      "term": "YEAR"
+    },
+    {
+      "days": "MF",
+      "name": "Reading",
+      "room": "114",
+      "teacher": "Teacher 2",
+      "term": "YEAR"
+    },
+    {
+      "days": "MTWHF",
+      "name": "Study Hall",
+      "room": "114",
+      "teacher": "Teacher 2",
+      "term": "YEAR"
     }
   ],
-  "mps": {
-    "349": {
-      "id": "349",
-      "name": "Sem1GradeBook",
-      "year": 2017
-    },
-    "350": {
-      "id": "350",
-      "name": "Sem2Gradebook",
-      "year": 2017,
-      "selected": true
-    }
+  "currentMarkingPeriod": {
+    "id": "462",
+    "name": "Sem1GradeBook",
+    "selected": true,
+    "year": 2018
   },
-  "mp_years": [
-    2012,
+  "markingPeriodYears": [
     2013,
     2014,
     2015,
@@ -101,5 +105,19 @@
     2017,
     2018,
     2019
+  ],
+  "markingPeriods": [
+    {
+      "id": "462",
+      "name": "Sem1GradeBook",
+      "selected": true,
+      "year": 2018
+    },
+    {
+      "id": "461",
+      "name": "Sem2GradeBook",
+      "selected": false,
+      "year": 2018
+    }
   ]
 }

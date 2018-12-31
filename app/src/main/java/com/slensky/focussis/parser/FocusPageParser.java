@@ -1,7 +1,14 @@
 package com.slensky.focussis.parser;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
+import android.util.Pair;
 
+import com.slensky.focussis.data.MarkingPeriod;
+import com.slensky.focussis.data.ScheduleCourse;
+import com.slensky.focussis.util.TermUtil;
+
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,6 +18,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -22,37 +31,29 @@ public abstract class FocusPageParser {
     private static final String TAG = "FocusPageParser";
     public abstract Object parse(String html) throws JSONException;
 
-    static protected JSONObject getMarkingPeriods(String html) throws JSONException {
+    static protected Pair<List<MarkingPeriod>, List<Integer>> getMarkingPeriods(String html) {
         Document page = Jsoup.parse(html);
-        JSONObject json = new JSONObject();
-
         Elements years = page.getElementsByAttributeValue("name", "side_syear").first().children();
-        JSONArray availableYears = new JSONArray();
+        List<Integer> availableYears = new ArrayList<>();
         int selectedYear = -1;
         for (int i = 0; i < years.size(); i++) {
+            int y = Integer.parseInt(years.get(i).attr("value"));
             if (years.get(i).hasAttr("selected")) {
-                selectedYear = Integer.parseInt(years.get(i).attr("value"));
+                selectedYear = y;
             }
-            availableYears.put(Integer.parseInt(years.get(i).attr("value")));
+            availableYears.add(y);
         }
 
         Elements mps = page.getElementsByAttributeValue("name", "side_mp").first().children();
-        JSONObject markingPeriods = new JSONObject();
+        List<MarkingPeriod> markingPeriods = new ArrayList<>();
         for (Element mp : mps) {
-            JSONObject mpd = new JSONObject();
-            mpd.put("id", mp.attr("value"));
-            mpd.put("name", mp.text());
-            mpd.put("year", selectedYear);
-            if (mp.hasAttr("selected")) {
-                mpd.put("selected", true);
-            }
-            markingPeriods.put(mp.attr("value"), mpd);
+            String id = mp.attr("value");
+            String name = mp.text();
+            boolean selected = mp.hasAttr("selected");
+            markingPeriods.add(new MarkingPeriod(id, selectedYear, selected, name));
         }
 
-        json.put("mps", markingPeriods);
-        json.put("mp_years", availableYears);
-
-        return json;
+        return new Pair<>(markingPeriods, availableYears);
     }
 
     static String sanitizePhoneNumber(String phoneNumber) {
@@ -84,19 +85,22 @@ public abstract class FocusPageParser {
      *   Portal courses, alerts: no course name, has meeting days
      *   Schedule: no course name, does not always have meeting days (assume no)
      *   Absences: has course name, does not always have meeting days (assume no)
+     *   Calendar event details: no course name, has meeting days, sometimes contains term
      */
     public static class HyphenatedCourseInformation {
         private final String courseName;
         @Nullable private final String period; // "Period x" should be shortened to "x"
         private final boolean periodIsInt;
+        private final ScheduleCourse.Term term;
         private final String meetingDays; // ex. "MWH"
         private final String section; // ex. "Red", "003", "12"
         private final String teacher;
 
-        public HyphenatedCourseInformation(String courseName, @Nullable String period, boolean periodIsInt, String meetingDays, String section, String teacher) {
+        public HyphenatedCourseInformation(String courseName, @Nullable String period, boolean periodIsInt, ScheduleCourse.Term term, String meetingDays, String section, String teacher) {
             this.courseName = courseName;
             this.period = period;
             this.periodIsInt = periodIsInt;
+            this.term = term;
             this.meetingDays = meetingDays;
             this.section = section;
             this.teacher = teacher;
@@ -113,6 +117,10 @@ public abstract class FocusPageParser {
 
         public boolean isPeriodIsInt() {
             return periodIsInt;
+        }
+
+        public ScheduleCourse.Term getTerm() {
+            return term;
         }
 
         public String getMeetingDays() {
@@ -135,6 +143,7 @@ public abstract class FocusPageParser {
             return periodIsInt == that.periodIsInt &&
                     Objects.equals(courseName, that.courseName) &&
                     Objects.equals(period, that.period) &&
+                    term == that.term &&
                     Objects.equals(meetingDays, that.meetingDays) &&
                     Objects.equals(section, that.section) &&
                     Objects.equals(teacher, that.teacher);
@@ -142,8 +151,7 @@ public abstract class FocusPageParser {
 
         @Override
         public int hashCode() {
-
-            return Objects.hash(courseName, period, periodIsInt, meetingDays, section, teacher);
+            return Objects.hash(courseName, period, periodIsInt, term, meetingDays, section, teacher);
         }
 
         @Override
@@ -152,15 +160,15 @@ public abstract class FocusPageParser {
                     "courseName='" + courseName + '\'' +
                     ", period='" + period + '\'' +
                     ", periodIsInt=" + periodIsInt +
+                    ", term=" + term +
                     ", meetingDays='" + meetingDays + '\'' +
                     ", section='" + section + '\'' +
                     ", teacher='" + teacher + '\'' +
                     '}';
         }
-
     }
 
-    public static HyphenatedCourseInformation parseHyphenatedCourseInformation(String c, boolean hasCourseName, boolean parseMeetingDays) {
+    public static HyphenatedCourseInformation parseHyphenatedCourseInformation(String c, boolean hasCourseName, boolean parseMeetingDays, boolean mightHaveTerm) {
         String courseName = null, period = null, meetingDays = null, section = null, teacher = null;
         boolean periodIsInt = false;
         c = c.trim();
@@ -193,19 +201,33 @@ public abstract class FocusPageParser {
             }
         }
 
-        if (parseMeetingDays) {
-            meetingDays = info[i + 1];
+        // if course has a section term, it will be after the period term and the info array will have a length 1 longer than anticipated
+        ScheduleCourse.Term term = ScheduleCourse.Term.YEAR;
+        if (mightHaveTerm) {
+            int anticipatedLength = BooleanUtils.toInteger(hasCourseName) + BooleanUtils.toInteger(parseMeetingDays) + 3; /* period, section, teacher */
+            if (info.length == anticipatedLength + 1) {
+                Log.d("HyphenatedCourseInfoP", c + " has term");
+                term = TermUtil.stringToTerm(info[i + 1]);
+            }
         }
 
-        // work backwards to get teacher + section
+        // work backwards to get teacher + section + meeting days
 
         // focus doesn't account for middle names properly in this page, so teachers without
         // middle names have two spaces in between their first and last!
-        teacher = info[info.length - 1].replace("  ", " ");
+        teacher = info[info.length - 1].replace("  ", " ").replace('\u00A0', ' ');
 
         section = info[info.length - 2];
 
-        return new HyphenatedCourseInformation(courseName, period, periodIsInt, meetingDays, section, teacher);
+        if (parseMeetingDays) {
+            meetingDays = info[info.length - 3];
+        }
+
+        return new HyphenatedCourseInformation(courseName, period, periodIsInt, term, meetingDays, section, teacher);
+    }
+
+    public static HyphenatedCourseInformation parseHyphenatedCourseInformation(String c, boolean hasCourseName, boolean parseMeetingDays) {
+        return parseHyphenatedCourseInformation(c, hasCourseName, parseMeetingDays, false);
     }
 
 }

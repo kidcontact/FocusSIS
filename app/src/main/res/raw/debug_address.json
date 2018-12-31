@@ -1,65 +1,195 @@
 {
-  "address": "22 Sims St.",
+  "address": "486 Amherst St.",
   "city": "Nashua",
-  "state": "NH",
-  "zip": "03063",
-  "phone": "5555555555",
   "contacts": [
     {
-      "name": "Alana Ross",
-      "emergency": false,
-      "relationship": "Mother",
+      "address": "486 Amherst St.",
+      "city": "Nashua",
       "custody": true,
-      "email": "alana.ross@asdnh.org",
       "details": [
         {
-          "title": "Home Phone",
-          "type": "phone",
+          "title": "CELL_PHONE",
+          "type": "PHONE",
           "value": "5555555555"
         },
         {
-          "title": "Private Email",
-          "type": "email",
-          "value": "alana.r@gmail.com"
+          "title": "EMAIL_2",
+          "type": "EMAIL",
+          "value": "chris.r@gmail.com"
         },
         {
-          "title": "Cell Phone",
-          "type": "phone",
+          "title": "HOME_PHONE",
+          "type": "PHONE",
+          "value": "5555555555"
+        },
+        {
+          "title": "WORK_PHONE",
+          "type": "PHONE",
           "value": "5555555555"
         }
       ],
-      "address": "486 Amherst St.",
-      "city": "Nashua",
-      "state": "NH",
-      "zip": "03063",
-      "phone": "5555555555",
-      "has_address": true
-    },
-    {
-      "name": "Chris Ross",
-      "emergency": false,
-      "relationship": "Father",
-      "custody": false,
       "email": "chris.ross@asdnh.org",
-      "address": "486 Amherst St.",
-      "city": "Nashua",
-      "state": "NH",
-      "zip": "03063",
+      "emergency": false,
+      "name": "Chris Ross",
       "phone": "5555555555",
-      "has_address": true
+      "relationship": "Father",
+      "state": "NH",
+      "zip": "03063"
     },
     {
-      "name": "Jennifer McCallum",
-      "emergency": true,
-      "custody": false,
+      "address": "486 Amherst St.",
+      "city": "Nashua",
+      "custody": true,
       "details": [
         {
-          "title": "OTHER_PHONE",
-          "type": "phone",
+          "title": "CELL_PHONE",
+          "type": "PHONE",
+          "value": "5555555555"
+        },
+        {
+          "title": "EMAIL_2",
+          "type": "EMAIL",
+          "value": "alana.ross@gmail.com"
+        },
+        {
+          "title": "HOME_PHONE",
+          "type": "PHONE",
+          "value": "5555555555"
+        },
+        {
+          "title": "WORK_PHONE",
+          "type": "PHONE",
           "value": "5555555555"
         }
       ],
-      "has_address": false
+      "email": "alana.ross@asdnh.org",
+      "emergency": false,
+      "name": "Alana Ross",
+      "phone": "5555555555",
+      "relationship": "Mother",
+      "state": "NH",
+      "zip": "03063"
+    },
+    {
+      "custody": false,
+      "details": [
+        {
+          "title": "CELL_PHONE",
+          "type": "PHONE",
+          "value": "5555555555"
+        }
+      ],
+      "emergency": false,
+      "name": "Jennifer McCallum"
     }
-  ]
+  ],
+  "phone": "5555555555",
+  "state": "NH",
+  "student": {
+    "apiUrl": "https://focus.asdnh.org/focus/build/90ff148accb2f250bb327306441979ae0f158f10.php?modname\u003dStudents%2FStudent.php\u0026type\u003dSISStudent\u0026id\u003d2701\u0026edit\u003dModules.php%3Fmodname%3DStudents%2FStudent.php",
+    "grade": 12,
+    "id": "2121",
+    "methods": {
+      "AddressController": {
+        "getUserOptions": "a2a99755b7b417048f747223e6d8cbb10376c9c2",
+        "getSettings": "cb94052a69355f42ac27f41526ced13519efa137",
+        "updateAddress": "e87f55a1e01e9e83fe5bef7eedb4f5953a68de58",
+        "getContactFlags": "0a5575b1e521e373e5e290e98e3620fd668200bf",
+        "getContacts": "7d73329207d96972fb5863db9c3f3a6021a09e34",
+        "getRelationshipFields": "6a5f40441403845e4961d7452a2d58d1afdbe721",
+        "getSuggestions": "5fe4467ce76f9eb20104091bd9a329aa93345dad",
+        "updateContact": "d65a571e31ff7ef9dda6385774f4b36e3bfd1d87",
+        "validateAddress": "e5c16570a3425d912790ff4ab230cc1a5b11197f",
+        "getSchools": "14d97cee51511c0703e38db68b0b8cb6287d2777",
+        "getStudentOptions": "629645b7900cbb22600ba565b1467cfb951bd4ba",
+        "getAddresses": "05a0f04e393ba8336be7fc53714b0681737eb367",
+        "getContactDetailFlags": "3f0c1b191676de0981e8f64da25694440a338948",
+        "getAddressFlags": "655461c8c232eb9d67f3649dcbfcb6aaecb5d70f",
+        "getCurrentEnrollments": "ec8f5f333303fcc0ff9b8250f5228dd10994f1ac",
+        "getOverrideOptions": "a90e4d34bef0f95f99c7a7df36deb89692ca351c",
+        "deleteAddress": "353e2a7eafaf5e2ec553a206d33bef48ddbe7c29",
+        "getLinkedUsers": "b25     a06aa78061ad66e4ac624a610c8ca921d42b2",
+        "formatAddressChangeRequest": "796194d61ab53624c89635ca2299037a4508b90e",
+        "getLinkedStudents": "ed92f43fde12f08ba8be3f116882d5702a3f5f31",
+        "getContactDetailTitles": "5c6fef8eb55a226e1151f813587b3d517e7c8ae4",
+        "formatAddressDeleteRequest": "5a6d8258ca8217d49dab94910d66e6eec0ea67e7",
+        "formatContactDeleteRequest": "3906e823d9f8c14b3917208fe64562b1c3905bc0",
+        "getContactFlagNames": "db9c20808fbc039c211d3e0d151e82a9bd461841",
+        "deleteContact": "6ca7dda37c394373c3357fc57b0ac9f413fbfee8",
+        "formatContactChangeRequest": "ca904eed3767466a7df2da5a68689f1fead3554f"
+      },
+      "TeacherScheduleController": {
+        "getMarkingPeriods": "ebbd90cb1359cdfee2643178ed2fcf1dd04cb231",
+        "getDays": "268f0450ab707909ed5e54ed85452c302d7b41d1",
+        "getDoeStatus": "5415a32bb90df637b5e2044e573cbb36ea56aa17",
+        "getInclusionStatus": "f8bba8277fb0efc064a85ce69a5500e7d14f8ae9",
+        "getSchedule": "b02fa21bca8b1fa4e68c31a062b5e9f7c35d9fc6"
+      },
+      "Student\\EnrollmentController": {
+        "checkRestriction": "1d6bc4187ad2a8a728570d8ada2ff981e06c7de7",
+        "getPermissions": "cd1d42a7cd1e901b5711305d566d55156cb99a38",
+        "getReadonlyEnrollmentCodes": "4f93fc18435e32100124b1ca4f6634c507e3d9ba"
+      },
+      "EditController": {
+        "getFieldData": "48f86332b11307653cfe14e27b05ad4221ce49be",
+        "checkDuplicateUsernames": "16f0f14eed121e96470dcb1174c138f1baaee239",
+        "createObject": "6b7ee39f193844c4f9aaff104c48b99ec33b8090",
+        "getGeneralInfo": "ee91a89abfa636ddf27c6e07abcfea597de1ae47",
+        "getCategories": "d2007a4c4fae56f5320b1719f764a5a3d5ed415c",
+        "checkDuplicateSSN": "3d49bbb39270e3871a37e33325cb6c146670c04f",
+        "getTitles": "8cb73cf5fff45f3d0297df174afb2cdcd9003e2a",
+        "getCategoryMap": "818bbbd7f62c8f8047c7d975e1516812702a2db7",
+        "deleteObject": "239b6bfb4dc068656f87b4f90bde7acbb5f863b1",
+        "getHeaderData": "f9b02c7cc1737aee9aeb29022703755bfeba7d20",
+        "getRules": "7889c4bf3c5f1168a70f2b53a16489dab6ac47cd",
+        "getNewRecordFieldData": "5e6ef1ad014eccc1bd10ba996e4175a21ff19b09",
+        "filterSelectOptions": "f4262e5bc664752dbf694d339b8b8fe14584aacd",
+        "getObjects": "b449aef24c698ea6d3c850be7e296f7a4dde3e0a"
+      },
+      "CommentsController": {
+        "getComment": "1332f2c1590f4bc5     579cdc1eea8577f9ac06daa5",
+        "updateComment": "061a33336e7162b3f97cb17cfe5d51df1307b06c"
+      },
+      "LettersController": {
+        "getEmails": "6c8dc680a164064c0e9850e58e7fc53fb48272b2",
+        "getLetters": "95eb103923ccb7ca24b9d43cb2db4ee0e8b983c8"
+      },
+      "FLShotsController": {
+        "init": "d76a351a99a4c556dfc616fb075aaa76456eb6b4",
+        "settings": "4c2279bba1e59c7cb1cf338bf08339b7981dd30f",
+        "resend": "414a76685325c757ce6ad1fa64c9ac04b4d363b1",
+        "compliance": "14d70095f012351dccb8fc7b829b0e866588d0cf"
+      },
+      "SetupController": {
+        "updateColumn": "8072f629773af656b5bb96a28a0b475615b91923",
+        "getSchoolYears": "0363f0dd5706d6d03ec1df7f0864cd5fbe5492c3",
+        "getFields": "0bb5afe907c240da50bfe391a609c7cdba0a54f0",
+        "getCategories": "f44875a54f9d6dd7d3c6a7ee987d5046fb4009bb",
+        "getSelectOptions": "5db5d464a5c79c7dee76a47de8308b62c6ab1631",
+        "getProfiles": "3775ec2b8fc90c62dd919b49442493249664ca81",
+        "updateField": "933a15709f8e99144edff96336f57642f004716a",
+        "getSchools": "2b2d0c9511ea6672e001aa7a8786fa53c743c50f",
+        "setDefaultCategory": "ce73dd712facc8c9831c164bec03e7cc0abd978d"
+      },
+      "FocusModule\\NuFile": {
+        "downloadFile": "47731ea5842b79bf80bdd3d11bb5758f28ed6944",
+        "deleteFile": "33df4a48a47132501cc9661eb4589826f0193fe0",
+        "uploadFile": "6dec3465849a4e6d085ed1d38bf0a189e93a567d",
+        "getFiles": "f809b4f0a281765362ecc80bb718e2be0686bf9a"
+      },
+      "CustomFieldsController": {
+        "processEditRules": "3f75622a2002eaaa4d5df72df7039f3b80febc8b",
+        "formatChangeRequest": "438f4f10997c3f6347c8c7e61781121b7197996e",
+        "saveData": "5e4549346a4416e4a0ca04757c6cf5bb45fcfc46",
+        "saveContexts": "35e8777a7ae3ba20806657fcdfe2ccff1394deca",
+        "getSuggestionQueryOptions": "fa8adc8ddddfb01ddd96f350e3c86f20bbfb20a4",
+        "validateSignatureChange": "b28d5b72c6c9c0da3f49a17797c19023e28ea360"
+      },
+      "SearchController": {
+        "getSuggestions": "717cf173862cac5fef44f2c9d38faa7a605e281c"
+      }
+    },
+    "pictureUrl": "https://focus.asdnh.org/focus//asset.php?student_id\u003d2701\u0026type\u003dstudent_photo\u0026prefix\u003d2121"
+  },
+  "zip": "03063"
 }

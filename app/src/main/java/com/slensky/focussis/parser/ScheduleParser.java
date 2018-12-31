@@ -1,6 +1,12 @@
 package com.slensky.focussis.parser;
 
+import android.util.Pair;
+
+import com.slensky.focussis.data.MarkingPeriod;
+import com.slensky.focussis.data.Schedule;
+import com.slensky.focussis.data.ScheduleCourse;
 import com.slensky.focussis.util.JSONUtil;
+import com.slensky.focussis.util.TermUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,6 +16,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by slensky on 3/18/18.
  */
@@ -18,50 +27,46 @@ public class ScheduleParser extends FocusPageParser {
     private static final String TAG = "ScheduleParser";
 
     @Override
-    public JSONObject parse(String html) throws JSONException {
+    public Schedule parse(String html) {
         Document schedule = Jsoup.parse(html);
-        JSONObject json = new JSONObject();
 
-        JSONArray courses = new JSONArray();
+        List<ScheduleCourse> courses = new ArrayList<>();
         int count = 1;
         Element tr = schedule.getElementById("LOy_row" + Integer.toString(count));
         while (tr != null) {
             Elements td = tr.select("td.LO_field");
             JSONObject course = new JSONObject();
 
-            course.put("name", td.get(0).text());
-            String[] data = td.get(1).text().split(" - ");
-            if (data[0].startsWith("Period")) {
-                course.put("period", Integer.parseInt(data[0].substring("Period ".length())));
-            }
-            course.put("teacher", data[data.length - 1]);
-            course.put("days", td.get(2).text());
-            course.put("room", td.get(3).text());
+            String name = td.get(0).text().trim();
+            HyphenatedCourseInformation courseInformation = parseHyphenatedCourseInformation(td.get(1).text(), false, false);
+            String days = td.get(2).text();
+            String room = td.get(3).text();
 
             String termStr = td.get(4).text().trim().toLowerCase();
             if (termStr.equals("full year") || termStr.isEmpty()) {
-                course.put("term", "year");
+                termStr = "year";
             }
             else {
-                String term = Character.toString(termStr.charAt(0));
+                String tmpTerm = Character.toString(termStr.charAt(0));
                 if (termStr.length() > 1) {
                     for (int i = 1; i < termStr.length(); i++) {
                         if (Character.isDigit(termStr.charAt(i))) {
-                            term += termStr.charAt(i);
+                            tmpTerm += termStr.charAt(i);
                             break;
                         }
                     }
                 }
-                course.put("term", term);
+                termStr = tmpTerm;
             }
+            ScheduleCourse.Term term = TermUtil.stringToTerm(termStr);
 
-            courses.put(course);
+            courses.add(new ScheduleCourse(days, name, courseInformation.getPeriod(), room, courseInformation.getTeacher(), term));
             count += 1;
             tr = schedule.getElementById("LOy_row" + Integer.toString(count));
         }
 
-        json.put("courses", courses);
-        return JSONUtil.concatJson(json, this.getMarkingPeriods(html));
+        Pair<List<MarkingPeriod>, List<Integer>> mp = getMarkingPeriods(html);
+        return new Schedule(mp.first, mp.second, courses);
     }
 
 }

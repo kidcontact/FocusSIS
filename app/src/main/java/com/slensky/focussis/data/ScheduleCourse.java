@@ -8,7 +8,7 @@ public class ScheduleCourse {
 
     private final String days;
     private final String name;
-    private final int period;
+    private final String period;
     private final String room;
     private final String teacher;
     public enum Term {
@@ -22,7 +22,7 @@ public class ScheduleCourse {
     }
     private final Term term;
 
-    public ScheduleCourse(String days, String name, int period, String room, String teacher, Term term) {
+    public ScheduleCourse(String days, String name, String period, String room, String teacher, Term term) {
         this.days = days;
         this.name = name;
         this.period = period;
@@ -39,7 +39,7 @@ public class ScheduleCourse {
         return name;
     }
 
-    public int getPeriod() {
+    public String getPeriod() {
         return period;
     }
 
@@ -56,7 +56,7 @@ public class ScheduleCourse {
     }
 
     public boolean isAdvisory() {
-        return period == 0;
+        return period != null && period.toLowerCase().equals("advisory");
     }
 
 }

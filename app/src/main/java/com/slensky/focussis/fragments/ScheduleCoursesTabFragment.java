@@ -61,11 +61,14 @@ public class ScheduleCoursesTabFragment extends Fragment {
             name.setText(c.getName());
             TextView period = (TextView) courseRow.findViewById(com.slensky.focussis.R.id.text_course_period);
             String periodStr;
-            if (c.isAdvisory()) {
+            if (c.getPeriod() == null) {
+                periodStr = "-";
+            }
+            else if (c.isAdvisory()) {
                 periodStr = "Advisory";
             }
             else {
-                periodStr = "Period " + Integer.toString(c.getPeriod());
+                periodStr = "Period " + c.getPeriod();
             }
             period.setText(periodStr);
             TextView teacher = (TextView) courseRow.findViewById(com.slensky.focussis.R.id.text_course_teacher);

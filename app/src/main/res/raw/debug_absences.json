@@ -1,1525 +1,198 @@
 {
-  "periods_absent":101,
-  "days_partially_absent":40,
-  "periods_absent_unexcused":53,
-  "periods_absent_excused":48,
-  "days_absent_excused":6,
-  "periods_other_marks":31,
-  "days_other_marks":28,
-  "periods_late":14,
-  "periods_tardy":1,
-  "periods_misc":3,
-  "periods_offsite":13,
-  "days_possible":148,
-  "days_attended":140,
-  "days_attended_percent":94.59,
-  "days_absent":8,
-  "days_absent_percent":5.41,
-  "absences":{
-    "2018-05-07T14:53":{
-      "date":"2018-05-07T14:53",
-      "status":"present",
-      "periods":{
-        "3":{
-          "period":3,
-          "name":"Advanced Physics",
-          "days":"MWH",
-          "teacher":"Abbas Farazdel",
-          "last_updated":"2018-05-07T10:18",
-          "last_updated_by":"Abbas Farazdel",
-          "status":"absent"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2018-05-07T09:54",
-          "last_updated_by":"Kimberly A Cashin",
-          "status":"absent"
+  "days": [
+    {
+      "date": "2018-12-12T04:05:39.924-05:00",
+      "periods": [
+        {
+          "lastUpdated": "2018-12-12T01:12:52.000-05:00",
+          "lastUpdatedBy": "Secretary 1",
+          "name": "Math",
+          "period": "P5",
+          "status": "MISC",
+          "teacher": "Teacher 7"
         }
-      }
+      ],
+      "status": "PRESENT"
     },
-    "2018-05-02T14:53":{
-      "date":"2018-05-02T14:53",
-      "status":"present",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2018-05-02T09:03",
-          "last_updated_by":"Stephanie Dumoski",
-          "status":"absent"
-        },
-        "3":{
-          "period":3,
-          "name":"Advanced Physics",
-          "days":"MWH",
-          "teacher":"Abbas Farazdel",
-          "last_updated":"2018-05-02T09:47",
-          "last_updated_by":"Abbas Farazdel",
-          "status":"absent"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2018-05-02T11:16",
-          "last_updated_by":"Douglass Adam Belley",
-          "status":"absent"
-        },
-        "6":{
-          "period":6,
-          "name":"Senior Writing Seminar",
-          "days":"TWF",
-          "teacher":"Patricia Ann Sockey",
-          "last_updated":"2018-05-02T01:45",
-          "last_updated_by":"Patricia Ann Sockey",
-          "status":"absent"
+    {
+      "date": "2018-10-11T04:05:40.010-04:00",
+      "periods": [
+        {
+          "lastUpdated": "2018-10-11T09:23:41.000-04:00",
+          "lastUpdatedBy": "Secretary 1",
+          "name": "Morning Homeroom",
+          "period": "HR",
+          "status": "LATE",
+          "teacher": "Teacher 2"
         }
-      }
+      ],
+      "status": "PRESENT"
     },
-    "2018-04-30T14:53":{
-      "date":"2018-04-30T14:53",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2018-04-30T10:00",
-          "last_updated_by":"Susie E Peacock",
-          "status":"offsite"
+    {
+      "date": "2018-10-10T04:05:40.054-04:00",
+      "periods": [
+        {
+          "lastUpdated": "2018-10-10T08:27:13.000-04:00",
+          "lastUpdatedBy": "Teacher 2",
+          "name": "Morning Homeroom",
+          "period": "HR",
+          "status": "LATE",
+          "teacher": "Teacher 2"
         }
-      }
+      ],
+      "status": "PRESENT"
     },
-    "2018-04-17T14:53":{
-      "date":"2018-04-17T14:53",
-      "status":"present",
-      "periods":{
-        "6":{
-          "period":6,
-          "name":"Senior Writing Seminar",
-          "days":"TWF",
-          "teacher":"Patricia Ann Sockey",
-          "last_updated":"2018-04-17T03:10",
-          "last_updated_by":"Susie E Peacock",
-          "status":"excused"
+    {
+      "date": "2018-10-09T04:05:40.097-04:00",
+      "periods": [
+        {
+          "lastUpdated": "2018-10-09T08:23:14.000-04:00",
+          "lastUpdatedBy": "Teacher 2",
+          "name": "Morning Homeroom",
+          "period": "HR",
+          "status": "ABSENT",
+          "teacher": "Teacher 2"
         }
-      }
+      ],
+      "status": "PRESENT"
     },
-    "2018-04-16T14:53":{
-      "date":"2018-04-16T14:53",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2018-04-16T11:28",
-          "last_updated_by":"Kimberly A Cashin",
-          "status":"absent"
+    {
+      "date": "2018-10-04T04:05:40.140-04:00",
+      "periods": [
+        {
+          "lastUpdated": "2018-10-04T08:26:41.000-04:00",
+          "lastUpdatedBy": "Teacher 2",
+          "name": "Morning Homeroom",
+          "period": "HR",
+          "status": "LATE",
+          "teacher": "Teacher 2"
         }
-      }
+      ],
+      "status": "PRESENT"
     },
-    "2018-04-13T14:53":{
-      "date":"2018-04-13T14:53",
-      "status":"present",
-      "periods":{
-        "6":{
-          "period":6,
-          "name":"Senior Writing Seminar",
-          "days":"TWF",
-          "teacher":"Patricia Ann Sockey",
-          "last_updated":"2018-04-13T12:53",
-          "last_updated_by":"Patricia Ann Sockey",
-          "status":"absent"
-        }
-      }
-    },
-    "2018-04-10T14:53":{
-      "date":"2018-04-10T14:53",
-      "status":"half-day",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2018-04-10T08:17",
-          "last_updated_by":"Stephanie Dumoski",
-          "status":"absent"
+    {
+      "date": "2018-10-01T04:05:40.171-04:00",
+      "periods": [
+        {
+          "lastUpdated": "2018-10-01T08:23:51.000-04:00",
+          "lastUpdatedBy": "Secretary 2",
+          "name": "Morning Homeroom",
+          "period": "HR",
+          "status": "EXCUSED",
+          "teacher": "Teacher 2"
         },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2018-04-10T09:55",
-          "last_updated_by":"Douglass Adam Belley",
-          "status":"absent"
+        {
+          "lastUpdated": "2018-10-01T08:23:51.000-04:00",
+          "lastUpdatedBy": "Secretary 2",
+          "name": "Language Arts",
+          "period": "P1",
+          "status": "EXCUSED",
+          "teacher": "Teacher 2"
         },
-        "6":{
-          "period":6,
-          "name":"Senior Writing Seminar",
-          "days":"TWF",
-          "teacher":"Patricia Ann Sockey",
-          "last_updated":"2018-04-10T12:29",
-          "last_updated_by":"Patricia Ann Sockey",
-          "status":"absent"
+        {
+          "lastUpdated": "2018-10-01T08:23:51.000-04:00",
+          "lastUpdatedBy": "Secretary 2",
+          "name": "Social Studies",
+          "period": "P2",
+          "status": "EXCUSED",
+          "teacher": "Susan Chauvette"
+        },
+        {
+          "lastUpdated": "2018-10-01T08:23:51.000-04:00",
+          "lastUpdatedBy": "Secretary 2",
+          "name": "Science",
+          "period": "P3",
+          "status": "EXCUSED",
+          "teacher": "Teacher 5"
+        },
+        {
+          "lastUpdated": "2018-10-01T08:23:51.000-04:00",
+          "lastUpdatedBy": "Secretary 2",
+          "name": "Engineering \u0026 Technology",
+          "period": "P4",
+          "status": "EXCUSED",
+          "teacher": "Teacher 6"
+        },
+        {
+          "lastUpdated": "2018-10-01T08:23:51.000-04:00",
+          "lastUpdatedBy": "Secretary 2",
+          "name": "Math",
+          "period": "P5",
+          "status": "EXCUSED",
+          "teacher": "Teacher 7"
+        },
+        {
+          "lastUpdated": "2018-10-01T08:23:51.000-04:00",
+          "lastUpdatedBy": "Secretary 2",
+          "name": "Reading",
+          "period": "P6",
+          "status": "EXCUSED",
+          "teacher": "Teacher 2"
+        },
+        {
+          "lastUpdated": "2018-10-01T08:23:51.000-04:00",
+          "lastUpdatedBy": "Secretary 2",
+          "name": "Study Hall",
+          "period": "SH",
+          "status": "EXCUSED",
+          "teacher": "Teacher 2"
         }
-      }
+      ],
+      "status": "ABSENT"
     },
-    "2018-04-05T14:54":{
-      "date":"2018-04-05T14:54",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2018-04-05T10:58",
-          "last_updated_by":"Susie E Peacock",
-          "status":"offsite"
+    {
+      "date": "2018-09-12T04:05:40.475-04:00",
+      "periods": [
+        {
+          "lastUpdated": "2018-09-12T01:48:37.000-04:00",
+          "lastUpdatedBy": "Teacher 2",
+          "name": "Advisory",
+          "period": "P6",
+          "status": "LATE",
+          "teacher": "Teacher 2"
         }
-      }
+      ],
+      "status": "PRESENT"
     },
-    "2018-04-04T14:54":{
-      "date":"2018-04-04T14:54",
-      "status":"present",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2018-04-04T09:02",
-          "last_updated_by":"Stephanie Dumoski",
-          "status":"absent"
-        },
-        "3":{
-          "period":3,
-          "name":"Advanced Physics",
-          "days":"MWH",
-          "teacher":"Abbas Farazdel",
-          "last_updated":"2018-04-04T09:46",
-          "last_updated_by":"Abbas Farazdel",
-          "status":"absent"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2018-04-04T11:25",
-          "last_updated_by":"Douglass Adam Belley",
-          "status":"absent"
-        },
-        "6":{
-          "period":6,
-          "name":"Senior Writing Seminar",
-          "days":"TWF",
-          "teacher":"Patricia Ann Sockey",
-          "last_updated":"2018-04-04T01:23",
-          "last_updated_by":"Patricia Ann Sockey",
-          "status":"misc"
+    {
+      "date": "2018-09-11T04:05:40.505-04:00",
+      "periods": [
+        {
+          "lastUpdated": "2018-09-11T11:32:59.000-04:00",
+          "lastUpdatedBy": "Teacher 6",
+          "name": "Engineering \u0026 Technology",
+          "period": "P4",
+          "status": "LATE",
+          "teacher": "Teacher 6"
         }
-      }
-    },
-    "2018-04-03T14:54":{
-      "date":"2018-04-03T14:54",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2018-04-03T09:57",
-          "last_updated_by":"Kimberly A Cashin",
-          "status":"absent"
-        }
-      }
-    },
-    "2018-03-28T14:54":{
-      "date":"2018-03-28T14:54",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2018-03-28T11:18",
-          "last_updated_by":"Kimberly A Cashin",
-          "status":"absent"
-        }
-      }
-    },
-    "2018-03-23T14:54":{
-      "date":"2018-03-23T14:54",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2018-03-23T09:57",
-          "last_updated_by":"Kimberly A Cashin",
-          "status":"absent"
-        }
-      }
-    },
-    "2018-03-22T14:54":{
-      "date":"2018-03-22T14:54",
-      "status":"present",
-      "periods":{
-        "3":{
-          "period":3,
-          "name":"Advanced Physics",
-          "days":"MWH",
-          "teacher":"Abbas Farazdel",
-          "last_updated":"2018-03-22T10:35",
-          "last_updated_by":"Susie E Peacock",
-          "status":"late"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2018-03-22T10:35",
-          "last_updated_by":"Susie E Peacock",
-          "status":"offsite"
-        }
-      }
-    },
-    "2018-03-14T14:54":{
-      "date":"2018-03-14T14:54",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Senior Project",
-          "days":"W",
-          "teacher":"Patricia Ann Sockey",
-          "last_updated":"2018-03-14T12:00",
-          "last_updated_by":"Bonnie Doyle",
-          "status":"absent"
-        },
-        "6":{
-          "period":6,
-          "name":"Senior Writing Seminar",
-          "days":"TWF",
-          "teacher":"Patricia Ann Sockey",
-          "last_updated":"2018-03-14T12:00",
-          "last_updated_by":"Bonnie Doyle",
-          "status":"late"
-        }
-      }
-    },
-    "2018-03-09T14:54":{
-      "date":"2018-03-09T14:54",
-      "status":"present",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2018-03-09T08:15",
-          "last_updated_by":"Stephanie Dumoski",
-          "status":"absent"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2018-03-09T09:52",
-          "last_updated_by":"Douglass Adam Belley",
-          "status":"absent"
-        }
-      }
-    },
-    "2018-03-07T14:54":{
-      "date":"2018-03-07T14:54",
-      "status":"present",
-      "periods":{
-        "3":{
-          "period":3,
-          "name":"Advanced Physics",
-          "days":"MWH",
-          "teacher":"Abbas Farazdel",
-          "last_updated":"2018-03-07T08:55",
-          "last_updated_by":"Abbas Farazdel",
-          "status":"absent"
-        }
-      }
-    },
-    "2018-02-23T14:54":{
-      "date":"2018-02-23T14:54",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2018-02-23T09:57",
-          "last_updated_by":"Kimberly A Cashin",
-          "status":"absent"
-        },
-        "6":{
-          "period":6,
-          "name":"Senior Writing Seminar",
-          "days":"TWF",
-          "teacher":"Patricia Ann Sockey",
-          "last_updated":"2018-02-23T12:41",
-          "last_updated_by":"Patricia Ann Sockey",
-          "status":"absent"
-        }
-      }
-    },
-    "2018-02-20T14:54":{
-      "date":"2018-02-20T14:54",
-      "status":"present",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2018-02-20T08:24",
-          "last_updated_by":"Stephanie Dumoski",
-          "status":"late"
-        }
-      }
-    },
-    "2018-02-16T14:54":{
-      "date":"2018-02-16T14:54",
-      "status":"present",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2018-02-16T08:18",
-          "last_updated_by":"Stephanie Dumoski",
-          "status":"late"
-        }
-      }
-    },
-    "2018-02-14T14:54":{
-      "date":"2018-02-14T14:54",
-      "status":"present",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2018-02-14T09:01",
-          "last_updated_by":"Stephanie Dumoski",
-          "status":"absent"
-        },
-        "3":{
-          "period":3,
-          "name":"Advanced Physics",
-          "days":"MWH",
-          "teacher":"Abbas Farazdel",
-          "last_updated":"2018-02-14T09:50",
-          "last_updated_by":"Abbas Farazdel",
-          "status":"absent"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2018-02-14T11:18",
-          "last_updated_by":"Douglass Adam Belley",
-          "status":"absent"
-        },
-        "6":{
-          "period":6,
-          "name":"Senior Writing Seminar",
-          "days":"TWF",
-          "teacher":"Patricia Ann Sockey",
-          "last_updated":"2018-02-14T04:24",
-          "last_updated_by":"Patricia Ann Sockey",
-          "status":"absent"
-        }
-      }
-    },
-    "2018-02-12T14:54":{
-      "date":"2018-02-12T14:54",
-      "status":"present",
-      "periods":{
-        "1":{
-          "period":1,
-          "name":"Study Period ",
-          "days":"MWH",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2018-02-12T10:21",
-          "last_updated_by":"Shannon Michaels",
-          "status":"offsite"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2018-02-12T10:20",
-          "last_updated_by":"Shannon Michaels",
-          "status":"tardy"
-        }
-      }
-    },
-    "2018-02-09T14:54":{
-      "date":"2018-02-09T14:54",
-      "status":"present",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2018-02-09T08:19",
-          "last_updated_by":"Stephanie Dumoski",
-          "status":"late"
-        }
-      }
-    },
-    "2018-02-06T14:54":{
-      "date":"2018-02-06T14:54",
-      "status":"present",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2018-02-06T08:17",
-          "last_updated_by":"Stephanie Dumoski",
-          "status":"late"
-        }
-      }
-    },
-    "2018-02-01T14:54":{
-      "date":"2018-02-01T14:54",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2018-02-01T09:54",
-          "last_updated_by":"Kimberly A Cashin",
-          "status":"absent"
-        }
-      }
-    },
-    "2018-01-31T14:54":{
-      "date":"2018-01-31T14:54",
-      "status":"present",
-      "periods":{
-        "6":{
-          "period":6,
-          "name":"Senior Writing Seminar",
-          "days":"TWF",
-          "teacher":"Patricia Ann Sockey",
-          "last_updated":"2018-01-31T01:28",
-          "last_updated_by":"Patricia Ann Sockey",
-          "status":"absent"
-        }
-      }
-    },
-    "2018-01-24T14:54":{
-      "date":"2018-01-24T14:54",
-      "status":"present",
-      "periods":{
-        "3":{
-          "period":3,
-          "name":"Advanced Physics",
-          "days":"MWH",
-          "teacher":"Abbas Farazdel",
-          "last_updated":"2018-01-24T01:13",
-          "last_updated_by":"Abbas Farazdel",
-          "status":"absent"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2018-01-24T11:29",
-          "last_updated_by":"Kimberly A Cashin",
-          "status":"absent"
-        }
-      }
-    },
-    "2018-01-23T14:54":{
-      "date":"2018-01-23T14:54",
-      "status":"present",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2018-01-23T10:48",
-          "last_updated_by":"Susie E Peacock",
-          "status":"late"
-        }
-      }
-    },
-    "2018-01-11T14:54":{
-      "date":"2018-01-11T14:54",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2018-01-11T10:08",
-          "last_updated_by":"Susie E Peacock",
-          "status":"offsite"
-        }
-      }
-    },
-    "2018-01-08T14:54":{
-      "date":"2018-01-08T14:54",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2018-01-08T09:55",
-          "last_updated_by":"Douglass Adam Belley",
-          "status":"absent"
-        }
-      }
-    },
-    "2017-12-19T14:54":{
-      "date":"2017-12-19T14:54",
-      "status":"excused",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2017-12-19T09:44",
-          "last_updated_by":"Susie E Peacock",
-          "status":"excused"
-        },
-        "4":{
-          "period":4,
-          "name":"Study Period ",
-          "days":"TWF",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-12-19T",
-          "last_updated_by":"Susie E Peacock",
-          "status":"excused"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-12-19T09:44",
-          "last_updated_by":"Susie E Peacock",
-          "status":"excused"
-        },
-        "6":{
-          "period":6,
-          "name":"Senior Writing Seminar",
-          "days":"TWF",
-          "teacher":"Patricia Ann Sockey",
-          "last_updated":"2017-12-19T09:44",
-          "last_updated_by":"Susie E Peacock",
-          "status":"excused"
-        },
-        "8":{
-          "period":8,
-          "name":"Study Period ",
-          "days":"TWF",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-12-19T09:44",
-          "last_updated_by":"Susie E Peacock",
-          "status":"excused"
-        }
-      }
-    },
-    "2017-12-18T14:54":{
-      "date":"2017-12-18T14:54",
-      "status":"excused",
-      "periods":{
-        "1":{
-          "period":1,
-          "name":"Study Period ",
-          "days":"MWH",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-12-18T12:00",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        },
-        "3":{
-          "period":3,
-          "name":"Advanced Physics",
-          "days":"MWH",
-          "teacher":"Abbas Farazdel",
-          "last_updated":"2017-12-18T12:00",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-12-18T12:00",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        },
-        "5":{
-          "period":5,
-          "name":"Study Period ",
-          "days":"MWH",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-12-18T12:00",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        },
-        "7":{
-          "period":7,
-          "name":"Study Period ",
-          "days":"MWH",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-12-18T12:00",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        }
-      }
-    },
-    "2017-12-15T14:54":{
-      "date":"2017-12-15T14:54",
-      "status":"half-day",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2017-12-15T08:23",
-          "last_updated_by":"Stephanie Dumoski",
-          "status":"absent"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-12-15T09:53",
-          "last_updated_by":"Douglass Adam Belley",
-          "status":"absent"
-        },
-        "6":{
-          "period":6,
-          "name":"Senior Writing Seminar",
-          "days":"TWF",
-          "teacher":"Patricia Ann Sockey",
-          "last_updated":"2017-12-15T12:35",
-          "last_updated_by":"Patricia Ann Sockey",
-          "status":"absent"
-        }
-      }
-    },
-    "2017-12-12T14:54":{
-      "date":"2017-12-12T14:54",
-      "status":"present",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2017-12-12T10:41",
-          "last_updated_by":"Susie E Peacock",
-          "status":"excused"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-12-12T10:34",
-          "last_updated_by":"Susie E Peacock",
-          "status":"offsite"
-        }
-      }
-    },
-    "2017-12-05T14:54":{
-      "date":"2017-12-05T14:54",
-      "status":"half-day",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2017-12-05T08:16",
-          "last_updated_by":"Stephanie Dumoski",
-          "status":"absent"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-12-05T10:00",
-          "last_updated_by":"Kimberly A Cashin",
-          "status":"absent"
-        },
-        "6":{
-          "period":6,
-          "name":"Senior Writing Seminar",
-          "days":"TWF",
-          "teacher":"Patricia Ann Sockey",
-          "last_updated":"2017-12-05T12:45",
-          "last_updated_by":"Patricia Ann Sockey",
-          "status":"absent"
-        }
-      }
-    },
-    "2017-12-01T14:54":{
-      "date":"2017-12-01T14:54",
-      "status":"present",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2017-12-01T08:15",
-          "last_updated_by":"Stephanie Dumoski",
-          "status":"absent"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-12-01T09:53",
-          "last_updated_by":"Kimberly A Cashin",
-          "status":"absent"
-        }
-      }
-    },
-    "2017-11-28T14:54":{
-      "date":"2017-11-28T14:54",
-      "status":"present",
-      "periods":{
-        "6":{
-          "period":6,
-          "name":"Senior Writing Seminar",
-          "days":"TWF",
-          "teacher":"Patricia Ann Sockey",
-          "last_updated":"2017-11-28T12:40",
-          "last_updated_by":"Patricia Ann Sockey",
-          "status":"absent"
-        }
-      }
-    },
-    "2017-11-20T14:54":{
-      "date":"2017-11-20T14:54",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-11-20T09:53",
-          "last_updated_by":"Douglass Adam Belley",
-          "status":"absent"
-        }
-      }
-    },
-    "2017-11-17T14:54":{
-      "date":"2017-11-17T14:54",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-11-17T11:18",
-          "last_updated_by":"Shannon Michaels",
-          "status":"offsite"
-        }
-      }
-    },
-    "2017-11-16T14:54":{
-      "date":"2017-11-16T14:54",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-11-16T10:30",
-          "last_updated_by":"Susie E Peacock",
-          "status":"offsite"
-        }
-      }
-    },
-    "2017-11-14T14:54":{
-      "date":"2017-11-14T14:54",
-      "status":"present",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2017-11-14T08:20",
-          "last_updated_by":"Stephanie Dumoski",
-          "status":"late"
-        }
-      }
-    },
-    "2017-11-13T14:54":{
-      "date":"2017-11-13T14:54",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-11-13T09:54",
-          "last_updated_by":"Kimberly A Cashin",
-          "status":"absent"
-        }
-      }
-    },
-    "2017-11-03T14:54":{
-      "date":"2017-11-03T14:54",
-      "status":"present",
-      "periods":{
-        "4":{
-          "period":4,
-          "name":"Study Period ",
-          "days":"TWF",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-11-03T10:36",
-          "last_updated_by":"Shannon Michaels",
-          "status":"offsite"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-11-03T10:36",
-          "last_updated_by":"Shannon Michaels",
-          "status":"offsite"
-        }
-      }
-    },
-    "2017-11-02T14:54":{
-      "date":"2017-11-02T14:54",
-      "status":"present",
-      "periods":{
-        "3":{
-          "period":3,
-          "name":"Advanced Physics",
-          "days":"MWH",
-          "teacher":"Abbas Farazdel",
-          "last_updated":"2017-11-02T10:33",
-          "last_updated_by":"Abbas Farazdel",
-          "status":"absent"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-11-02T09:55",
-          "last_updated_by":"Kimberly A Cashin",
-          "status":"absent"
-        }
-      }
-    },
-    "2017-10-24T14:54":{
-      "date":"2017-10-24T14:54",
-      "status":"present",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2017-10-24T08:23",
-          "last_updated_by":"Stephanie Dumoski",
-          "status":"late"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-10-24T10:23",
-          "last_updated_by":"Susie E Peacock",
-          "status":"excused"
-        }
-      }
-    },
-    "2017-10-20T14:54":{
-      "date":"2017-10-20T14:54",
-      "status":"present",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2017-10-20T08:26",
-          "last_updated_by":"Stephanie Dumoski",
-          "status":"late"
-        }
-      }
-    },
-    "2017-10-19T14:54":{
-      "date":"2017-10-19T14:54",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-10-19T10:10",
-          "last_updated_by":"Susie E Peacock",
-          "status":"offsite"
-        }
-      }
-    },
-    "2017-10-17T14:54":{
-      "date":"2017-10-17T14:54",
-      "status":"present",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2017-10-17T08:23",
-          "last_updated_by":"Stephanie Dumoski",
-          "status":"late"
-        }
-      }
-    },
-    "2017-10-11T14:54":{
-      "date":"2017-10-11T14:54",
-      "status":"present",
-      "periods":{
-        "1":{
-          "period":1,
-          "name":"Study Period ",
-          "days":"MWH",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-10-11T10:36",
-          "last_updated_by":"Susie E Peacock",
-          "status":"absent"
-        },
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2017-10-11T10:36",
-          "last_updated_by":"Susie E Peacock",
-          "status":"absent"
-        },
-        "3":{
-          "period":3,
-          "name":"Advanced Physics",
-          "days":"MWH",
-          "teacher":"Abbas Farazdel",
-          "last_updated":"2017-10-11T12:00",
-          "last_updated_by":"Susie E Peacock",
-          "status":"absent"
-        },
-        "4":{
-          "period":4,
-          "name":"Study Period ",
-          "days":"TWF",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-10-11T12:00",
-          "last_updated_by":"Susie E Peacock",
-          "status":"absent"
-        }
-      }
-    },
-    "2017-10-10T14:54":{
-      "date":"2017-10-10T14:54",
-      "status":"present",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2017-10-10T08:24",
-          "last_updated_by":"Stephanie Dumoski",
-          "status":"late"
-        }
-      }
-    },
-    "2017-10-06T14:54":{
-      "date":"2017-10-06T14:54",
-      "status":"present",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2017-10-06T08:20",
-          "last_updated_by":"Stephanie Dumoski",
-          "status":"late"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-10-06T10:29",
-          "last_updated_by":"Susie E Peacock",
-          "status":"excused"
-        }
-      }
-    },
-    "2017-10-05T14:54":{
-      "date":"2017-10-05T14:54",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-10-05T09:54",
-          "last_updated_by":"Kimberly A Cashin",
-          "status":"absent"
-        },
-        "5":{
-          "period":5,
-          "name":"Study Period ",
-          "days":"MWH",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-10-05T12:00",
-          "last_updated_by":"Amy E Bewley",
-          "status":"misc"
-        }
-      }
-    },
-    "2017-10-04T14:54":{
-      "date":"2017-10-04T14:54",
-      "status":"present",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2017-10-04T09:16",
-          "last_updated_by":"Stephanie Dumoski",
-          "status":"late"
-        }
-      }
-    },
-    "2017-09-28T14:54":{
-      "date":"2017-09-28T14:54",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-09-28T09:56",
-          "last_updated_by":"Kimberly A Cashin",
-          "status":"misc"
-        }
-      }
-    },
-    "2017-09-26T14:54":{
-      "date":"2017-09-26T14:54",
-      "status":"half-day",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2017-09-26T08:18",
-          "last_updated_by":"Stephanie Dumoski",
-          "status":"absent"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-09-26T09:59",
-          "last_updated_by":"Douglass Adam Belley",
-          "status":"absent"
-        },
-        "6":{
-          "period":6,
-          "name":"Senior Writing Seminar",
-          "days":"TWF",
-          "teacher":"Patricia Ann Sockey",
-          "last_updated":"2017-09-26T12:35",
-          "last_updated_by":"Patricia Ann Sockey",
-          "status":"absent"
-        }
-      }
-    },
-    "2017-09-25T14:54":{
-      "date":"2017-09-25T14:54",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-09-25T12:49",
-          "last_updated_by":"Shannon Michaels",
-          "status":"offsite"
-        }
-      }
-    },
-    "2017-09-22T14:54":{
-      "date":"2017-09-22T14:54",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-09-22T12:15",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        }
-      }
-    },
-    "2017-09-18T14:54":{
-      "date":"2017-09-18T14:54",
-      "status":"present",
-      "periods":{
-        "1":{
-          "period":1,
-          "name":"Study Period ",
-          "days":"MWH",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-09-18T12:46",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-09-18T12:46",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        }
-      }
-    },
-    "2017-09-12T14:54":{
-      "date":"2017-09-12T14:54",
-      "status":"excused",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2017-09-12T08:46",
-          "last_updated_by":"Susie E Peacock",
-          "status":"excused"
-        },
-        "4":{
-          "period":4,
-          "name":"Study Period ",
-          "days":"TWF",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-09-12T08:46",
-          "last_updated_by":"Susie E Peacock",
-          "status":"excused"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-09-12T08:46",
-          "last_updated_by":"Susie E Peacock",
-          "status":"excused"
-        },
-        "6":{
-          "period":6,
-          "name":"Senior Writing Seminar",
-          "days":"TWF",
-          "teacher":"Patricia Ann Sockey",
-          "last_updated":"2017-09-12T08:46",
-          "last_updated_by":"Susie E Peacock",
-          "status":"excused"
-        },
-        "8":{
-          "period":8,
-          "name":"Study Period ",
-          "days":"TWF",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-09-12T08:46",
-          "last_updated_by":"Susie E Peacock",
-          "status":"excused"
-        }
-      }
-    },
-    "2017-09-11T14:54":{
-      "date":"2017-09-11T14:54",
-      "status":"excused",
-      "periods":{
-        "1":{
-          "period":1,
-          "name":"Study Period ",
-          "days":"MWH",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-09-11T12:00",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        },
-        "3":{
-          "period":3,
-          "name":"Advanced Physics",
-          "days":"MWH",
-          "teacher":"Abbas Farazdel",
-          "last_updated":"2017-09-11T12:00",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-09-11T12:00",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        },
-        "5":{
-          "period":5,
-          "name":"Study Period ",
-          "days":"MWH",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-09-11T12:00",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        },
-        "7":{
-          "period":7,
-          "name":"Study Period ",
-          "days":"MWH",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-09-11T12:00",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        }
-      }
-    },
-    "2017-09-07T14:54":{
-      "date":"2017-09-07T14:54",
-      "status":"excused",
-      "periods":{
-        "1":{
-          "period":1,
-          "name":"Study Period ",
-          "days":"MWH",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-09-07T12:00",
-          "last_updated_by":"Susie E Peacock",
-          "status":"excused"
-        },
-        "3":{
-          "period":3,
-          "name":"Advanced Physics",
-          "days":"MWH",
-          "teacher":"Abbas Farazdel",
-          "last_updated":"2017-09-07T12:00",
-          "last_updated_by":"Susie E Peacock",
-          "status":"excused"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-09-07T12:00",
-          "last_updated_by":"Susie E Peacock",
-          "status":"excused"
-        },
-        "5":{
-          "period":5,
-          "name":"Study Period ",
-          "days":"MWH",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-09-07T12:00",
-          "last_updated_by":"Susie E Peacock",
-          "status":"excused"
-        },
-        "7":{
-          "period":7,
-          "name":"Study Period ",
-          "days":"MWH",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-09-07T12:00",
-          "last_updated_by":"Susie E Peacock",
-          "status":"excused"
-        }
-      }
-    },
-    "2017-09-06T14:54":{
-      "date":"2017-09-06T14:54",
-      "status":"excused",
-      "periods":{
-        "2":{
-          "period":2,
-          "name":"Advanced Calculus BC",
-          "days":"TWF",
-          "teacher":"Stephanie Dumoski",
-          "last_updated":"2017-09-06T10:23",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        },
-        "3":{
-          "period":3,
-          "name":"Advanced Physics",
-          "days":"MWH",
-          "teacher":"Abbas Farazdel",
-          "last_updated":"2017-09-06T10:23",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        },
-        "4":{
-          "period":4,
-          "name":"Study Period ",
-          "days":"TWF",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-09-06T10:23",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        },
-        "advisory":{
-          "period":"advisory",
-          "name":"Senior Project",
-          "days":"W",
-          "teacher":"Patricia Ann Sockey",
-          "last_updated":"2017-09-06T10:23",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        },
-        "5":{
-          "period":5,
-          "name":"Study Period ",
-          "days":"MWH",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-09-06T10:23",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        },
-        "6":{
-          "period":6,
-          "name":"Senior Writing Seminar",
-          "days":"TWF",
-          "teacher":"Patricia Ann Sockey",
-          "last_updated":"2017-09-06T10:23",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        },
-        "7":{
-          "period":7,
-          "name":"Study Period ",
-          "days":"MWH",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-09-06T10:23",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        },
-        "8":{
-          "period":8,
-          "name":"Study Period ",
-          "days":"TWF",
-          "teacher":"Jennifer Cava",
-          "last_updated":"2017-09-06T10:23",
-          "last_updated_by":"Shannon Michaels",
-          "status":"excused"
-        }
-      }
-    },
-    "2017-08-31T14:54":{
-      "date":"2017-08-31T14:54",
-      "status":"present",
-      "periods":{
-        "advisory":{
-          "period":"advisory",
-          "name":"Silver Advisory",
-          "days":"12",
-          "teacher":"Douglass Adam Belley",
-          "last_updated":"2017-08-31T10:36",
-          "last_updated_by":"Susie E Peacock",
-          "status":"offsite"
-        }
-      }
+      ],
+      "status": "PRESENT"
     }
+  ],
+  "daysAbsent": 1.0,
+  "daysAbsentExcused": 1,
+  "daysAbsentPercent": 1.39,
+  "daysAttended": 71.0,
+  "daysAttendedPercent": 98.61,
+  "daysOtherMarks": 6,
+  "daysPartiallyAbsent": 2,
+  "daysPossible": 72.0,
+  "periodsAbsent": 9,
+  "periodsAbsentExcused": 8,
+  "periodsAbsentUnexcused": 1,
+  "periodsDismissed": 0,
+  "periodsLate": 5,
+  "periodsMisc": 1,
+  "periodsOffsite": 0,
+  "periodsOtherMarks": 6,
+  "periodsTardy": 0,
+  "currentMarkingPeriod": {
+    "id": "462",
+    "name": "Sem1GradeBook",
+    "selected": true,
+    "year": 2018
   },
-  "mps": {
-    "349": {
-      "id": "349",
-      "name": "Sem1GradeBook",
-      "year": 2017
-    },
-    "350": {
-      "id": "350",
-      "name": "Sem2Gradebook",
-      "year": 2017,
-      "selected": true
-    }
-  },
-  "mp_years": [
-    2012,
+  "markingPeriodYears": [
     2013,
     2014,
     2015,
@@ -1527,5 +200,19 @@
     2017,
     2018,
     2019
+  ],
+  "markingPeriods": [
+    {
+      "id": "462",
+      "name": "Sem1GradeBook",
+      "selected": true,
+      "year": 2018
+    },
+    {
+      "id": "461",
+      "name": "Sem2GradeBook",
+      "selected": false,
+      "year": 2018
+    }
   ]
 }

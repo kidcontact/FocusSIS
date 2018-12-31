@@ -33,6 +33,7 @@ import com.slensky.focussis.data.GoogleCalendarEvent;
 import com.slensky.focussis.data.PortalAssignment;
 import com.slensky.focussis.data.PortalCourse;
 import com.slensky.focussis.data.PortalEvent;
+import com.slensky.focussis.network.FocusApi;
 import com.slensky.focussis.util.GsonSingleton;
 
 import org.json.JSONObject;
@@ -84,8 +85,8 @@ public class PortalFragment extends NetworkTabAwareFragment implements ActionMod
         return view;
     }
 
-    protected void onSuccess(JSONObject response) {
-        portal = new Portal(response);
+    protected void onSuccess(Portal response) {
+        portal = response;
 
         if (isAdded()) {
             List<Fragment> tempTabFragments = new ArrayList<>();
@@ -121,9 +122,9 @@ public class PortalFragment extends NetworkTabAwareFragment implements ActionMod
                 return;
             }
         }
-        api.getPortal(new Response.Listener<JSONObject>() {
+        api.getPortal(new FocusApi.Listener<Portal>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(Portal response) {
                 onSuccess(response);
             }
         }, new Response.ErrorListener() {
@@ -453,10 +454,9 @@ public class PortalFragment extends NetworkTabAwareFragment implements ActionMod
         progress.show();
 
         for (final PortalCourse portalCourse : coursesToDownload) {
-            Request request = api.getCourse(portalCourse.getId(), new Response.Listener<JSONObject>() {
+            Request request = api.getCourse(portalCourse.getId(), new FocusApi.Listener<Course>() {
                 @Override
-                public void onResponse(JSONObject response) {
-                    Course course = new Course(response);
+                public void onResponse(Course course) {
                     for (PortalAssignment portalAssignment : portalCourse.getAssignments()) {
                         if (!portalAssignment.isCustomAssignment() && course.hasAssignments()) {
                             for (CourseAssignment courseAssignment : course.getAssignments()) {
