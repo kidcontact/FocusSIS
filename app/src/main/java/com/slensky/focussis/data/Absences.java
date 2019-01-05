@@ -26,7 +26,7 @@ public class Absences extends MarkingPeriodPage {
     private final int periodsAbsent;
     private final int periodsAbsentUnexcused;
     private final int periodsAbsentExcused;
-    private final int periodsDismissed;
+    private final int periodsDismissed; // NOT ALWAYS PRESENT
     private final int periodsOtherMarks;
     private final int periodsLate;
     private final int periodsTardy;
@@ -150,10 +150,6 @@ public class Absences extends MarkingPeriodPage {
 
     public int getPeriodsAbsentExcused() {
         return periodsAbsentExcused;
-    }
-
-    public int getPeriodsDismissed() {
-        return periodsDismissed;
     }
 
     public int getDaysAbsentExcused() {

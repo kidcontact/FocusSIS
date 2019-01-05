@@ -36,24 +36,43 @@ public class AbsencesParser extends FocusPageParser {
     public Absences parse(String html) {
         Document absences = Jsoup.parse(html);
         Element table = absences.select("table.WhiteDrawHeader").get(1);
-        Pattern r = Pattern.compile("Absent: ([0-9]+) periods \\(during ([0-9]+) days\\) A Absent ([0-9]+) periods D Dismissed ([0-9]+) periods E Excused Absence ([0-9]+) periods -- ([0-9]+) days Other Marks: ([0-9]+) periods \\(during ([0-9]+) days\\) L Late ([0-9]+) periods T Tardy ([0-9]+) periods M Misc. Activity ([0-9]+) periods O Off Site/Field Trip ([0-9]+) periods");
-        Matcher m = r.matcher(table.text());
+
+        // some absences pages have a field for "Dismissed". others don't
+        boolean hasDismissed = true;
+        Pattern r1 = Pattern.compile("Absent: ([0-9]+) periods \\(during ([0-9]+) days\\) A Absent ([0-9]+) periods D Dismissed ([0-9]+) periods E Excused Absence ([0-9]+) periods -- ([0-9]+) days Other Marks: ([0-9]+) periods \\(during ([0-9]+) days\\) L Late ([0-9]+) periods T Tardy ([0-9]+) periods M Misc. Activity ([0-9]+) periods O Off Site/Field Trip ([0-9]+) periods");
+        Pattern r2 = Pattern.compile("Absent: ([0-9]+) periods \\(during ([0-9]+) days\\) A Absent ([0-9]+) periods E Excused Absence ([0-9]+) periods -- ([0-9]+) days Other Marks: ([0-9]+) periods \\(during ([0-9]+) days\\) L Late ([0-9]+) periods T Tardy ([0-9]+) periods M Misc. Activity ([0-9]+) periods O Off Site/Field Trip ([0-9]+) periods");
+
+        String tableText = table.text();
+        Matcher m = r1.matcher(tableText);
         if (!m.find()) {
-            throw new FocusParseException("Regex pattern could not be matched on " + table.text());
+            hasDismissed = false;
+            m = r2.matcher(tableText);
+            if (!m.find()) {
+                throw new FocusParseException("Regex pattern could not be matched on " + table.text());
+            }
+            Log.d(TAG, "Absences does not have Dismissed field");
+
         }
 
         int periodsAbsent = Integer.parseInt(m.group(1));
         int daysPartiallyAbsent = Integer.parseInt(m.group(2));
         int periodsAbsentUnexcused = Integer.parseInt(m.group(3));
-        int periodsDismissed = Integer.parseInt(m.group(4));
-        int periodsAbsentExcused = Integer.parseInt(m.group(5));
-        int daysAbsentExcused = Integer.parseInt(m.group(6));
-        int periodsOtherMarks = Integer.parseInt(m.group(7));
-        int daysOtherMarks = Integer.parseInt(m.group(8));
-        int periodsLate = Integer.parseInt(m.group(9));
-        int periodsTardy = Integer.parseInt(m.group(10));
-        int periodsMisc = Integer.parseInt(m.group(11));
-        int periodsOffsite = Integer.parseInt(m.group(12));
+
+        int idx = 4;
+        int periodsDismissed = -1;
+        if (hasDismissed) {
+            periodsDismissed = Integer.parseInt(m.group(4));
+            idx = 5;
+        }
+
+        int periodsAbsentExcused = Integer.parseInt(m.group(idx));
+        int daysAbsentExcused = Integer.parseInt(m.group(idx + 1));
+        int periodsOtherMarks = Integer.parseInt(m.group(idx + 2));
+        int daysOtherMarks = Integer.parseInt(m.group(idx + 3));
+        int periodsLate = Integer.parseInt(m.group(idx + 4));
+        int periodsTardy = Integer.parseInt(m.group(idx + 5));
+        int periodsMisc = Integer.parseInt(m.group(idx + 6));
+        int periodsOffsite = Integer.parseInt(m.group(idx + 7));
 
         int start, end;
         String key1 = "Total Full Days Possible: ";
