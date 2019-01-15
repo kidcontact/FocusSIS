@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -20,17 +19,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.slensky.focussis.R;
 import com.slensky.focussis.activities.MainActivity;
-import com.slensky.focussis.data.Student;
-import com.slensky.focussis.network.FocusApi;
+import com.slensky.focussis.data.network.FocusApi;
 import com.slensky.focussis.util.CardViewAnimationController;
 import com.slensky.focussis.util.SchoolSingleton;
 import com.slensky.focussis.views.IconWithTextView;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.json.JSONObject;
 
-import com.slensky.focussis.data.Demographic;
-import com.slensky.focussis.network.FocusApiSingleton;
+import com.slensky.focussis.data.focus.Demographic;
 import com.slensky.focussis.util.DateUtil;
 
 import java.util.List;
@@ -45,7 +41,6 @@ public class DemographicFragment extends NetworkTabAwareFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        api = FocusApiSingleton.getApi();
         title = getString(com.slensky.focussis.R.string.demographic_label);
         refresh();
     }

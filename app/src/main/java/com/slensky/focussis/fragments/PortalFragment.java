@@ -1,6 +1,5 @@
 package com.slensky.focussis.fragments;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -27,19 +26,16 @@ import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.slensky.focussis.R;
 import com.slensky.focussis.activities.MainActivity;
-import com.slensky.focussis.data.Course;
-import com.slensky.focussis.data.CourseAssignment;
+import com.slensky.focussis.data.focus.Course;
+import com.slensky.focussis.data.focus.CourseAssignment;
 import com.slensky.focussis.data.GoogleCalendarEvent;
-import com.slensky.focussis.data.PortalAssignment;
-import com.slensky.focussis.data.PortalCourse;
-import com.slensky.focussis.data.PortalEvent;
-import com.slensky.focussis.network.FocusApi;
+import com.slensky.focussis.data.focus.PortalAssignment;
+import com.slensky.focussis.data.focus.PortalCourse;
+import com.slensky.focussis.data.focus.PortalEvent;
+import com.slensky.focussis.data.network.FocusApi;
 import com.slensky.focussis.util.GsonSingleton;
 
-import org.json.JSONObject;
-
-import com.slensky.focussis.data.Portal;
-import com.slensky.focussis.network.FocusApiSingleton;
+import com.slensky.focussis.data.focus.Portal;
 import com.slensky.focussis.util.Syncable;
 import com.slensky.focussis.views.adapters.PortalAssignmentCourseAdapter;
 import com.slensky.focussis.views.adapters.PortalEventAdapter;
@@ -72,7 +68,6 @@ public class PortalFragment extends NetworkTabAwareFragment implements ActionMod
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        api = FocusApiSingleton.getApi();
         title = getString(com.slensky.focussis.R.string.portal_label);
         refresh();
     }

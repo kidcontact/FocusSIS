@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -23,12 +22,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.slensky.focussis.FocusApplication;
 import com.slensky.focussis.R;
-import com.slensky.focussis.network.FocusApi;
-import com.slensky.focussis.network.FocusApiSingleton;
+import com.slensky.focussis.data.network.ApiProvider;
+import com.slensky.focussis.data.network.FocusApi;
 
-import org.json.JSONObject;
-import com.slensky.focussis.data.FocusPreferences;
-import com.slensky.focussis.network.FocusDebugApi;
+import com.slensky.focussis.data.focus.FocusPreferences;
+import com.slensky.focussis.data.network.FocusDebugApi;
+
+import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.BindView;
@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
     private AlertDialog languageErrorDialog;
     private FocusPreferences focusPreferences;
 
-    private FocusApi api;
+    @Inject ApiProvider focusApiProvider;
 
     private SharedPreferences defaultSharedPrefs;
 
@@ -61,13 +61,14 @@ public class LoginActivity extends AppCompatActivity {
         setTheme(com.slensky.focussis.R.style.AppTheme_Light);
         super.onCreate(savedInstanceState);
 
+        ((FocusApplication) getApplication()).getAppComponent().inject(this);
+
         // finish activity and resume MainActivity if the app was already open
         // https://stackoverflow.com/questions/19545889/app-restarts-rather-than-resumes
         if (!isTaskRoot()
                 && getIntent().hasCategory(Intent.CATEGORY_LAUNCHER)
                 && getIntent().getAction() != null
                 && getIntent().getAction().equals(Intent.ACTION_MAIN)) {
-
             finish();
             return;
         }
@@ -157,40 +158,6 @@ public class LoginActivity extends AppCompatActivity {
             _saveLoginCheckBox.setChecked(true);
         }
 
-        languageErrorDialog = new AlertDialog.Builder(this)
-                .setTitle(com.slensky.focussis.R.string.language_alert_title)
-                .setMessage(com.slensky.focussis.R.string.language_alert_message)
-                .setPositiveButton(com.slensky.focussis.R.string.language_alert_positive, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                        final ProgressDialog progressDialog = ProgressDialog.show(LoginActivity.this, null, getString(com.slensky.focussis.R.string.language_change_progress),true);
-                        focusPreferences.setEnglishLanguage(true);
-                        api.setPreferences(focusPreferences, new FocusApi.Listener<FocusPreferences>() {
-                            @Override
-                            public void onResponse(FocusPreferences response) {
-                                progressDialog.hide();
-                                progressDialog.dismiss();
-                                login();
-                            }
-                        }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                progressDialog.hide();
-                                progressDialog.dismiss();
-                                onLoginFailed(getString(com.slensky.focussis.R.string.network_error_timeout));
-                            }
-                        });
-                    }
-                })
-                .setNegativeButton(com.slensky.focussis.R.string.language_alert_negative, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.cancel();
-                    }
-                })
-                .create();
-
         defaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (saveLogin && defaultSharedPrefs.getBoolean("automatic_login", false)
                 && !intent.getBooleanExtra(getString(com.slensky.focussis.R.string.EXTRA_DISABLE_AUTO_SIGN_IN), false)
@@ -213,11 +180,9 @@ public class LoginActivity extends AppCompatActivity {
 
         if (username.equals(getString(R.string.debug_username)) && password.equals(getString(R.string.debug_password))) {
             Log.d(TAG, "Using debug API");
-            FocusApplication.USE_DEBUG_API = true;
+            focusApiProvider.setApi(new FocusDebugApi(this));
         }
-        else {
-            FocusApplication.USE_DEBUG_API = false;
-        }
+        final FocusApi api = focusApiProvider.getApi();
 
         boolean attemptLogin = true;
         if (username.isEmpty()) {
@@ -242,14 +207,44 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         final ProgressDialog progressDialog = ProgressDialog.show(LoginActivity.this, null, getString(com.slensky.focussis.R.string.auth_progress_dialog),true);
+        if (languageErrorDialog == null) {
+            languageErrorDialog = new AlertDialog.Builder(this)
+                    .setTitle(com.slensky.focussis.R.string.language_alert_title)
+                    .setMessage(com.slensky.focussis.R.string.language_alert_message)
+                    .setPositiveButton(com.slensky.focussis.R.string.language_alert_positive, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                            final ProgressDialog progressDialog = ProgressDialog.show(LoginActivity.this, null, getString(com.slensky.focussis.R.string.language_change_progress),true);
+                            focusPreferences.setEnglishLanguage(true);
+                            api.setPreferences(focusPreferences, new FocusApi.Listener<FocusPreferences>() {
+                                @Override
+                                public void onResponse(FocusPreferences response) {
+                                    progressDialog.hide();
+                                    progressDialog.dismiss();
+                                    login();
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    progressDialog.hide();
+                                    progressDialog.dismiss();
+                                    onLoginFailed(getString(com.slensky.focussis.R.string.network_error_timeout));
+                                }
+                            });
+                        }
+                    })
+                    .setNegativeButton(com.slensky.focussis.R.string.language_alert_negative, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    })
+                    .create();
+        }
 
-        if (FocusApplication.USE_DEBUG_API) {
-            api = new FocusDebugApi(username, password, getApplicationContext());
-        }
-        else {
-            api = new FocusApi(username, password, getApplicationContext());
-        }
-        api.login(new FocusApi.Listener<Boolean>() {
+
+        api.login(username, password, new FocusApi.Listener<Boolean>() {
             @Override
             public void onResponse(Boolean response) {
                 if (response) {
@@ -277,7 +272,6 @@ public class LoginActivity extends AppCompatActivity {
                                 if (focusPreferences.isEnglishLanguage()) {
                                     progressDialog.hide();
                                     progressDialog.dismiss();
-                                    FocusApiSingleton.setApi(api);
                                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     intent.putExtra(getString(com.slensky.focussis.R.string.EXTRA_USERNAME), username);
@@ -319,7 +313,6 @@ public class LoginActivity extends AppCompatActivity {
                             Log.e(TAG, "Not attached to window manager, could not dismiss dialog");
                             e.printStackTrace();
                         }
-                        FocusApiSingleton.setApi(api);
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         intent.putExtra(getString(com.slensky.focussis.R.string.EXTRA_USERNAME), username);

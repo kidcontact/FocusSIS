@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.slensky.focussis.R;
-import com.slensky.focussis.data.Absences;
+import com.slensky.focussis.data.focus.Absences;
 
 /**
  * Created by slensky on 5/30/17.

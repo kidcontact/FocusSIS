@@ -48,16 +48,15 @@ import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.slensky.focussis.data.CourseAssignment;
+import com.slensky.focussis.data.focus.CourseAssignment;
 
 import org.joda.time.DateTime;
-import org.json.JSONObject;
+
 import com.slensky.focussis.activities.MainActivity;
-import com.slensky.focussis.data.Course;
-import com.slensky.focussis.data.CourseCategory;
+import com.slensky.focussis.data.focus.Course;
+import com.slensky.focussis.data.focus.CourseCategory;
 import com.slensky.focussis.R;
-import com.slensky.focussis.network.FocusApi;
-import com.slensky.focussis.network.FocusApiSingleton;
+import com.slensky.focussis.data.network.FocusApi;
 import com.slensky.focussis.util.CourseAssignmentFileHandler;
 import com.slensky.focussis.util.DateUtil;
 import com.slensky.focussis.util.LayoutUtil;
@@ -105,7 +104,6 @@ public class CourseFragment extends NetworkFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        api = FocusApiSingleton.getApi();//ApiBuilder.getCourseUrl();
         id = getArguments().getString(getString(R.string.EXTRA_COURSE_ID));
 
         if (course == null) {

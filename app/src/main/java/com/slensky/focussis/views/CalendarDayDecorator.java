@@ -1,6 +1,6 @@
 package com.slensky.focussis.views;
 
-import com.slensky.focussis.data.CalendarEvent;
+import com.slensky.focussis.data.focus.CalendarEvent;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
 import com.prolificinteractive.materialcalendarview.DayViewFacade;

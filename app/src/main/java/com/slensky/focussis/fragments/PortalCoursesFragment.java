@@ -19,8 +19,8 @@ import com.slensky.focussis.util.ItemClickSupport;
 import com.slensky.focussis.views.DividerItemDecoration;
 import com.slensky.focussis.views.adapters.PortalCourseAdapter;
 
-import com.slensky.focussis.data.Portal;
-import com.slensky.focussis.data.PortalCourse;
+import com.slensky.focussis.data.focus.Portal;
+import com.slensky.focussis.data.focus.PortalCourse;
 
 import java.util.ArrayList;
 import java.util.Collections;

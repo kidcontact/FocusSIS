@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.gson.Gson;
-import com.slensky.focussis.data.Portal;
+import com.slensky.focussis.data.focus.Portal;
 import com.slensky.focussis.util.GsonSingleton;
 
 public class PortalCoursesTabFragment extends Fragment {

@@ -1,13 +1,16 @@
 package com.slensky.focussis.fragments;
 
 import android.app.Activity;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.android.volley.VolleyError;
-import com.slensky.focussis.network.FocusApi;
+import com.slensky.focussis.FocusApplication;
+import com.slensky.focussis.data.network.FocusApi;
 
-import org.json.JSONObject;
+import javax.inject.Inject;
 
 /**
  * Created by slensky on 4/22/17.
@@ -19,10 +22,16 @@ public abstract class NetworkFragment extends Fragment {
     protected boolean networkFailed = false;
     protected VolleyError networkError;
     protected volatile boolean requestFinished = false;
-    protected FocusApi api;
+    @Inject FocusApi api;
 
     public NetworkFragment() {
         // required empty constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ((FocusApplication) getActivity().getApplication()).getAppComponent().inject(this);
     }
 
     protected void onError(VolleyError error) {

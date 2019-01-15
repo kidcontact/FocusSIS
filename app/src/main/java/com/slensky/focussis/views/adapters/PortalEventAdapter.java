@@ -1,16 +1,14 @@
 package com.slensky.focussis.views.adapters;
 
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.slensky.focussis.util.DateUtil;
-import com.slensky.focussis.data.PortalEvent;
+import com.slensky.focussis.data.focus.PortalEvent;
 
 import java.util.List;
 

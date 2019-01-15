@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.slensky.focussis.data.PortalCourse;
+import com.slensky.focussis.data.focus.PortalCourse;
 
 import java.util.ArrayList;
 import java.util.List;

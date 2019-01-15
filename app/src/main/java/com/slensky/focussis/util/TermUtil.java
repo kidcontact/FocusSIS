@@ -1,6 +1,6 @@
 package com.slensky.focussis.util;
 
-import com.slensky.focussis.data.ScheduleCourse;
+import com.slensky.focussis.data.focus.ScheduleCourse;
 
 /**
  * Created by slensky on 4/28/17.

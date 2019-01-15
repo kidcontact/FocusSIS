@@ -14,8 +14,8 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.slensky.focussis.R;
-import com.slensky.focussis.data.Schedule;
-import com.slensky.focussis.data.ScheduleCourse;
+import com.slensky.focussis.data.focus.Schedule;
+import com.slensky.focussis.data.focus.ScheduleCourse;
 import com.slensky.focussis.util.GsonSingleton;
 import com.slensky.focussis.util.TableRowAnimationController;
 import com.slensky.focussis.util.TermUtil;

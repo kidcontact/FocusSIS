@@ -12,7 +12,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.URLSpan;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -31,13 +30,10 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.slensky.focussis.R;
-import com.slensky.focussis.data.FinalGrade;
-import com.slensky.focussis.network.FocusApi;
-import com.slensky.focussis.network.FocusApiSingleton;
+import com.slensky.focussis.data.focus.FinalGrade;
+import com.slensky.focussis.data.network.FocusApi;
 
-import org.json.JSONObject;
-
-import com.slensky.focussis.data.FinalGrades;
+import com.slensky.focussis.data.focus.FinalGrades;
 import com.slensky.focussis.util.TableRowAnimationController;
 
 import java.util.ArrayList;
@@ -69,7 +65,6 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        api = FocusApiSingleton.getApi();
         title = getString(com.slensky.focussis.R.string.final_grades_label);
         refresh();
     }

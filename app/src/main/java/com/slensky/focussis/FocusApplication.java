@@ -1,12 +1,15 @@
 package com.slensky.focussis;
 
 import android.app.Application;
-import android.preference.PreferenceManager;
 
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 import com.slensky.focussis.activities.CrashReportActivity;
+import com.slensky.focussis.di.component.AppComponent;
+import com.slensky.focussis.di.component.DaggerAppComponent;
+import com.slensky.focussis.di.module.AppModule;
+import com.slensky.focussis.di.module.NetModule;
 
 /**
  * Created by slensky on 3/30/18.
@@ -17,12 +20,21 @@ import com.slensky.focussis.activities.CrashReportActivity;
     reportDialogClass = CrashReportActivity.class)
 public class FocusApplication extends Application {
 
-    public static boolean USE_DEBUG_API = false;
+    private AppComponent appComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
         ACRA.init(this);
+
+        appComponent = DaggerAppComponent.builder()
+                .appModule(new AppModule(this))
+                .netModule(new NetModule())
+                .build();
+    }
+
+    public AppComponent getAppComponent() {
+        return appComponent;
     }
 
 }

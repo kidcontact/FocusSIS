@@ -1,8 +1,8 @@
 package com.slensky.focussis.views;
 
+import android.app.Application;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -15,11 +15,11 @@ import android.widget.EditText;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.slensky.focussis.data.PasswordResponse;
-import com.slensky.focussis.network.FocusApi;
-import com.slensky.focussis.network.FocusApiSingleton;
+import com.slensky.focussis.FocusApplication;
+import com.slensky.focussis.data.focus.PasswordResponse;
+import com.slensky.focussis.data.network.FocusApi;
 
-import org.json.JSONObject;
+import javax.inject.Inject;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -36,7 +36,9 @@ public class PasswordChangePreferenceDialogFragmentCompat extends PreferenceDial
     private EditText currentPassword;
     private EditText newPassword;
     private EditText verifyNewPassword;
-    private Context ctx;
+
+    @Inject FocusApi api;
+    @Inject Application ctx;
 
     public static PasswordChangePreferenceDialogFragmentCompat newInstance(
             String key) {
@@ -63,8 +65,8 @@ public class PasswordChangePreferenceDialogFragmentCompat extends PreferenceDial
     public void onStart()
     {
         super.onStart();
+        ((FocusApplication) getActivity().getApplication()).getAppComponent().inject(this);
         AlertDialog d = (AlertDialog) getDialog();
-        this.ctx = getActivity();
         if(d != null)
         {
             Button positiveButton = d.getButton(Dialog.BUTTON_POSITIVE);
@@ -121,7 +123,7 @@ public class PasswordChangePreferenceDialogFragmentCompat extends PreferenceDial
                     .create();
             final SharedPreferences loginPrefs = getContext().getSharedPreferences(getString(com.slensky.focussis.R.string.login_prefs), MODE_PRIVATE);
             final SharedPreferences.Editor loginPrefsEditor = loginPrefs.edit();
-            FocusApiSingleton.getApi().changePassword(currentPassword.getText().toString(),
+            api.changePassword(currentPassword.getText().toString(),
                     newPassword.getText().toString(),
                     verifyNewPassword.getText().toString(),
                     new FocusApi.Listener<PasswordResponse>() {

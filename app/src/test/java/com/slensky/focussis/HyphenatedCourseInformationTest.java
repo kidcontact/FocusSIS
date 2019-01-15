@@ -1,7 +1,7 @@
 package com.slensky.focussis;
 
-import com.slensky.focussis.data.ScheduleCourse;
-import com.slensky.focussis.parser.FocusPageParser;
+import com.slensky.focussis.data.focus.ScheduleCourse;
+import com.slensky.focussis.data.network.model.FocusPageParser;
 
 import org.junit.Test;
 

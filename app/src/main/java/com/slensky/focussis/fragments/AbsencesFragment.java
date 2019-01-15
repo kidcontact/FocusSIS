@@ -13,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,23 +30,19 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.slensky.focussis.R;
-import com.slensky.focussis.data.Absences;
-import com.slensky.focussis.network.FocusApi;
-import com.slensky.focussis.network.FocusApiSingleton;
+import com.slensky.focussis.data.focus.Absences;
+import com.slensky.focussis.data.network.FocusApi;
 import com.slensky.focussis.util.TableRowAnimationController;
 import com.slensky.focussis.views.AbsenceLabelView;
 
 import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.json.JSONObject;
 
-import com.slensky.focussis.data.AbsenceDay;
-import com.slensky.focussis.data.AbsencePeriod;
+import com.slensky.focussis.data.focus.AbsenceDay;
+import com.slensky.focussis.data.focus.AbsencePeriod;
 import com.slensky.focussis.util.DateUtil;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by slensky on 5/24/17.
@@ -59,7 +54,6 @@ public class AbsencesFragment extends NetworkTabAwareFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        api = FocusApiSingleton.getApi();
         title = getString(com.slensky.focussis.R.string.absences_label);
         refresh();
     }

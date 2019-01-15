@@ -10,12 +10,9 @@ import android.view.ViewGroup;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
-import com.slensky.focussis.data.Schedule;
-import com.slensky.focussis.network.FocusApi;
-import com.slensky.focussis.network.FocusApiSingleton;
+import com.slensky.focussis.data.focus.Schedule;
+import com.slensky.focussis.data.network.FocusApi;
 import com.slensky.focussis.util.GsonSingleton;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +34,6 @@ public class ScheduleFragment extends NetworkTabAwareFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        api = FocusApiSingleton.getApi();
         title = getString(com.slensky.focussis.R.string.schedule_label);
         refresh();
     }

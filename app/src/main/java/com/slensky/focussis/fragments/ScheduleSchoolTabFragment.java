@@ -29,7 +29,7 @@ import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.google.gson.Gson;
 import com.slensky.focussis.R;
-import com.slensky.focussis.data.Schedule;
+import com.slensky.focussis.data.focus.Schedule;
 import com.slensky.focussis.util.GsonSingleton;
 import com.slensky.focussis.util.JSONUtil;
 import com.slensky.focussis.util.SchoolSingleton;

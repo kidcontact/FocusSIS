@@ -16,7 +16,7 @@ import com.google.gson.Gson;
 
 import com.slensky.focussis.activities.MainActivity;
 import com.slensky.focussis.util.GsonSingleton;
-import com.slensky.focussis.data.Portal;
+import com.slensky.focussis.data.focus.Portal;
 import com.slensky.focussis.util.RecyclerClickListener;
 import com.slensky.focussis.util.RecyclerTouchListener;
 import com.slensky.focussis.views.DividerItemDecoration;

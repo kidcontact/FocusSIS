@@ -87,6 +87,13 @@ dependencies {
     implementation 'me.xdrop:fuzzywuzzy:1.1.10'
     testImplementation 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+
+    // dagger 2
+    implementation 'com.google.dagger:dagger-android:2.20'
+    implementation 'com.google.dagger:dagger-android-support:2.20'
+    annotationProcessor 'com.google.dagger:dagger-android-processor:2.20'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.20'
+
     implementation project(':MaterialCalendarView')
 }
 

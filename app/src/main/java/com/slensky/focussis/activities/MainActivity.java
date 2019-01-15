@@ -72,12 +72,12 @@ import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.slensky.focussis.FocusApplication;
 import com.slensky.focussis.R;
-import com.slensky.focussis.data.CalendarEvent;
-import com.slensky.focussis.data.CalendarEventDetails;
-import com.slensky.focussis.data.CourseAssignment;
+import com.slensky.focussis.data.focus.CalendarEvent;
+import com.slensky.focussis.data.focus.CalendarEventDetails;
+import com.slensky.focussis.data.focus.CourseAssignment;
 import com.slensky.focussis.data.GoogleCalendarEvent;
-import com.slensky.focussis.data.PortalAssignment;
-import com.slensky.focussis.data.PortalEvent;
+import com.slensky.focussis.data.focus.PortalAssignment;
+import com.slensky.focussis.data.focus.PortalEvent;
 import com.slensky.focussis.fragments.AboutFragment;
 import com.slensky.focussis.fragments.AbsencesFragment;
 import com.slensky.focussis.fragments.AddressFragment;
@@ -91,9 +91,8 @@ import com.slensky.focussis.fragments.PortalFragment;
 import com.slensky.focussis.fragments.ReferralsFragment;
 import com.slensky.focussis.fragments.ScheduleFragment;
 import com.slensky.focussis.fragments.SettingsFragment;
-import com.slensky.focussis.network.FocusApi;
-import com.slensky.focussis.network.FocusApiSingleton;
-import com.slensky.focussis.network.FocusDebugApi;
+import com.slensky.focussis.data.network.FocusApi;
+import com.slensky.focussis.data.network.FocusDebugApi;
 
 import com.slensky.focussis.fragments.EmptyFragment;
 import com.slensky.focussis.fragments.LoadingFragment;
@@ -107,6 +106,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import javax.inject.Inject;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -131,7 +132,8 @@ public class MainActivity extends AppCompatActivity
     private boolean threadExit = false;
     private boolean inOnLoad = false;
 
-    private FocusApi api;
+    @Inject FocusApi api;
+
     // stored for keeping the session alive after it expires
     String username;
     String password;
@@ -160,17 +162,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(com.slensky.focussis.R.style.AppTheme_Light);
+        ((FocusApplication) getApplication()).getAppComponent().inject(this);
         if (savedInstanceState != null) {
             Log.d(TAG, "Restoring saved instance state");
             username = savedInstanceState.getString(USERNAME_BUNDLE_KEY);
             password = savedInstanceState.getString(PASSWORD_BUNDLE_KEY);
-            if (FocusApplication.USE_DEBUG_API) {
-                api = new FocusDebugApi(username, password, getApplicationContext());
-            }
-            else {
-                api = new FocusApi(username, password, getApplicationContext());
-            }
-            FocusApiSingleton.setApi(api);
+
             super.onCreate(savedInstanceState);
             setContentView(com.slensky.focussis.R.layout.activity_main);
             if (api.hasSession()) {
@@ -193,7 +190,6 @@ public class MainActivity extends AppCompatActivity
         else {
             super.onCreate(savedInstanceState);
             setContentView(com.slensky.focussis.R.layout.activity_main);
-            api = FocusApiSingleton.getApi();
             Log.d(TAG, "Unpacking intent");
             Intent intent = getIntent();
             username = intent.getStringExtra(getString(com.slensky.focussis.R.string.EXTRA_USERNAME));
@@ -733,7 +729,7 @@ public class MainActivity extends AppCompatActivity
                 getString(com.slensky.focussis.R.string.timeout_progress_dialog_message),
                 true);
 
-        api.login(new FocusApi.Listener<Boolean>() {
+        api.login(username, password, new FocusApi.Listener<Boolean>() {
             @Override
             public void onResponse(Boolean response) {
                 if (response) {

@@ -14,16 +14,14 @@ import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.slensky.focussis.data.AddressContactDetail;
-import com.slensky.focussis.network.FocusApi;
+import com.slensky.focussis.data.focus.AddressContactDetail;
+import com.slensky.focussis.data.network.FocusApi;
 import com.slensky.focussis.util.CardViewAnimationController;
 import com.slensky.focussis.views.IconWithTextView;
 
-import org.json.JSONObject;
 import com.slensky.focussis.R;
-import com.slensky.focussis.data.Address;
-import com.slensky.focussis.data.AddressContact;
-import com.slensky.focussis.network.FocusApiSingleton;
+import com.slensky.focussis.data.focus.Address;
+import com.slensky.focussis.data.focus.AddressContact;
 
 import java.util.List;
 
@@ -37,7 +35,6 @@ public class AddressFragment extends NetworkTabAwareFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        api = FocusApiSingleton.getApi();
         title = getString(R.string.address_label);
         refresh();
     }

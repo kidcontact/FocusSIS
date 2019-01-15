@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.slensky.focussis.R;
 import com.slensky.focussis.util.DateUtil;
-import com.slensky.focussis.data.PortalAssignment;
+import com.slensky.focussis.data.focus.PortalAssignment;
 
 import java.util.List;
 
