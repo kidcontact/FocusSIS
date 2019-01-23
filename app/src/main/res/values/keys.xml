@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
+
+    <!-- Misc. -->
+    <string name="key_already_converted_prefs_to_new">prefs_converted_prefs_to_new</string>
+    <string name="key_save_login">prefs_save_login</string>
+    <string name="key_saved_username">prefs_saved_username</string>
+    <string name="key_saved_password">prefs_saved_password</string>
+    <string name="key_read_school_message">prefs_read_school_message</string>
+    <string name="key_assignment_menu_category_for_course">prefs_course%1$s_remembered_category</string>
+    <string name="key_schedule_remembered_type_selection">prefs_schedule_remembered_type_selection</string>
+    <string name="key_gcalendar_id_for_user">prefs_%s_gcalendar_id</string>
+
+    <!-- Settings -->
+    <string name="key_automatic_login">prefs_automatic_login</string>
+    <string name="key_always_check_preferences">prefs_always_check_preferences</string>
+    <string name="key_show_custom_assignments_in_portal">prefs_show_custom_assignments_in_portal</string>
+
+    <!-- Settings (buttons, not stored as preferences) -->
+    <string name="key_change_google_account">change_google_account</string>
+    <string name="key_clear_all_saved_assignments">clear_all_saved_assignments</string>
+    <string name="key_username_display">username_display</string>
+    <string name="key_password_change">password_change</string>
+
+</resources>

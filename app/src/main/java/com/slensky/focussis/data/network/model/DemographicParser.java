@@ -1,6 +1,6 @@
 package com.slensky.focussis.data.network.model;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.slensky.focussis.data.focus.Demographic;

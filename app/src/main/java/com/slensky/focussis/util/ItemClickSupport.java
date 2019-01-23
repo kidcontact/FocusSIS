@@ -1,6 +1,6 @@
 package com.slensky.focussis.util;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import com.slensky.focussis.R;

@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <com.slensky.focussis.views.AbsenceLabelView
+        <com.slensky.focussis.ui.absences.AbsenceLabelView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/period_absence_label"/>

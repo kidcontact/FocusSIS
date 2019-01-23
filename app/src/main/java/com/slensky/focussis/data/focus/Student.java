@@ -1,7 +1,7 @@
 package com.slensky.focussis.data.focus;
 
 import android.graphics.Bitmap;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import org.joda.time.DateTime;
 

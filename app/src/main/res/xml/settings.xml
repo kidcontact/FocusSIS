@@ -4,19 +4,19 @@
         android:title="@string/settings_title_general">
 
         <CheckBoxPreference
-            android:key="automatic_login"
+            android:key="@string/key_automatic_login"
             android:title="@string/settings_automatic_login_title"
             android:summary="@string/settings_automatic_login_summary"
             android:defaultValue="false"/>
 
         <CheckBoxPreference
-            android:key="always_check_preferences"
+            android:key="@string/key_always_check_preferences"
             android:title="@string/settings_always_check_preferences_title"
             android:summary="@string/settings_always_check_preferences_summary"
             android:defaultValue="true"/>
 
         <Preference
-            android:key="change_google_account"
+            android:key="@string/key_change_google_account"
             android:title="@string/settings_change_google_account_title"
             android:summary="@string/settings_change_google_account_summary_no_account"/>
 
@@ -26,16 +26,10 @@
         android:title="@string/settings_title_portal">
 
         <CheckBoxPreference
-            android:key="show_custom_assignments_in_portal"
+            android:key="@string/key_show_custom_assignments_in_portal"
             android:title="@string/settings_show_custom_assignments_in_portal_title"
             android:summary="@string/settings_show_custom_assignments_in_portal_summary"
             android:defaultValue="true"/>
-
-        <!--<CheckBoxPreference-->
-            <!--android:key="get_assignment_descriptions_on_export_from_portal"-->
-            <!--android:title="@string/settings_get_assignment_descriptions_on_export_from_portal_title"-->
-            <!--android:summary="@string/settings_get_assignment_descriptions_on_export_from_portal_summary"-->
-            <!--android:defaultValue="false" />-->
 
     </PreferenceCategory>
 
@@ -43,7 +37,7 @@
         android:title="@string/settings_title_course">
 
         <Preference
-            android:key="clear_all_saved_assignments"
+            android:key="@string/key_clear_all_saved_assignments"
             android:title="@string/settings_clear_all_saved_assignments" />
 
     </PreferenceCategory>
@@ -52,32 +46,14 @@
         android:title="@string/settings_title_account">
 
         <Preference
-            android:key="username_display"
+            android:key="@string/key_username_display"
             android:title="@string/settings_username_title"/>
 
-        <com.slensky.focussis.views.PasswordChangePreference
-            android:key="password_change"
+        <com.slensky.focussis.ui.settings.PasswordChangePreference
+            android:key="@string/key_password_change"
             android:title="@string/settings_change_password_title" />
 
 
     </PreferenceCategory>
-
-    <!--<PreferenceCategory-->
-    <!--android:title="@string/title_second_section">-->
-
-    <!--<ListPreference-->
-    <!--android:key="list_preference"-->
-    <!--android:title="@string/title_list_preference"-->
-    <!--android:dialogTitle="@string/dialog_title_list_preference"-->
-    <!--android:entries="@array/entries_list_preference"-->
-    <!--android:entryValues="@array/entryvalues_list_preference" />-->
-
-    <!--<Preference-->
-    <!--android:title="@string/title_intent_preference">-->
-    <!--<intent android:action="android.intent.action.VIEW"-->
-    <!--android:data="http://codepath.com/" />-->
-    <!--</Preference>-->
-
-    <!--</PreferenceCategory>-->
 
 </PreferenceScreen>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center"
     android:layout_width="match_parent"
@@ -29,7 +29,7 @@
                 android:layout_marginBottom="4dp"
                 style="@style/primarySubheadingText" />
 
-            <com.slensky.focussis.views.IconWithTextView
+            <com.slensky.focussis.ui.custom.IconWithTextView
                 android:id="@+id/view_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -39,49 +39,49 @@
         </LinearLayout>
 
 
-        <com.slensky.focussis.views.IconWithTextView
+        <com.slensky.focussis.ui.custom.IconWithTextView
             android:id="@+id/view_relationship"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             custom:icon="@drawable/ic_account_multiple_black_24px"
             custom:hint="@string/address_contact_relationship_hint"/>
 
-        <com.slensky.focussis.views.IconWithTextView
+        <com.slensky.focussis.ui.custom.IconWithTextView
             android:id="@+id/view_custody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             custom:icon="@drawable/ic_gavel_black_24px"
             custom:hint="@string/address_contact_custody_hint"/>
 
-        <com.slensky.focussis.views.IconWithTextView
+        <com.slensky.focussis.ui.custom.IconWithTextView
             android:id="@+id/view_emergency"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             custom:icon="@drawable/ic_warning_black_24px"
             custom:hint="@string/address_contact_emergency_hint"/>
 
-        <com.slensky.focussis.views.IconWithTextView
+        <com.slensky.focussis.ui.custom.IconWithTextView
             android:id="@+id/view_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             custom:icon="@drawable/ic_home_black_24px"
             custom:hint="@string/address_contact_address_hint"/>
 
-        <com.slensky.focussis.views.IconWithTextView
+        <com.slensky.focussis.ui.custom.IconWithTextView
             android:id="@+id/view_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             custom:icon="@drawable/ic_phone_black_24px"
             custom:hint="@string/address_phone_hint"/>
 
-        <com.slensky.focussis.views.IconWithTextView
+        <com.slensky.focussis.ui.custom.IconWithTextView
             android:id="@+id/view_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             custom:icon="@drawable/ic_email_black_24px"
             custom:hint="@string/address_contact_email_hint"/>
 
-        <com.slensky.focussis.views.IconWithTextView
+        <com.slensky.focussis.ui.custom.IconWithTextView
             android:id="@+id/view_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -90,4 +90,4 @@
 
     </LinearLayout>
 
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>

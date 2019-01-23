@@ -1,6 +1,6 @@
 package com.slensky.focussis.data.network.model;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import android.util.Pair;
 

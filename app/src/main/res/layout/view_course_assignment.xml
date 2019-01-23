@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/assignment_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true"
-    android:background="?android:attr/selectableItemBackground">
+    android:background="?attr/selectableItemBackground">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -26,7 +27,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerInParent="true"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_mode_edit_grey_24px" />
+            app:srcCompat="@drawable/ic_mode_edit_grey_24px" />
 
         <TextView
             android:id="@+id/text_assignment_name"

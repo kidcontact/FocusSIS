@@ -1,6 +1,6 @@
 package com.slensky.focussis.data.focus;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;

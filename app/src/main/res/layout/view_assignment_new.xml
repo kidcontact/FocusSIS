@@ -9,7 +9,7 @@
     android:paddingLeft="@dimen/alert_def_padding"
     android:paddingRight="@dimen/alert_def_padding">
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/assignment_name_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:inputType="textCapSentences|textAutoCorrect" />
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,7 +37,7 @@
             style="@style/primarySubheadingText"/>
 
 
-        <com.slensky.focussis.views.AlignmentAwareTextInputLayout
+        <com.slensky.focussis.ui.portal.course.AlignmentAwareTextInputLayout
             android:id="@+id/assignment_date_wrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
                 android:inputType="date"
                 android:hint="@string/assignment_add_new_due_hint"/>
 
-        </com.slensky.focussis.views.AlignmentAwareTextInputLayout>
+        </com.slensky.focussis.ui.portal.course.AlignmentAwareTextInputLayout>
 
     </LinearLayout>
 
@@ -75,7 +75,7 @@
 
     </LinearLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/assignment_description_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -87,6 +87,6 @@
             android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
             android:hint="@string/assignment_add_new_description_hint"/>
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

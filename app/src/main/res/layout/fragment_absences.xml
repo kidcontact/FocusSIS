@@ -43,7 +43,7 @@
                 android:layout_marginBottom="2dp"
                 android:orientation="horizontal">
 
-                <com.slensky.focussis.views.AbsenceLabelView
+                <com.slensky.focussis.ui.absences.AbsenceLabelView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:status="absent"/>
@@ -65,7 +65,7 @@
                 android:layout_marginBottom="8dp"
                 android:orientation="horizontal">
 
-                <com.slensky.focussis.views.AbsenceLabelView
+                <com.slensky.focussis.ui.absences.AbsenceLabelView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:status="excused"/>
@@ -96,7 +96,7 @@
                 android:layout_marginBottom="2dp"
                 android:orientation="horizontal">
 
-                <com.slensky.focussis.views.AbsenceLabelView
+                <com.slensky.focussis.ui.absences.AbsenceLabelView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:status="late"/>
@@ -118,7 +118,7 @@
                 android:layout_marginBottom="2dp"
                 android:orientation="horizontal">
 
-                <com.slensky.focussis.views.AbsenceLabelView
+                <com.slensky.focussis.ui.absences.AbsenceLabelView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:status="tardy"/>
@@ -140,7 +140,7 @@
                 android:layout_marginBottom="2dp"
                 android:orientation="horizontal">
 
-                <com.slensky.focussis.views.AbsenceLabelView
+                <com.slensky.focussis.ui.absences.AbsenceLabelView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:status="misc"/>
@@ -161,7 +161,7 @@
                 android:layout_marginRight="24dp"
                 android:orientation="horizontal">
 
-                <com.slensky.focussis.views.AbsenceLabelView
+                <com.slensky.focussis.ui.absences.AbsenceLabelView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:status="offsite"/>

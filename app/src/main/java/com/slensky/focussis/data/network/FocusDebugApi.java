@@ -46,22 +46,26 @@ import javax.inject.Inject;
  * Generates test data offline instead of connecting to Focus
  */
 
-public class FocusDebugApi extends FocusApi {
+public class FocusDebugApi implements FocusApi {
     private static final String TAG = "FocusDebugApi";
     private static final int FAKE_LOAD_TIME_MS = 500;
 
     @Inject Application context;
 
+    @SuppressWarnings("FieldCanBeLocal")
     private long sessionLengthMillis = 20 * 60 * 1000; // milliseconds
+
     private List<Thread> threads = new ArrayList<>();
     private Request dummyRequest;
     private Handler handler;
 
+    private boolean loggedIn;
+    private long sessionTimeout;
+
     public FocusDebugApi(Context context) {
-        super(context);
         dummyRequest = new StringRequest(Request.Method.GET, null, null, null);
 
-        ((FocusApplication) context.getApplicationContext()).getAppComponent().inject(this);
+        ((FocusApplication) context.getApplicationContext()).getComponent().inject(this);
         handler = new Handler(context.getMainLooper());
     }
 
@@ -357,17 +361,17 @@ public class FocusDebugApi extends FocusApi {
 
     @Override
     public void setSessionTimeout(long sessionTimeout) {
-        super.setSessionTimeout(sessionTimeout);
+        this.sessionTimeout = sessionTimeout;
     }
 
     @Override
     public boolean isLoggedIn() {
-        return super.isLoggedIn();
+        return loggedIn;
     }
 
     @Override
     public void setLoggedIn(boolean loggedIn) {
-        super.setLoggedIn(loggedIn);
+        this.loggedIn = loggedIn;
     }
 
     @Override

@@ -12,7 +12,7 @@
         android:orientation="vertical"
         android:padding="8dp">
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/room_search_wrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
                 android:hint="@string/map_search_hint"
                 android:drawableStart="@drawable/ic_search"/>
 
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"

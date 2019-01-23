@@ -5,7 +5,7 @@ import android.app.Application;
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
-import com.slensky.focussis.activities.CrashReportActivity;
+import com.slensky.focussis.ui.crashreport.CrashReportActivity;
 import com.slensky.focussis.di.component.AppComponent;
 import com.slensky.focussis.di.component.DaggerAppComponent;
 import com.slensky.focussis.di.module.AppModule;
@@ -33,7 +33,7 @@ public class FocusApplication extends Application {
                 .build();
     }
 
-    public AppComponent getAppComponent() {
+    public AppComponent getComponent() {
         return appComponent;
     }
 

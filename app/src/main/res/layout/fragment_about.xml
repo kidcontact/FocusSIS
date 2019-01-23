@@ -51,7 +51,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
-                    android:background="?android:attr/selectableItemBackground"
+                    android:background="?attr/selectableItemBackground"
                     android:padding="16dp">
 
                     <ImageView
@@ -61,7 +61,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_marginRight="16dp"
                         android:layout_centerVertical="true"
-                        android:src="@drawable/ic_email_black_24px" />
+                        app:srcCompat="@drawable/ic_email_black_24px" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -78,7 +78,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
-                    android:background="?android:attr/selectableItemBackground"
+                    android:background="?attr/selectableItemBackground"
                     android:padding="16dp">
 
                     <ImageView
@@ -88,7 +88,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_marginRight="16dp"
                         android:layout_centerVertical="true"
-                        android:src="@drawable/ic_github_circle_black_24px" />
+                        app:srcCompat="@drawable/ic_github_circle_black_24px" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -105,7 +105,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
-                    android:background="?android:attr/selectableItemBackground"
+                    android:background="?attr/selectableItemBackground"
                     android:padding="16dp">
 
                     <ImageView
@@ -115,7 +115,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_marginRight="16dp"
                         android:layout_centerVertical="true"
-                        android:src="@drawable/ic_information_outline_black_24px" />
+                        app:srcCompat="@drawable/ic_information_outline_black_24px" />
 
                     <TextView
                         android:id="@+id/text_version"
@@ -126,27 +126,6 @@
                         style="@style/primarySubheadingText"/>
 
                 </RelativeLayout>
-
-
-
-                <!--<TextView
-                    android:id="@+id/text_license"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:clickable="true"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:text="@string/license"
-                    style="@style/primarySubheadingText"/>
-
-                <TextView
-                    android:id="@+id/text_copyright"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:clickable="true"
-                    android:background="?android:attr/selectableItemBackground"
-                    style="@style/primarySubheadingText"/>-->
 
             </LinearLayout>
 

@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/card_basic"
                 android:layout_gravity="center"
                 android:layout_width="match_parent"
@@ -31,35 +31,35 @@
                     android:showDividers="middle"
                     android:divider="@drawable/divider">
 
-                    <com.slensky.focussis.views.IconWithTextView
+                    <com.slensky.focussis.ui.custom.IconWithTextView
                         android:id="@+id/view_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         custom:icon="@drawable/ic_person_black_24px"
                         custom:hint="@string/demographic_name_hint"/>
 
-                    <com.slensky.focussis.views.IconWithTextView
+                    <com.slensky.focussis.ui.custom.IconWithTextView
                         android:id="@+id/view_dob"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         custom:icon="@drawable/ic_cake_variant_black_24px"
                         custom:hint="@string/demographic_dob_hint"/>
 
-                    <com.slensky.focussis.views.IconWithTextView
+                    <com.slensky.focussis.ui.custom.IconWithTextView
                         android:id="@+id/view_email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         custom:icon="@drawable/ic_email_black_24px"
                         custom:hint="@string/demographic_email_hint"/>-->
 
-                    <com.slensky.focussis.views.IconWithTextView
+                    <com.slensky.focussis.ui.custom.IconWithTextView
                         android:id="@+id/view_grade"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         custom:icon="@drawable/ic_calendar_text_black_24px"
                         custom:hint="@string/demographic_grade_hint"/>
 
-                    <com.slensky.focussis.views.IconWithTextView
+                    <com.slensky.focussis.ui.custom.IconWithTextView
                         android:id="@+id/view_student_id"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -68,9 +68,9 @@
 
                 </LinearLayout>
 
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/card_detailed"
                 android:layout_gravity="center"
                 android:layout_width="match_parent"
@@ -90,7 +90,7 @@
 
                 </LinearLayout>
 
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
 

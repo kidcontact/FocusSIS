@@ -2,14 +2,25 @@ package com.slensky.focussis.data.network;
 
 public class ApiProvider {
 
-    private FocusApi api;
+    private FocusNetApi netApi;
+    private FocusDebugApi debugApi;
+    private boolean useDebugApi;
 
-    public FocusApi getApi() {
-        return api;
+    public ApiProvider(FocusNetApi netApi, FocusDebugApi debugApi) {
+        this.netApi = netApi;
+        this.debugApi = debugApi;
     }
 
-    public void setApi(FocusApi api) {
-        this.api = api;
+    public boolean isUseDebugApi() {
+        return useDebugApi;
+    }
+
+    public void setUseDebugApi(boolean useDebugApi) {
+        this.useDebugApi = useDebugApi;
+    }
+
+    public FocusApi getApi() {
+        return useDebugApi ? debugApi : netApi;
     }
 
 }

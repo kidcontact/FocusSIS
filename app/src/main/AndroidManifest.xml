@@ -14,19 +14,29 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.Launcher">
-        <activity android:name="com.slensky.focussis.activities.LoginActivity">
+        android:theme="@style/AppTheme.Launcher"
+        android:fullBackupContent="@xml/backup_descriptor">
+        <activity android:name="com.slensky.focussis.ui.login.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http"
+                    android:host="focus.asdnh.org" />
+                <data android:scheme="https"
+                    android:host="focus.asdnh.org" />
+            </intent-filter>
         </activity>
         <activity
-            android:name="com.slensky.focussis.activities.MainActivity"
+            android:name="com.slensky.focussis.ui.main.MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="Portal"
             android:theme="@style/AppTheme.Light"/>
-        <activity android:name="com.slensky.focussis.activities.CrashReportActivity"
+        <activity android:name="com.slensky.focussis.ui.crashreport.CrashReportActivity"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
             android:launchMode="singleInstance" />

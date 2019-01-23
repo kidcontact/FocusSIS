@@ -1,5 +1,6 @@
 package com.slensky.focussis.data.network.model;
 
+import android.util.Log;
 import android.util.Pair;
 
 import com.joestelmach.natty.DateGroup;

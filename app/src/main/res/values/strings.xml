@@ -85,8 +85,6 @@
     <string name="assignment_dialog_reset">Reset</string>
     <string name="assignment_dialog_delete">Delete</string>
 
-    <string name="course_prefs_assignment_menu_category">course%1$sRememberedCategory</string>
-
     <!-- Schedule page -->
     <string name="course_name_header">Course</string>
     <string name="course_period_header">Period</string>
@@ -105,8 +103,6 @@
         <item>Grade 6 Delay</item>
         <item>SPARK</item>
     </string-array>
-    <string name="schedule_prefs">schedulePrefs</string>
-    <string name="schedule_prefs_spinner_selection">spinnerSelection</string>
 
     <!-- Calendar -->
     <string name="calendar_hint">Tap a day on the calendar to see events and assignments</string>
@@ -198,7 +194,7 @@
     <!-- Network error messages -->
     <string name="network_error_timeout">Network error</string>
     <string name="network_error_auth">Invalid username or password</string>
-    <string name="network_error_auth_expanded">Invalid username or password. Are you a student at the Academy for Science and Design?</string>
+    <string name="network_error_auth_verify_school">Invalid username or password. Are you a student at the Academy for Science and Design?</string>
     <string name="network_error_server">Server error. Please try again later</string>
     <string name="network_error_unknown">Error. Please try again later</string>
 
@@ -213,13 +209,6 @@
     <string name="EXTRA_PASSWORD">com.slensky.focussis.PASSWORD</string>
     <string name="EXTRA_COURSE_ID">com.slensky.focussis.COURSE_ID</string>
     <string name="EXTRA_DISABLE_AUTO_SIGN_IN">com.slensky.focussis.DISABLE_AUTO_SIGN_IN</string>
-
-    <!-- Preferences -->
-    <string name="login_prefs">loginPrefs</string>
-    <string name="login_prefs_save_login">saveLogin</string>
-    <string name="login_prefs_username">username</string>
-    <string name="login_prefs_password">password</string>
-    <string name="login_prefs_read_school_msg">readSchoolMsg</string>
 
     <!-- Preferences page -->
     <string name="settings_title_general">General</string>
@@ -263,6 +252,7 @@
     <string name="about_website">http://slensky.com</string>
     <string name="about_github">Find the code on GitHub</string>
     <string name="about_github_link">https://github.com/stephanlensky/FocusSIS</string>
+    <string name="about_version_format">Version %1$s</string>
 
     <!-- Dialogs -->
     <string name="auth_progress_dialog">Authenticating…</string>
@@ -295,8 +285,6 @@
 
     <!-- Google Calendar -->
     <string name="google_calendar_summary">Focus %1$s</string>
-    <string name="google_calendar_prefs">gCalendarPrefs</string>
-    <string name="google_calendar_prefs_id_for_account">%1$s_googleCalendarId</string>
 
     <!-- Play services -->
     <string name="play_servces_app_name">Focus App</string>

@@ -1,7 +1,7 @@
 package com.slensky.focussis.util;
 
-import com.slensky.focussis.school.ASD;
-import com.slensky.focussis.school.School;
+import com.slensky.focussis.data.school.ASD;
+import com.slensky.focussis.data.school.School;
 
 /**
  * Created by slensky on 4/25/18.

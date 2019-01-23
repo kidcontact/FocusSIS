@@ -1,8 +1,8 @@
 package com.slensky.focussis.di.module;
 
-import android.app.Application;
-import android.content.SharedPreferences;
-import android.support.v7.preference.PreferenceManager;
+import android.content.Context;
+
+import androidx.preference.PreferenceManager;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -10,10 +10,11 @@ import com.fatboyindustrial.gsonjodatime.Converters;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.slensky.focussis.FocusApplication;
 import com.slensky.focussis.data.network.ApiProvider;
 import com.slensky.focussis.data.network.FocusApi;
 import com.slensky.focussis.data.network.FocusDebugApi;
+import com.slensky.focussis.data.network.FocusNetApi;
+import com.slensky.focussis.di.ApplicationContext;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -25,12 +26,6 @@ import dagger.Provides;
 
 @Module
 public class NetModule {
-
-    @Provides
-    @Singleton
-    SharedPreferences provideSharedPreferences(Application application) {
-        return PreferenceManager.getDefaultSharedPreferences(application);
-    }
 
     @Provides
     @Singleton
@@ -51,20 +46,17 @@ public class NetModule {
 
     @Provides
     @Singleton
-    RequestQueue provideRequestQueue(Application application) {
-        return Volley.newRequestQueue(application);
+    RequestQueue provideRequestQueue(@ApplicationContext Context context) {
+        return Volley.newRequestQueue(context);
     }
 
     @Provides
     @Singleton
-    ApiProvider provideApiProvider(Application application) {
-        ApiProvider p = new ApiProvider();
-        p.setApi(new FocusApi(application));
-        return p;
+    ApiProvider provideApiProvider(@ApplicationContext Context context) {
+        return new ApiProvider(new FocusNetApi(context), new FocusDebugApi(context));
     }
 
     @Provides
-    @Singleton
     FocusApi provideFocusApi(ApiProvider provider) {
         return provider.getApi();
     }
