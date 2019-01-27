@@ -2,6 +2,10 @@ package com.slensky.focussis.data.prefs;
 
 public interface PreferencesHelper {
 
+    boolean getUseDebugApi();
+
+    void setUseDebugApi(boolean useDebugApi);
+
     // whether or not to save the user's login information ("remember me")
     boolean getSaveLogin();
 

@@ -24,7 +24,6 @@ import com.slensky.focussis.R;
 public class PortalEventsTabFragment extends Fragment {
     private static final String TAG = "PortalEventsTabFragment";
 
-    private PortalFragment portalFragment;
     private RecyclerView recyclerView;
     private PortalEventAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -39,9 +38,6 @@ public class PortalEventsTabFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Gson gson = GsonSingleton.getInstance();
         portal = gson.fromJson(getArguments().getString(getString(R.string.EXTRA_PORTAL)), Portal.class);
-        if (getActivity() != null && getActivity() instanceof MainActivity && ((MainActivity) getActivity()).getCurrentFragment() instanceof PortalFragment) {
-            portalFragment = (PortalFragment) ((MainActivity) getActivity()).getCurrentFragment();
-        }
     }
 
     @Override

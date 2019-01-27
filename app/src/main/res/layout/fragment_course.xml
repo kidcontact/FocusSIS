@@ -169,7 +169,7 @@
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@android:drawable/ic_input_add"
         android:tint="@android:color/white"
-        app:layout_behavior="com.slensky.focussis.views.ScrollAwareFABBehavior"
+        app:layout_behavior="com.slensky.focussis.ui.portal.course.ScrollAwareFABBehavior"
         android:focusable="true" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

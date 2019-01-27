@@ -46,15 +46,21 @@
     <string name="language_alert_message">This application requires that your language be set to "English" in the Focus preferences. Would you like to automatically set the language now?</string>
     <string name="language_alert_positive">OK, change my language</string>
     <string name="language_alert_negative">Cancel</string>
-    <string name="language_change_progress">Changing Language…</string>
+    <string name="login_language_change_progress">Changing Language…</string>
     <string name="login_blank_username_error">Username cannot be blank</string>
     <string name="login_blank_password_error">Password cannot be blank</string>
     <string name="login_asd_notice_title">Important Notice</string>
     <string name="login_asd_notice_message">This app was created for the Academy for Science and Design. If you are not a student at this school, the app will not work for you. Sorry for the inconvenience!</string>
     <string name="login_asd_notice_negative">Close</string>
     <string name="login_asd_notice_positive">I understand</string>
+    <string name="login_asd_notice_positive_with_time">I Understand (%1$d)</string>
 
     <!-- Portal page -->
+    <string-array name="portal_tab_names">
+        <item>Courses</item>
+        <item>Events</item>
+        <item>Assignments</item>
+    </string-array>
     <string name="portal_empty_fragment">Whoops, looks like there isn\'t anything here!</string>
     <string name="portal_action_export">Export</string>
     <string name="portal_get_assignment_descriptions_progress">Downloading courses to find assignment descriptions…</string>
@@ -255,7 +261,7 @@
     <string name="about_version_format">Version %1$s</string>
 
     <!-- Dialogs -->
-    <string name="auth_progress_dialog">Authenticating…</string>
+    <string name="login_auth_progress">Authenticating…</string>
     <string name="timeout_progress_dialog_title">Session timed out</string>
     <string name="timeout_progress_dialog_message">Reauthenticating…</string>
     <string name="contacts_permission_request_on_denied_message">Focus needs to access your Google account (via Contacts) in order to export to Google Calendar.</string>

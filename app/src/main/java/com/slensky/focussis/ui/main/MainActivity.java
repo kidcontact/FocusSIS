@@ -7,6 +7,8 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -19,9 +21,13 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
+import butterknife.ButterKnife;
+import icepick.Icepick;
+import icepick.State;
+
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
@@ -62,6 +68,7 @@ import com.google.api.services.calendar.model.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.services.calendar.model.Event;
+import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
@@ -69,14 +76,20 @@ import com.karumi.dexter.listener.single.BasePermissionListener;
 import com.karumi.dexter.listener.single.CompositePermissionListener;
 import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener;
 import com.karumi.dexter.listener.single.PermissionListener;
-import com.slensky.focussis.FocusApplication;
 import com.slensky.focussis.R;
+import com.slensky.focussis.data.focus.Absences;
+import com.slensky.focussis.data.focus.Address;
 import com.slensky.focussis.data.focus.CalendarEvent;
 import com.slensky.focussis.data.focus.CalendarEventDetails;
 import com.slensky.focussis.data.focus.CourseAssignment;
 import com.slensky.focussis.data.GoogleCalendarEvent;
+import com.slensky.focussis.data.focus.Demographic;
+import com.slensky.focussis.data.focus.FinalGrades;
+import com.slensky.focussis.data.focus.Portal;
 import com.slensky.focussis.data.focus.PortalAssignment;
 import com.slensky.focussis.data.focus.PortalEvent;
+import com.slensky.focussis.data.focus.Referrals;
+import com.slensky.focussis.data.focus.Schedule;
 import com.slensky.focussis.data.prefs.PreferencesHelper;
 import com.slensky.focussis.ui.base.BaseActivity;
 import com.slensky.focussis.ui.contacts.ContactsFragment;
@@ -89,6 +102,9 @@ import com.slensky.focussis.ui.base.NetworkErrorFragment;
 import com.slensky.focussis.ui.base.NetworkFragment;
 import com.slensky.focussis.ui.base.PageFragment;
 import com.slensky.focussis.ui.login.LoginActivity;
+import com.slensky.focussis.ui.portal.PortalAssignmentsTabFragment;
+import com.slensky.focussis.ui.portal.PortalCoursesTabFragment;
+import com.slensky.focussis.ui.portal.PortalEventsTabFragment;
 import com.slensky.focussis.ui.portal.PortalFragment;
 import com.slensky.focussis.ui.referrals.ReferralsFragment;
 import com.slensky.focussis.ui.schedule.ScheduleFragment;
@@ -101,6 +117,8 @@ import com.slensky.focussis.ui.base.NetworkTabAwareFragment;
 import com.slensky.focussis.util.SchoolSingleton;
 import com.slensky.focussis.util.Syncable;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -110,12 +128,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class MainActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements MainContract.ViewActions, NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = "MainActivity";
-    private static final String USERNAME_BUNDLE_KEY = "username";
-    private static final String PASSWORD_BUNDLE_KEY = "password";
-    private static final String SESSION_TIMEOUT_BUNDLE_KEY = "session_timeout";
-    private static final String FRAGMENT_ID_BUNDLE_KEY = "fragment_id";
 
     // tag set on reauthenticate request to prevent that request from getting cancelled by switchFragment()
     private static final String REAUTH_REQUEST_TAG = "reauth";
@@ -125,19 +139,31 @@ public class MainActivity extends BaseActivity
     private ViewPager viewPager;
     private FrameLayout fragmentContainer;
     private PageFragment currentFragment;
-    private int currentFragmentId;
     private LinearLayout loadingLayout;
     private LinearLayout networkErrorLayout;
 
     private boolean threadExit = false;
     private boolean inOnLoad = false;
 
-    @Inject FocusApi api;
-    @Inject PreferencesHelper preferencesHelper;
+    // reusable loading fragments
+    private LoadingFragment[] loadingFragments = {new LoadingFragment(), new LoadingFragment(), new LoadingFragment()};
 
     // stored for keeping the session alive after it expires
+    @State
     String username;
+    @State
     String password;
+    @State
+    int selectedNavItemId = R.id.nav_home;
+
+    @Inject
+    FocusApi api;
+    @Inject
+    PreferencesHelper preferencesHelper;
+    @Inject
+    Gson gson;
+    @Inject
+    MainContract.UserActions<MainContract.ViewActions> presenter;
 
     private boolean isVisible;
 
@@ -151,10 +177,12 @@ public class MainActivity extends BaseActivity
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
-    private static final String[] SCOPES = { CalendarScopes.CALENDAR};
-    private GoogleSignInOptions googleSignInOptions;
-    private GoogleSignInClient googleSignInClient;
+
+    @Inject
+    GoogleSignInClient googleSignInClient;
+    @Inject
     GoogleAccountCredential credential;
+
     MaterialDialog calendarExportProgress;
     private Collection<GoogleCalendarEvent> eventsToExport;
     private boolean updateEvents;
@@ -164,77 +192,56 @@ public class MainActivity extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(com.slensky.focussis.R.style.AppTheme_Light);
         super.onCreate(savedInstanceState);
-        setContentView(com.slensky.focussis.R.layout.activity_main);
-        getActivityComponent().inject(this);
-        if (savedInstanceState != null) {
-            Log.d(TAG, "Restoring saved instance state");
-            username = savedInstanceState.getString(USERNAME_BUNDLE_KEY);
-            password = savedInstanceState.getString(PASSWORD_BUNDLE_KEY);
 
-            if (api.hasSession()) {
-                api.setSessionTimeout(savedInstanceState.getLong(SESSION_TIMEOUT_BUNDLE_KEY));
-                if (!api.isSessionExpired()) {
-                    api.setLoggedIn(true);
-                }
-                else {
-                    Log.d(TAG, "Session timed out, reauthenticating from saved instance state");
-                    authenticating = true;
-                    reauthenticate();
-                }
-            }
-            else {
-                Log.d(TAG, "API has no session, reauthenticating from saved instance state");
-                authenticating = true;
-                reauthenticate();
-            }
-        }
-        else {
+        setContentView(com.slensky.focussis.R.layout.activity_main);
+
+        if (savedInstanceState == null) {
             Log.d(TAG, "Unpacking intent");
             Intent intent = getIntent();
             username = intent.getStringExtra(getString(com.slensky.focussis.R.string.EXTRA_USERNAME));
             password = intent.getStringExtra(getString(com.slensky.focussis.R.string.EXTRA_PASSWORD));
+        } else {
+            Icepick.restoreInstanceState(this, savedInstanceState);
         }
 
+        getActivityComponent().inject(this);
+
+        ButterKnife.bind(this);
+
+        setupView();
+
+        presenter.onAttach(this);
+    }
+
+    @Override
+    protected void setupView() {
         Log.d(TAG, "Toolbar init");
-        Toolbar toolbar = (Toolbar) findViewById(com.slensky.focussis.R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(com.slensky.focussis.R.id.main_drawer_layout);
+        DrawerLayout drawerLayout = findViewById(R.id.main_drawer_layout);
         ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(
-                this,  mDrawerLayout, toolbar,
+                this,  drawerLayout, toolbar,
                 com.slensky.focussis.R.string.navigation_drawer_open, com.slensky.focussis.R.string.navigation_drawer_close
         );
 
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        drawerLayout.setDrawerListener(mDrawerToggle);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         mDrawerToggle.syncState();
 
         isVisible = true;
 
-        navigationView = (NavigationView) findViewById(com.slensky.focussis.R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.getMenu().findItem(selectedNavItemId).setChecked(true);
         View header = navigationView.getHeaderView(0);
-        TextView name = (TextView) header.findViewById(com.slensky.focussis.R.id.nav_text_name);
-        TextView email = (TextView) header.findViewById(com.slensky.focussis.R.id.nav_text_email);
-
-        String[] n = username.split("\\.");
-        if (n.length > 1) {
-            String first = n[0].substring(0, 1).toUpperCase() + n[0].substring(1);
-            String last = n[1].substring(0, 1).toUpperCase() + n[1].substring(1);
-            name.setText(first + " " + last);
-        }
-        else {
-            name.setText(n[0]);
-        }
-
-        String domain = SchoolSingleton.getInstance().getSchool().getDomainName();
-        if (domain != null) {
-            email.setText(username + "@" + domain);
-        }
+        TextView name = header.findViewById(R.id.nav_text_header);
+        TextView email = header.findViewById(R.id.nav_text_subheader);
 
         Log.d(TAG, "Configure viewpager + tab layout");
 
         viewPager = (ViewPager) findViewById(com.slensky.focussis.R.id.viewpager);
         viewPager.setSaveEnabled(false);
+        viewPager.setOffscreenPageLimit(2);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -262,31 +269,6 @@ public class MainActivity extends BaseActivity
         tabLayout.setupWithViewPager(viewPager);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Log.d(TAG, "Starting session keep alive thread");
-        final Thread sessionKeepAliveThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (api.isSessionExpired() && !authenticating && isVisible) {
-                        authenticating = true;
-                        Log.d(TAG, "Session timed out, reauthenticating from thread");
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                reauthenticate();
-                            }
-                        });
-                    }
-                }
-            }
-        });
-        sessionKeepAliveThread.start();
-
         // Initialize progress dialog for event export, credentials, and service object.
         calendarExportProgress = new MaterialDialog.Builder(this)
                 .content(R.string.export_progress_dialog)
@@ -294,47 +276,139 @@ public class MainActivity extends BaseActivity
                 .negativeText(R.string.cancel)
                 .canceledOnTouchOutside(false)
                 .build();
+    }
 
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-
-        // Build a GoogleSignInClient with the options specified by gso.
-        googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
-
-        credential = GoogleAccountCredential.usingOAuth2(
-                getApplicationContext(), Arrays.asList(SCOPES))
-                .setBackOff(new ExponentialBackOff() {
-                    int tries = 0;
-                    @Override
-                    public long nextBackOffMillis() throws IOException {
-                        tries += 1;
-                        if (tries < 3) {
-                            return super.nextBackOffMillis();
-                        }
-                        else {
-                            return BackOff.STOP;
-                        }
-                    }
-                });
-
-        if (savedInstanceState == null) {
-            currentFragment = new PortalFragment();
-            currentFragmentId = com.slensky.focussis.R.id.nav_home;
-            switchFragment(currentFragment);
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // Handle navigation view item clicks here.
+        DrawerLayout drawer = (DrawerLayout) findViewById(com.slensky.focussis.R.id.main_drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        if (item.getItemId() != selectedNavItemId) {
+            selectedNavItemId = item.getItemId();
+            presenter.onNavigationItemSelected(navIdToNavItem(selectedNavItemId));
         }
-        else {
-            // switch back to correct fragment
-            currentFragmentId = savedInstanceState.getInt(FRAGMENT_ID_BUNDLE_KEY);
-            navigationView.getMenu().findItem(currentFragmentId).setChecked(true);
-            switchFragmentFromNav(currentFragmentId);
+
+        return true;
+    }
+
+    private MainContract.NavigationItem navIdToNavItem(@IdRes int id) {
+        switch (id) {
+            case R.id.nav_home:
+                return MainContract.NavigationItem.HOME;
+            case R.id.nav_schedule:
+                return MainContract.NavigationItem.SCHEDULE;
+            case R.id.nav_calendar:
+                return MainContract.NavigationItem.CALENDAR;
+            case R.id.nav_demographic:
+                return MainContract.NavigationItem.DEMOGRAPHIC;
+            case R.id.nav_address:
+                return MainContract.NavigationItem.CONTACTS;
+            case R.id.nav_referrals:
+                return MainContract.NavigationItem.REFERRALS;
+            case R.id.nav_absences:
+                return MainContract.NavigationItem.ABSENCES;
+            case R.id.nav_final_grades:
+                return MainContract.NavigationItem.FINAL_GRADES;
+            case R.id.nav_settings:
+                return MainContract.NavigationItem.SETTINGS;
+            case R.id.nav_about:
+                return MainContract.NavigationItem.ABOUT;
+            default:
+                return null;
         }
     }
 
     @Override
-    protected void setupView() {
+    public void removeTabs() {
+        tabLayout.setVisibility(View.GONE);
+        if (viewPager.getAdapter() != null) {
+            ((ViewPagerAdapter) viewPager.getAdapter()).clear();
+            viewPager.getAdapter().notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void showPortalTabs() {
+        String[] tabNames = getResources().getStringArray(R.array.portal_tab_names);
+        ViewPagerAdapter adapter = new ViewPagerAdapter(
+                (Fragment[]) ArrayUtils.subarray(loadingFragments, 0, 3),
+                tabNames, getSupportFragmentManager());
+        viewPager.setAdapter(adapter);
+    }
+
+    private void showPortalTabs(Fragment[] fragments) {
+
+    }
+
+    @Override
+    public void showPortal(Portal portal) {
+        Bundle args = new Bundle();
+        args.putString(getString(com.slensky.focussis.R.string.EXTRA_PORTAL), gson.toJson(portal));
+
+        Fragment courseFragment = new PortalCoursesTabFragment();
+        courseFragment.setArguments(args);
+        Fragment eventFragment = new PortalEventsTabFragment();
+        eventFragment.setArguments(args);
+        Fragment assignmentFragment = new PortalAssignmentsTabFragment();
+        assignmentFragment.setArguments(args);
+
+        fragmentContainer.setVisibility(View.GONE);
+        if (viewPager.getAdapter() == null) {
+            showPortalTabs();
+        }
+        ((ViewPagerAdapter) viewPager.getAdapter()).setFragments(
+                new Fragment[]{courseFragment, eventFragment, assignmentFragment}
+        );
+        viewPager.getAdapter().notifyDataSetChanged();
+    }
+
+    @Override
+    public void showScheduleTabs() {
+
+    }
+
+    @Override
+    public void showSchedule(Schedule schedule) {
+
+    }
+
+    @Override
+    public void showCalendar(com.slensky.focussis.data.focus.Calendar calendar) {
+
+    }
+
+    @Override
+    public void showDemographic(Demographic demographic) {
+
+    }
+
+    @Override
+    public void showContacts(Address address) {
+
+    }
+
+    @Override
+    public void showReferrals(Referrals referrals) {
+
+    }
+
+    @Override
+    public void showAbsences(Absences absences) {
+
+    }
+
+    @Override
+    public void showFinalGrades(FinalGrades finalGrades) {
+
+    }
+
+    @Override
+    public void showSettings() {
+
+    }
+
+    @Override
+    public void showAbout() {
 
     }
 
@@ -452,7 +526,6 @@ public class MainActivity extends BaseActivity
                     ((ViewPagerAdapter) viewPager.getAdapter()).setFragmentList(fragment.getTabFragments());
                     viewPager.getAdapter().notifyDataSetChanged();
                     Log.d(TAG, "Running fragment's onLoad()");
-                    fragment.onFragmentLoad();
                     fragmentContainer.setVisibility(View.GONE);
                 }
                 else {
@@ -661,71 +734,6 @@ public class MainActivity extends BaseActivity
         refresh();
     }
 
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        currentFragmentId = id;
-        switchFragmentFromNav(id);
-        DrawerLayout drawer = (DrawerLayout) findViewById(com.slensky.focussis.R.id.main_drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    private void switchFragmentFromNav(int id) {
-        if (id == com.slensky.focussis.R.id.nav_home) {
-            if (!(currentFragment instanceof PortalFragment)) {
-                currentFragment = new PortalFragment();
-                switchFragment(currentFragment);
-            }
-        } else if (id == com.slensky.focussis.R.id.nav_schedule) {
-            if (!(currentFragment instanceof ScheduleFragment)) {
-                currentFragment = new ScheduleFragment();
-                switchFragment(currentFragment);
-            }
-        } else if (id == com.slensky.focussis.R.id.nav_calendar) {
-            if (!(currentFragment instanceof CalendarFragment)) {
-                currentFragment = new CalendarFragment();
-                switchFragment(currentFragment);
-            }
-        } else if (id == com.slensky.focussis.R.id.nav_demographic) {
-            if (!(currentFragment instanceof DemographicFragment)) {
-                currentFragment = new DemographicFragment();
-                switchFragment(currentFragment);
-            }
-        } else if (id == com.slensky.focussis.R.id.nav_address) {
-            if (!(currentFragment instanceof ContactsFragment)) {
-                currentFragment = new ContactsFragment();
-                switchFragment(currentFragment);
-            }
-        } else if (id == com.slensky.focussis.R.id.nav_referrals) {
-            if (!(currentFragment instanceof ReferralsFragment)) {
-                currentFragment = new ReferralsFragment();
-                switchFragment(currentFragment);
-            }
-        } else if (id == com.slensky.focussis.R.id.nav_absences) {
-            if (!(currentFragment instanceof AbsencesFragment)) {
-                currentFragment = new AbsencesFragment();
-                switchFragment(currentFragment);
-            }
-        } else if (id == com.slensky.focussis.R.id.nav_final_grades) {
-            if (!(currentFragment instanceof FinalGradesFragment)) {
-                currentFragment = new FinalGradesFragment();
-                switchFragment(currentFragment);
-            }
-        } else if (id == com.slensky.focussis.R.id.nav_settings) {
-            if (!(currentFragment instanceof SettingsFragment)) {
-                currentFragment = new SettingsFragment();
-                switchFragment(currentFragment);
-            }
-        } else if (id == com.slensky.focussis.R.id.nav_about) {
-            if (!(currentFragment instanceof AboutFragment)) {
-                currentFragment = new AboutFragment();
-                switchFragment(currentFragment);
-            }
-        }
-    }
-
     public void reauthenticate() {
         Log.d(TAG, "Reauthenticating user");
         final ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this,
@@ -857,7 +865,7 @@ public class MainActivity extends BaseActivity
         alertDialog.show();
     }
 
-    private void showNetworkError() {
+    public void showNetworkError() {
         Log.d(TAG, "Switching to network error view");
         if (currentFragment instanceof NetworkTabAwareFragment) {
             NetworkTabAwareFragment nFragment = (NetworkTabAwareFragment) currentFragment;
@@ -883,7 +891,27 @@ public class MainActivity extends BaseActivity
         }
     }
 
-    private void showLoading() {
+    @Override
+    public void createActionMode(int menuResId, String title) {
+
+    }
+
+    @Override
+    public boolean isActionModeCreated() {
+        return false;
+    }
+
+    @Override
+    public void updateActionMode(String title) {
+
+    }
+
+    @Override
+    public void destroyActionMode() {
+
+    }
+
+    public void showLoading() {
         Log.d(TAG, "Switching to loading view");
         if (currentFragment instanceof NetworkTabAwareFragment) {
             NetworkTabAwareFragment nFragment = (NetworkTabAwareFragment) currentFragment;
@@ -906,12 +934,9 @@ public class MainActivity extends BaseActivity
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         Log.d(TAG, "Saving instance state");
-        savedInstanceState.putString(USERNAME_BUNDLE_KEY, username);
-        savedInstanceState.putString(PASSWORD_BUNDLE_KEY, password);
-        savedInstanceState.putLong(SESSION_TIMEOUT_BUNDLE_KEY, api.getSessionTimeout());
-        savedInstanceState.putInt(FRAGMENT_ID_BUNDLE_KEY, currentFragmentId);
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
+        Icepick.saveInstanceState(this, savedInstanceState);
     }
 
     @Override
@@ -953,8 +978,28 @@ public class MainActivity extends BaseActivity
         this.isVisible = false;
     }
 
+    @Override
+    public MainContract.NavigationItem getSelectedNavigationItem() {
+        return null;
+    }
+
     public String getUsername() {
         return username;
+    }
+
+    @Override
+    public String getPassword() {
+        return null;
+    }
+
+    @Override
+    public void setNavigationHeader(String header) {
+
+    }
+
+    @Override
+    public void setNavigationSubheader(String subheader) {
+
     }
 
     public PageFragment getCurrentFragment() {
@@ -962,10 +1007,6 @@ public class MainActivity extends BaseActivity
     }
 
     // Google play services
-
-    public GoogleSignInClient getGoogleSignInClient() {
-        return googleSignInClient;
-    }
 
     public void exportEventsToCalendar(final Collection<GoogleCalendarEvent> events, final boolean updateEvents, final Runnable onExportTaskFinishedListener) {
         PermissionListener dialogOnDeniedListener = DialogOnDeniedPermissionListener.Builder

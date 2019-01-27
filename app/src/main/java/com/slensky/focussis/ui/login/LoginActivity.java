@@ -1,12 +1,16 @@
 package com.slensky.focussis.ui.login;
 
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -18,15 +22,11 @@ import com.slensky.focussis.ui.main.MainActivity;
 import javax.inject.Inject;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
 public class LoginActivity extends BaseActivity implements LoginContract.ViewActions {
-
-    private static final String TAG = "LoginActivity";
 
     @BindView(R.id.input_username)
     EditText usernameText;
@@ -40,8 +40,10 @@ public class LoginActivity extends BaseActivity implements LoginContract.ViewAct
     Button loginButton;
     @BindView(R.id.check_remember)
     CheckBox rememberMeCheckbox;
-    @BindView(R.id.progress_bar)
-    SmoothProgressBar progressBar;
+    @BindView(R.id.layout_progress)
+    LinearLayout progressLayout;
+    @BindView(R.id.text_progress)
+    TextView progressText;
 
     @Inject
     LoginContract.UserActions<LoginContract.ViewActions> presenter;
@@ -72,23 +74,26 @@ public class LoginActivity extends BaseActivity implements LoginContract.ViewAct
 
         isDisableAutoSignIn = getIntent().getBooleanExtra(getString(com.slensky.focussis.R.string.EXTRA_DISABLE_AUTO_SIGN_IN), false);
 
+        setupView();
+
         presenter.onAttach(this);
 
-        setupView();
     }
 
     @Override
     protected void setupView() {
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int displayHeight = size.y;
+
         RelativeLayout rl = findViewById(R.id.login_layout);
-        rl.setPadding(rl.getPaddingLeft(), getWindowManager().getDefaultDisplay().getHeight() / 6, rl.getPaddingRight(), rl.getPaddingBottom());
-        progressBar.setSmoothProgressDrawableInterpolator(new FastOutSlowInInterpolator());
-        progressBar.setSmoothProgressDrawableColors(getResources().getIntArray(R.array.gplus_colors));
-        progressBar.setVisibility(View.INVISIBLE);
+        rl.setPadding(rl.getPaddingLeft(), displayHeight / 6, rl.getPaddingRight(), rl.getPaddingBottom());
         enableInputs(true);
     }
 
     @OnClick(R.id.btn_login)
-    void onLoginClick(View v) {
+    void onLoginClick() {
         presenter.onLogin();
     }
 
@@ -117,7 +122,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.ViewAct
             int waitTime = 6;
             do {
                 final int finalWaitTime = waitTime;
-                runOnUiThread(() -> positive.setText(positiveMessage + " (" + finalWaitTime + ")"));
+                runOnUiThread(() -> positive.setText(getString(R.string.login_asd_notice_positive_with_time, finalWaitTime)));
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -141,28 +146,28 @@ public class LoginActivity extends BaseActivity implements LoginContract.ViewAct
 
     @Override
     public void showAuthenticatingProgress() {
-        progressBar.setVisibility(View.VISIBLE);
-        progressBar.progressiveStart();
         enableInputs(false);
+        progressText.setText(R.string.login_auth_progress);
+        progressLayout.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideAuthenticatingProgress() {
-        progressBar.progressiveStop();
         enableInputs(true);
+        progressLayout.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void showLanguageChangeProgress() {
-        progressBar.setVisibility(View.VISIBLE);
-        progressBar.progressiveStart();
         enableInputs(false);
+        progressText.setText(R.string.login_language_change_progress);
+        progressLayout.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideLanguageChangeProgress() {
-        progressBar.progressiveStop();
         enableInputs(true);
+        progressLayout.setVisibility(View.INVISIBLE);
     }
 
     @Override

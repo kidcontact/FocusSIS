@@ -3,6 +3,7 @@
     tools:ignore="MissingTranslation">
 
     <!-- Misc. -->
+    <string name="key_use_debug_api">prefs_use_debug_api</string>
     <string name="key_already_converted_prefs_to_new">prefs_converted_prefs_to_new</string>
     <string name="key_save_login">prefs_save_login</string>
     <string name="key_saved_username">prefs_saved_username</string>

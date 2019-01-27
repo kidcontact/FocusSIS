@@ -14,6 +14,7 @@ import com.slensky.focussis.data.network.ApiProvider;
 import com.slensky.focussis.data.network.FocusApi;
 import com.slensky.focussis.data.network.FocusDebugApi;
 import com.slensky.focussis.data.network.FocusNetApi;
+import com.slensky.focussis.data.prefs.PreferencesHelper;
 import com.slensky.focussis.di.ApplicationContext;
 
 import java.net.CookieHandler;
@@ -52,8 +53,10 @@ public class NetModule {
 
     @Provides
     @Singleton
-    ApiProvider provideApiProvider(@ApplicationContext Context context) {
-        return new ApiProvider(new FocusNetApi(context), new FocusDebugApi(context));
+    ApiProvider provideApiProvider(@ApplicationContext Context context, PreferencesHelper preferencesHelper) {
+        ApiProvider apiProvider = new ApiProvider(new FocusNetApi(context), new FocusDebugApi(context));
+        apiProvider.setUseDebugApi(preferencesHelper.getUseDebugApi());
+        return apiProvider;
     }
 
     @Provides

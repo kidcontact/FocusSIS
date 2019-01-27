@@ -96,7 +96,10 @@ dependencies {
     implementation 'com.google.dagger:dagger-android-support:2.20'
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.20'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.20'
-    implementation 'com.github.castorflex.smoothprogressbar:library:1.1.0'
+    implementation 'org.greenrobot:eventbus:3.1.1'
+    implementation 'frankiesardo:icepick:3.2.0'
+    compileOnly 'frankiesardo:icepick-processor:3.2.0'
+
     implementation project(':MaterialCalendarView')
 }
 

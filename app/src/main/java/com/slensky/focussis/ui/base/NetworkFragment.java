@@ -87,8 +87,4 @@ public abstract class NetworkFragment extends Fragment {
 
     protected abstract void makeRequest();
 
-    public void onFragmentLoad() {
-
-    }
-
 }

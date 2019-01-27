@@ -18,6 +18,7 @@ allprojects {
         jcenter()
         google()
         maven { url "https://jitpack.io" }
+        maven {url "https://clojars.org/repo/"}
     }
     tasks.withType(JavaCompile) {
         options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"

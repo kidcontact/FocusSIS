@@ -19,10 +19,6 @@ public class PortalCoursesTabFragment extends Fragment {
 
     private Portal portal;
 
-    public PortalCoursesTabFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

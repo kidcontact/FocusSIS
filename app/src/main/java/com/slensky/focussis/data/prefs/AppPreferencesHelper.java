@@ -15,6 +15,7 @@ public class AppPreferencesHelper implements PreferencesHelper {
 
     private final SharedPreferences prefs;
 
+    private final String KEY_USE_DEBUG_API;
     private final String KEY_SAVE_LOGIN;
     private final String KEY_SAVED_USERNAME;
     private final String KEY_SAVED_PASSWORD;
@@ -29,6 +30,7 @@ public class AppPreferencesHelper implements PreferencesHelper {
     @Inject
     public AppPreferencesHelper(@ApplicationContext Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        KEY_USE_DEBUG_API = context.getString(R.string.key_use_debug_api);
         KEY_SAVE_LOGIN = context.getString(R.string.key_save_login);
         KEY_SAVED_USERNAME = context.getString(R.string.key_saved_username);
         KEY_SAVED_PASSWORD = context.getString(R.string.key_saved_password);
@@ -88,6 +90,16 @@ public class AppPreferencesHelper implements PreferencesHelper {
         editor.apply();
     }
 
+
+    @Override
+    public boolean getUseDebugApi() {
+        return prefs.getBoolean(KEY_USE_DEBUG_API, false);
+    }
+
+    @Override
+    public void setUseDebugApi(boolean useDebugApi) {
+        prefs.edit().putBoolean(KEY_USE_DEBUG_API, useDebugApi).apply();
+    }
 
     @Override
     public boolean getSaveLogin() {

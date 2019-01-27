@@ -37,6 +37,7 @@ public class LoginPresenter
     public void onAttach(LoginContract.ViewActions view) {
         super.onAttach(view);
         authErrors = 0;
+        preferencesHelper.setUseDebugApi(false);
         if (preferencesHelper.getSaveLogin()) {
             String user = preferencesHelper.getSavedUsername();
             String pass = preferencesHelper.getSavedPassword();
@@ -65,7 +66,6 @@ public class LoginPresenter
     }
 
     private void onLogin(boolean checkPreferences) {
-
         String username = view.getUsername().split("@")[0];
         String password = view.getPassword();
 
@@ -78,6 +78,9 @@ public class LoginPresenter
         apiProvider.setUseDebugApi(view.checkIsDebugCredentials(username, password));
         if (apiProvider.isUseDebugApi()) {
             Log.d(TAG, "Using debug API");
+            preferencesHelper.setUseDebugApi(true);
+        } else {
+            preferencesHelper.setUseDebugApi(false);
         }
 
         view.showAuthenticatingProgress();
@@ -114,7 +117,6 @@ public class LoginPresenter
                 showNetworkErrorFor(error);
             }
         });
-
     }
 
     private void showNetworkErrorFor(VolleyError error) {

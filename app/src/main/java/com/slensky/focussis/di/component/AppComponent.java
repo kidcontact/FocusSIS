@@ -3,6 +3,7 @@ package com.slensky.focussis.di.component;
 import com.slensky.focussis.data.network.ApiProvider;
 import com.slensky.focussis.data.network.FocusNetApi;
 import com.slensky.focussis.data.prefs.PreferencesHelper;
+import com.slensky.focussis.ui.base.BaseFragment;
 import com.slensky.focussis.ui.login.LoginActivity;
 import com.slensky.focussis.ui.main.MainActivity;
 import com.slensky.focussis.data.network.FocusApi;
@@ -41,5 +42,7 @@ public interface AppComponent {
     void inject(ScheduleSchoolTabFragment fragment);
 
     void inject(FocusNetApi focusNetApi);
+
+    void inject(BaseFragment baseFragment);
 
 }
