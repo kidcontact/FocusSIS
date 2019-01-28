@@ -92,6 +92,10 @@
     <string name="assignment_dialog_delete">Delete</string>
 
     <!-- Schedule page -->
+    <string-array name="schedule_tab_names">
+        <item>Courses</item>
+        <item>School</item>
+    </string-array>
     <string name="course_name_header">Course</string>
     <string name="course_period_header">Period</string>
     <string name="course_teacher_header">Teacher</string>
@@ -211,6 +215,11 @@
     <!-- Extras -->
     <string name="EXTRA_PORTAL">com.slensky.focussis.PORTAL</string>
     <string name="EXTRA_SCHEDULE">com.slensky.focussis.SCHEDULE</string>
+    <string name="EXTRA_DEMOGRAPHIC">com.slensky.focussis.DEMOGRAPHIC</string>
+    <string name="EXTRA_CONTACTS">com.slensky.focussis.CONTACTS</string>
+    <string name="EXTRA_REFERRALS">com.slensky.focussis.REFERRALS</string>
+    <string name="EXTRA_ABSENCES">com.slensky.focussis.ABSENCES</string>
+    <string name="EXTRA_FINALGRADES">com.slensky.focussis.FINALGRADES</string>
     <string name="EXTRA_USERNAME">com.slensky.focussis.USERNAME</string>
     <string name="EXTRA_PASSWORD">com.slensky.focussis.PASSWORD</string>
     <string name="EXTRA_COURSE_ID">com.slensky.focussis.COURSE_ID</string>

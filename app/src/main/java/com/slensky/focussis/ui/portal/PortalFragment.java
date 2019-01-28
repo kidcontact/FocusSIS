@@ -154,12 +154,6 @@ public class PortalFragment extends NetworkTabAwareFragment implements ActionMod
     }
 
     @Override
-    public void onFragmentLoad() {
-        eventAdapter = null;
-        assignmentAdapter = null;
-    }
-
-    @Override
     public boolean hasTabs() {
         return true;
     }

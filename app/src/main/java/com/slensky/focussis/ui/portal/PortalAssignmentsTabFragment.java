@@ -36,7 +36,6 @@ import java.util.Map;
 public class PortalAssignmentsTabFragment extends Fragment{
     private static final String TAG = "AssignmentsTabFragment";
 
-    private PortalFragment portalFragment;
     private View view;
     private RecyclerView recyclerView;
     private PortalAssignmentCourseAdapter adapter;
@@ -55,9 +54,6 @@ public class PortalAssignmentsTabFragment extends Fragment{
         super.onCreate(savedInstanceState);
         Gson gson = GsonSingleton.getInstance();
         portal = gson.fromJson(getArguments().getString(getString(com.slensky.focussis.R.string.EXTRA_PORTAL)), Portal.class);
-        if (getActivity() != null && getActivity() instanceof MainActivity && ((MainActivity) getActivity()).getCurrentFragment() instanceof PortalFragment) {
-            portalFragment = (PortalFragment) ((MainActivity) getActivity()).getCurrentFragment();
-        }
     }
 
     @Override
@@ -130,18 +126,16 @@ public class PortalAssignmentsTabFragment extends Fragment{
             recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recyclerView, new RecyclerClickListener() {
                 @Override
                 public void onClick(View view, int position) {
-                    if (portalFragment != null) {
-                        portalFragment.onItemSelected(adapter, false, position);
-                    }
+
                 }
 
                 @Override
                 public void onLongClick(View view, int position) {
                     //Select item on long click
-                    if (portalFragment != null) {
-                        view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-                        portalFragment.onItemSelected(adapter, true, position);
-                    }
+//                    if (portalFragment != null) {
+//                        view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+//                        portalFragment.onItemSelected(adapter, true, position);
+//                    }
                 }
             }));
         }

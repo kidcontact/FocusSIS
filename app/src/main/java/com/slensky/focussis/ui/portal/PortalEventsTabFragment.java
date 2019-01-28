@@ -56,18 +56,16 @@ public class PortalEventsTabFragment extends Fragment {
             recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recyclerView, new RecyclerClickListener() {
                 @Override
                 public void onClick(View view, int position) {
-                    if (portalFragment != null) {
-                        portalFragment.onItemSelected(adapter, false, position);
-                    }
+
                 }
 
                 @Override
                 public void onLongClick(View view, int position) {
                     //Select item on long click
-                    if (portalFragment != null) {
-                        view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-                        portalFragment.onItemSelected(adapter, true, position);
-                    }
+//                    if (portalFragment != null) {
+//                        view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+//                        portalFragment.onItemSelected(adapter, true, position);
+//                    }
                 }
             }));
         }

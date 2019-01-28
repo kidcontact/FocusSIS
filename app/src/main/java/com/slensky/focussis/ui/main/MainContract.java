@@ -41,7 +41,7 @@ public class MainContract {
 
         void showSchedule(Schedule schedule);
 
-        void showCalendar(Calendar calendar);
+        void showCalendar(); // calendar takes care of its own loading
 
         void showDemographic(Demographic demographic);
 

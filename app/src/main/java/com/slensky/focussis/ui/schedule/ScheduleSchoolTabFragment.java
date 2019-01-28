@@ -64,10 +64,6 @@ public class ScheduleSchoolTabFragment extends Fragment {
 
     @Inject PreferencesHelper preferencesHelper;
 
-    public ScheduleSchoolTabFragment() {
-        // required empty constructor
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

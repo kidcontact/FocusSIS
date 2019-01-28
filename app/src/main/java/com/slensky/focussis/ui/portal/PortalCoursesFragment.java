@@ -66,9 +66,6 @@ public class PortalCoursesFragment extends Fragment {
         ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                if (getActivity() != null && getActivity() instanceof MainActivity && ((MainActivity) getActivity()).getCurrentFragment() instanceof PortalFragment) {
-                    ((PortalFragment) ((MainActivity) getActivity()).getCurrentFragment()).destroyActionMode();
-                }
 
                 CourseFragment courseFragment = new CourseFragment();
                 Bundle args = new Bundle();

@@ -46,7 +46,6 @@ import com.android.volley.VolleyError;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
@@ -60,10 +59,7 @@ import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.BackOff;
 import com.google.api.client.util.DateTime;
-import com.google.api.client.util.ExponentialBackOff;
-import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;
@@ -91,23 +87,24 @@ import com.slensky.focussis.data.focus.PortalEvent;
 import com.slensky.focussis.data.focus.Referrals;
 import com.slensky.focussis.data.focus.Schedule;
 import com.slensky.focussis.data.prefs.PreferencesHelper;
-import com.slensky.focussis.ui.base.BaseActivity;
-import com.slensky.focussis.ui.contacts.ContactsFragment;
 import com.slensky.focussis.ui.about.AboutFragment;
 import com.slensky.focussis.ui.absences.AbsencesFragment;
-import com.slensky.focussis.ui.calendar.CalendarFragment;
-import com.slensky.focussis.ui.demographic.DemographicFragment;
-import com.slensky.focussis.ui.finalgrades.FinalGradesFragment;
+import com.slensky.focussis.ui.base.BaseActivity;
 import com.slensky.focussis.ui.base.NetworkErrorFragment;
 import com.slensky.focussis.ui.base.NetworkFragment;
 import com.slensky.focussis.ui.base.PageFragment;
+import com.slensky.focussis.ui.calendar.CalendarFragment;
+import com.slensky.focussis.ui.contacts.ContactsFragment;
+import com.slensky.focussis.ui.demographic.DemographicFragment;
+import com.slensky.focussis.ui.finalgrades.FinalGradesFragment;
 import com.slensky.focussis.ui.login.LoginActivity;
 import com.slensky.focussis.ui.portal.PortalAssignmentsTabFragment;
 import com.slensky.focussis.ui.portal.PortalCoursesTabFragment;
 import com.slensky.focussis.ui.portal.PortalEventsTabFragment;
 import com.slensky.focussis.ui.portal.PortalFragment;
 import com.slensky.focussis.ui.referrals.ReferralsFragment;
-import com.slensky.focussis.ui.schedule.ScheduleFragment;
+import com.slensky.focussis.ui.schedule.ScheduleCoursesTabFragment;
+import com.slensky.focussis.ui.schedule.ScheduleSchoolTabFragment;
 import com.slensky.focussis.ui.settings.SettingsFragment;
 import com.slensky.focussis.data.network.FocusApi;
 
@@ -121,7 +118,6 @@ import org.apache.commons.lang.ArrayUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -327,23 +323,28 @@ public class MainActivity extends BaseActivity
         }
     }
 
-    @Override
-    public void showPortalTabs() {
-        String[] tabNames = getResources().getStringArray(R.array.portal_tab_names);
-        ViewPagerAdapter adapter = new ViewPagerAdapter(
-                (Fragment[]) ArrayUtils.subarray(loadingFragments, 0, 3),
-                tabNames, getSupportFragmentManager());
+    private void showTabs(Fragment[] fragments, String[] tabNames) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(fragments, tabNames, getSupportFragmentManager());
         viewPager.setAdapter(adapter);
     }
 
-    private void showPortalTabs(Fragment[] fragments) {
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.replace(R.id.fragment_container, new CalendarFragment());
+        transaction.commitNow();
+    }
 
+    @Override
+    public void showPortalTabs() {
+        Fragment[] fragments = (Fragment[]) ArrayUtils.subarray(loadingFragments, 0, 3);
+        showTabs(fragments, getResources().getStringArray(R.array.portal_tab_names));
     }
 
     @Override
     public void showPortal(Portal portal) {
         Bundle args = new Bundle();
-        args.putString(getString(com.slensky.focussis.R.string.EXTRA_PORTAL), gson.toJson(portal));
+        args.putString(getString(R.string.EXTRA_PORTAL), gson.toJson(portal));
 
         Fragment courseFragment = new PortalCoursesTabFragment();
         courseFragment.setArguments(args);
@@ -351,255 +352,309 @@ public class MainActivity extends BaseActivity
         eventFragment.setArguments(args);
         Fragment assignmentFragment = new PortalAssignmentsTabFragment();
         assignmentFragment.setArguments(args);
+        Fragment[] fragments = {courseFragment, eventFragment, assignmentFragment};
 
         fragmentContainer.setVisibility(View.GONE);
         if (viewPager.getAdapter() == null) {
-            showPortalTabs();
+            showTabs(fragments, getResources().getStringArray(R.array.portal_tab_names));
+        } else {
+            ((ViewPagerAdapter) viewPager.getAdapter()).setFragments(fragments);
+            viewPager.getAdapter().notifyDataSetChanged();
         }
-        ((ViewPagerAdapter) viewPager.getAdapter()).setFragments(
-                new Fragment[]{courseFragment, eventFragment, assignmentFragment}
-        );
-        viewPager.getAdapter().notifyDataSetChanged();
     }
 
     @Override
     public void showScheduleTabs() {
-
+        Fragment[] fragments = (Fragment[]) ArrayUtils.subarray(loadingFragments, 0, 2);
+        showTabs(fragments, getResources().getStringArray(R.array.schedule_tab_names));
     }
 
     @Override
     public void showSchedule(Schedule schedule) {
+        Bundle args = new Bundle();
+        args.putString(getString(R.string.EXTRA_SCHEDULE), gson.toJson(schedule));
 
+        Fragment coursesFragment = new ScheduleCoursesTabFragment();
+        coursesFragment.setArguments(args);
+        Fragment schoolFragment = new ScheduleSchoolTabFragment();
+        schoolFragment.setArguments(args);
+        Fragment[] fragments = {coursesFragment, schoolFragment};
+
+        fragmentContainer.setVisibility(View.GONE);
+        if (viewPager.getAdapter() == null) {
+            showTabs(fragments, getResources().getStringArray(R.array.schedule_tab_names));
+        } else {
+            ((ViewPagerAdapter) viewPager.getAdapter()).setFragments(fragments);
+            viewPager.getAdapter().notifyDataSetChanged();
+        }
     }
 
     @Override
-    public void showCalendar(com.slensky.focussis.data.focus.Calendar calendar) {
-
+    public void showCalendar() {
+        removeTabs();
+        replaceFragment(new CalendarFragment());
+        fragmentContainer.setVisibility(View.VISIBLE);
+        loadingLayout.setVisibility(View.GONE);
     }
 
     @Override
     public void showDemographic(Demographic demographic) {
+        Bundle args = new Bundle();
+        args.putString(getString(R.string.EXTRA_DEMOGRAPHIC), gson.toJson(demographic));
 
+        Fragment fragment = new DemographicFragment();
+        fragment.setArguments(args);
+        replaceFragment(fragment);
+        fragmentContainer.setVisibility(View.VISIBLE);
+        loadingLayout.setVisibility(View.GONE);
     }
 
     @Override
     public void showContacts(Address address) {
+        Bundle args = new Bundle();
+        args.putString(getString(R.string.EXTRA_CONTACTS), gson.toJson(address));
 
+        Fragment fragment = new ContactsFragment();
+        fragment.setArguments(args);
+        replaceFragment(fragment);
+        fragmentContainer.setVisibility(View.VISIBLE);
+        loadingLayout.setVisibility(View.GONE);
     }
 
     @Override
     public void showReferrals(Referrals referrals) {
+        Bundle args = new Bundle();
+        args.putString(getString(R.string.EXTRA_REFERRALS), gson.toJson(referrals));
 
+        Fragment fragment = new ReferralsFragment();
+        fragment.setArguments(args);
+        replaceFragment(fragment);
+        fragmentContainer.setVisibility(View.VISIBLE);
+        loadingLayout.setVisibility(View.GONE);
     }
 
     @Override
     public void showAbsences(Absences absences) {
+        Bundle args = new Bundle();
+        args.putString(getString(R.string.EXTRA_ABSENCES), gson.toJson(absences));
 
+        Fragment fragment = new AbsencesFragment();
+        fragment.setArguments(args);
+        replaceFragment(fragment);
+        fragmentContainer.setVisibility(View.VISIBLE);
+        loadingLayout.setVisibility(View.GONE);
     }
 
     @Override
     public void showFinalGrades(FinalGrades finalGrades) {
+        Bundle args = new Bundle();
+        args.putString(getString(R.string.EXTRA_FINALGRADES), gson.toJson(finalGrades));
 
+        Fragment fragment = new FinalGradesFragment();
+        fragment.setArguments(args);
+        replaceFragment(fragment);
+        fragmentContainer.setVisibility(View.VISIBLE);
+        loadingLayout.setVisibility(View.GONE);
     }
 
     @Override
     public void showSettings() {
-
+        replaceFragment(new SettingsFragment());
+        fragmentContainer.setVisibility(View.VISIBLE);
+        loadingLayout.setVisibility(View.GONE);
     }
 
     @Override
     public void showAbout() {
-
+        replaceFragment(new AboutFragment());
+        fragmentContainer.setVisibility(View.VISIBLE);
+        loadingLayout.setVisibility(View.GONE);
     }
 
-    private void switchFragment(final PageFragment fragment) {
-        Log.d(TAG, "Switching to fragment " + fragment.getClass().getCanonicalName());
-        threadExit = true;
-        if (inOnLoad) {
-            Thread waitForOnLoad = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (inOnLoad) {
-                        try {
-                            Thread.sleep(10);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            switchFragment(fragment);
-                        }
-                    });
-                }
-            });
-            waitForOnLoad.start();
-        }
-
-        api.cancelAll(new RequestQueue.RequestFilter() {
-            @Override
-            public boolean apply(Request<?> request) {
-                return !REAUTH_REQUEST_TAG.equals(request.getTag());
-            }
-        });
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction transaction = fm.beginTransaction();
-        transaction.replace(com.slensky.focussis.R.id.fragment_container, (Fragment) fragment);
-        networkErrorLayout.setVisibility(View.GONE);
-        if (fragment instanceof NetworkTabAwareFragment) {
-            Log.d(TAG, "Fragment is a network tab fragment");
-            NetworkTabAwareFragment nFragment = (NetworkTabAwareFragment) fragment;
-
-            if (nFragment.hasTabs()) {
-                Log.d(TAG, "Configuring with tabs");
-                tabLayout.setVisibility(View.VISIBLE);
-                fragmentContainer.setVisibility(View.GONE);
-                loadingLayout.setVisibility(View.GONE);
-                setupViewPager(viewPager, nFragment.getTabNames(), nFragment.getTabFragments());
-            }
-            else {
-                Log.d(TAG, "Configuring without tabs");
-                fragmentContainer.setVisibility(View.GONE);
-                loadingLayout.setVisibility(View.VISIBLE);
-                tabLayout.setVisibility(View.GONE);
-                if (viewPager.getAdapter() != null) {
-                    ((ViewPagerAdapter) viewPager.getAdapter()).clear();
-                    viewPager.getAdapter().notifyDataSetChanged();
-                }
-            }
-        }
-        else {
-            Log.d(TAG, "Configuring static non-tab page");
-            tabLayout.setVisibility(View.GONE);
-            loadingLayout.setVisibility(View.GONE);
-            fragmentContainer.setVisibility(View.VISIBLE);
-            if (viewPager.getAdapter() != null) {
-                ((ViewPagerAdapter) viewPager.getAdapter()).clear();
-                viewPager.getAdapter().notifyDataSetChanged();
-            }
-        }
-
-        Log.d(TAG, "Committing transaction");
-        transaction.commitNow();
-
-        if (fragment instanceof NetworkTabAwareFragment) {
-            Log.d(TAG, "Starting thread for network fragment load");
-            final NetworkTabAwareFragment nFragment = (NetworkTabAwareFragment) fragment;
-            final Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while(!nFragment.isRequestFinished() && !threadExit) {
-                        try {
-                            Thread.sleep(100);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if (!threadExit) {
-                        inOnLoad = true;
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                onFragmentLoad(nFragment);
-                            }
-                        });
-                    }
-                }
-            });
-            threadExit = false;
-            thread.start();
-        }
-
-        Log.d(TAG, "Setting title");
-        setTitle(fragment.getTitle());
-
-    }
-
-    private void onFragmentLoad(NetworkTabAwareFragment fragment) {
-        if (currentFragment == fragment) {
-            Log.d(TAG, "Fragment " + fragment.getClass().getCanonicalName() + " loaded");
-            if (!fragment.hasNetworkError()) {
-                Log.d(TAG, "Fragment does not have a network error");
-                if (fragment.hasTabs()) {
-                    Log.d(TAG, "Setting tab fragments");
-                    ((ViewPagerAdapter) viewPager.getAdapter()).setFragmentList(fragment.getTabFragments());
-                    viewPager.getAdapter().notifyDataSetChanged();
-                    Log.d(TAG, "Running fragment's onLoad()");
-                    fragmentContainer.setVisibility(View.GONE);
-                }
-                else {
-                    Log.d(TAG, "Displaying untabbed fragment");
-                    loadingLayout.setVisibility(View.GONE);
-                    fragmentContainer.setVisibility(View.VISIBLE);
-                    tabLayout.setVisibility(View.GONE);
-                    if (viewPager.getAdapter() != null) {
-                        ((ViewPagerAdapter) viewPager.getAdapter()).clear();
-                        viewPager.getAdapter().notifyDataSetChanged();
-                    }
-                }
-            }
-            else {
-                if (fragment.getNetworkError().networkResponse != null) {
-                    Log.d(TAG, "Fragment has network error, " + Integer.toString(fragment.getNetworkError().networkResponse.statusCode));
-                    if (fragment.getNetworkError().networkResponse.statusCode == 403) {
-                        Log.d(TAG, "Automatically refreshing session");
-                        loadingLayout.setVisibility(View.GONE);
-                        if (fragment.hasTabs()) {
-                            List<Fragment> emptyFragments = new ArrayList<>();
-                            for (int i = 0; i < fragment.getTabNames().size(); i++) {
-                                emptyFragments.add(new EmptyFragment());
-                            }
-                            ((ViewPagerAdapter) viewPager.getAdapter()).setFragmentList(emptyFragments);
-                            viewPager.getAdapter().notifyDataSetChanged();
-                        }
-                        reauthenticate();
-                    } else {
-                        Log.d(TAG, "Showing generic retry page");
-                        showNetworkError();
-                    }
-                }
-                else {
-                    Log.d(TAG, "Null network response");
-                    Log.d(TAG, "Showing generic retry page");
-                    showNetworkError();
-                }
-            }
-        }
-        inOnLoad = false;
-    }
-
-    private void setupViewPager(ViewPager viewPager, List<String> tabNames, List<Fragment> tabFragments) {
-        Log.d(TAG, "Updating viewpager");
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.clear();
-        for (int i = 0; i < tabNames.size(); i++) {
-            if (tabFragments != null) {
-                adapter.addFragment(tabFragments.get(i), tabNames.get(i));
-            }
-            else {
-                adapter.addFragment(new LoadingFragment(), tabNames.get(i));
-            }
-        }
-
-        viewPager.setAdapter(adapter);
-        viewPager.setOffscreenPageLimit(2);
-    }
+//    private void switchFragment(final PageFragment fragment) {
+//        Log.d(TAG, "Switching to fragment " + fragment.getClass().getCanonicalName());
+//        threadExit = true;
+//        if (inOnLoad) {
+//            Thread waitForOnLoad = new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    while (inOnLoad) {
+//                        try {
+//                            Thread.sleep(10);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            switchFragment(fragment);
+//                        }
+//                    });
+//                }
+//            });
+//            waitForOnLoad.start();
+//        }
+//
+//        api.cancelAll(new RequestQueue.RequestFilter() {
+//            @Override
+//            public boolean apply(Request<?> request) {
+//                return !REAUTH_REQUEST_TAG.equals(request.getTag());
+//            }
+//        });
+//        FragmentManager fm = getSupportFragmentManager();
+//        FragmentTransaction transaction = fm.beginTransaction();
+//        transaction.replace(com.slensky.focussis.R.id.fragment_container, (Fragment) fragment);
+//        networkErrorLayout.setVisibility(View.GONE);
+//        if (fragment instanceof NetworkTabAwareFragment) {
+//            Log.d(TAG, "Fragment is a network tab fragment");
+//            NetworkTabAwareFragment nFragment = (NetworkTabAwareFragment) fragment;
+//
+//            if (nFragment.hasTabs()) {
+//                Log.d(TAG, "Configuring with tabs");
+//                tabLayout.setVisibility(View.VISIBLE);
+//                fragmentContainer.setVisibility(View.GONE);
+//                loadingLayout.setVisibility(View.GONE);
+//                setupViewPager(viewPager, nFragment.getTabNames(), nFragment.getTabFragments());
+//            }
+//            else {
+//                Log.d(TAG, "Configuring without tabs");
+//                fragmentContainer.setVisibility(View.GONE);
+//                loadingLayout.setVisibility(View.VISIBLE);
+//                tabLayout.setVisibility(View.GONE);
+//                if (viewPager.getAdapter() != null) {
+//                    ((ViewPagerAdapter) viewPager.getAdapter()).clear();
+//                    viewPager.getAdapter().notifyDataSetChanged();
+//                }
+//            }
+//        }
+//        else {
+//            Log.d(TAG, "Configuring static non-tab page");
+//            tabLayout.setVisibility(View.GONE);
+//            loadingLayout.setVisibility(View.GONE);
+//            fragmentContainer.setVisibility(View.VISIBLE);
+//            if (viewPager.getAdapter() != null) {
+//                ((ViewPagerAdapter) viewPager.getAdapter()).clear();
+//                viewPager.getAdapter().notifyDataSetChanged();
+//            }
+//        }
+//
+//        Log.d(TAG, "Committing transaction");
+//        transaction.commitNow();
+//
+//        if (fragment instanceof NetworkTabAwareFragment) {
+//            Log.d(TAG, "Starting thread for network fragment load");
+//            final NetworkTabAwareFragment nFragment = (NetworkTabAwareFragment) fragment;
+//            final Thread thread = new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    while(!nFragment.isRequestFinished() && !threadExit) {
+//                        try {
+//                            Thread.sleep(100);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                    if (!threadExit) {
+//                        inOnLoad = true;
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                onFragmentLoad(nFragment);
+//                            }
+//                        });
+//                    }
+//                }
+//            });
+//            threadExit = false;
+//            thread.start();
+//        }
+//
+//        Log.d(TAG, "Setting title");
+//        setTitle(fragment.getTitle());
+//
+//    }
+//
+//    private void onFragmentLoad(NetworkTabAwareFragment fragment) {
+//        if (currentFragment == fragment) {
+//            Log.d(TAG, "Fragment " + fragment.getClass().getCanonicalName() + " loaded");
+//            if (!fragment.hasNetworkError()) {
+//                Log.d(TAG, "Fragment does not have a network error");
+//                if (fragment.hasTabs()) {
+//                    Log.d(TAG, "Setting tab fragments");
+//                    ((ViewPagerAdapter) viewPager.getAdapter()).setFragmentList(fragment.getTabFragments());
+//                    viewPager.getAdapter().notifyDataSetChanged();
+//                    Log.d(TAG, "Running fragment's onLoad()");
+//                    fragmentContainer.setVisibility(View.GONE);
+//                }
+//                else {
+//                    Log.d(TAG, "Displaying untabbed fragment");
+//                    loadingLayout.setVisibility(View.GONE);
+//                    fragmentContainer.setVisibility(View.VISIBLE);
+//                    tabLayout.setVisibility(View.GONE);
+//                    if (viewPager.getAdapter() != null) {
+//                        ((ViewPagerAdapter) viewPager.getAdapter()).clear();
+//                        viewPager.getAdapter().notifyDataSetChanged();
+//                    }
+//                }
+//            }
+//            else {
+//                if (fragment.getNetworkError().networkResponse != null) {
+//                    Log.d(TAG, "Fragment has network error, " + Integer.toString(fragment.getNetworkError().networkResponse.statusCode));
+//                    if (fragment.getNetworkError().networkResponse.statusCode == 403) {
+//                        Log.d(TAG, "Automatically refreshing session");
+//                        loadingLayout.setVisibility(View.GONE);
+//                        if (fragment.hasTabs()) {
+//                            List<Fragment> emptyFragments = new ArrayList<>();
+//                            for (int i = 0; i < fragment.getTabNames().size(); i++) {
+//                                emptyFragments.add(new EmptyFragment());
+//                            }
+//                            ((ViewPagerAdapter) viewPager.getAdapter()).setFragmentList(emptyFragments);
+//                            viewPager.getAdapter().notifyDataSetChanged();
+//                        }
+//                        reauthenticate();
+//                    } else {
+//                        Log.d(TAG, "Showing generic retry page");
+//                        showNetworkError();
+//                    }
+//                }
+//                else {
+//                    Log.d(TAG, "Null network response");
+//                    Log.d(TAG, "Showing generic retry page");
+//                    showNetworkError();
+//                }
+//            }
+//        }
+//        inOnLoad = false;
+//    }
+//
+//    private void setupViewPager(ViewPager viewPager, List<String> tabNames, List<Fragment> tabFragments) {
+//        Log.d(TAG, "Updating viewpager");
+//        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+//        adapter.clear();
+//        for (int i = 0; i < tabNames.size(); i++) {
+//            if (tabFragments != null) {
+//                adapter.addFragment(tabFragments.get(i), tabNames.get(i));
+//            }
+//            else {
+//                adapter.addFragment(new LoadingFragment(), tabNames.get(i));
+//            }
+//        }
+//
+//        viewPager.setAdapter(adapter);
+//        viewPager.setOffscreenPageLimit(2);
+//    }
 
     @Override
     public void onBackPressed() {
 
-        if (!(currentFragment instanceof NetworkTabAwareFragment)
-                || !((NetworkTabAwareFragment) currentFragment).hasTabs()) {
+        if (viewPager.getAdapter() == null) {
             super.onBackPressed();
             return;
         }
 
-        FragmentManager fm = getSupportFragmentManager();
-
         // We retrieve the fragment container showed right now
         // The viewpager assigns tags to fragment automatically like this
-        // mPager is our ViewPager instance
         Fragment fragment = ((ViewPagerAdapter) viewPager.getAdapter()).getItem(viewPager.getCurrentItem());
 
         // And thanks to the fragment container, we retrieve its child fragment manager
@@ -696,37 +751,37 @@ public class MainActivity extends BaseActivity
     }
 
     public void refresh() {
-        Log.d(TAG, "Refreshing fragment");
-        if (currentFragment instanceof NetworkTabAwareFragment) {
-            final NetworkTabAwareFragment nFragment = (NetworkTabAwareFragment) currentFragment;
-            nFragment.refresh();
-            if (!nFragment.isCurrentFragmentNested()) {
-                showLoading();
-                final Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        while(!nFragment.isRequestFinished() && !threadExit) {
-                            try {
-                                Thread.sleep(100);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if (!threadExit) {
-                            inOnLoad = true;
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    onFragmentLoad(nFragment);
-                                }
-                            });
-                        }
-                    }
-                });
-                threadExit = false;
-                thread.start();
-            }
-        }
+//        Log.d(TAG, "Refreshing fragment");
+//        if (currentFragment instanceof NetworkTabAwareFragment) {
+//            final NetworkTabAwareFragment nFragment = (NetworkTabAwareFragment) currentFragment;
+//            nFragment.refresh();
+//            if (!nFragment.isCurrentFragmentNested()) {
+//                showLoading();
+//                final Thread thread = new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        while(!nFragment.isRequestFinished() && !threadExit) {
+//                            try {
+//                                Thread.sleep(100);
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                        if (!threadExit) {
+//                            inOnLoad = true;
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    onFragmentLoad(nFragment);
+//                                }
+//                            });
+//                        }
+//                    }
+//                });
+//                threadExit = false;
+//                thread.start();
+//            }
+//        }
     }
 
     public void onClickRetry(View v) {
@@ -866,29 +921,29 @@ public class MainActivity extends BaseActivity
     }
 
     public void showNetworkError() {
-        Log.d(TAG, "Switching to network error view");
-        if (currentFragment instanceof NetworkTabAwareFragment) {
-            NetworkTabAwareFragment nFragment = (NetworkTabAwareFragment) currentFragment;
-            if (nFragment.hasTabs()) {
-                List<Fragment> errorFrags = new ArrayList<>();
-                for (int i = 0; i < nFragment.getTabNames().size(); i++) {
-                    errorFrags.add(new NetworkErrorFragment());
-                }
-                ((ViewPagerAdapter) viewPager.getAdapter()).setFragmentList(errorFrags);
-                viewPager.getAdapter().notifyDataSetChanged();
-            }
-            else {
-                loadingLayout.setVisibility(View.GONE);
-                fragmentContainer.setVisibility(View.GONE);
-                networkErrorLayout.setVisibility(View.VISIBLE);
-                tabLayout.setVisibility(View.GONE);
-                if (viewPager != null && viewPager.getAdapter() != null) {
-                    ((ViewPagerAdapter) viewPager.getAdapter()).clear();
-                    viewPager.getAdapter().notifyDataSetChanged();
-                }
-
-            }
-        }
+//        Log.d(TAG, "Switching to network error view");
+//        if (currentFragment instanceof NetworkTabAwareFragment) {
+//            NetworkTabAwareFragment nFragment = (NetworkTabAwareFragment) currentFragment;
+//            if (nFragment.hasTabs()) {
+//                List<Fragment> errorFrags = new ArrayList<>();
+//                for (int i = 0; i < nFragment.getTabNames().size(); i++) {
+//                    errorFrags.add(new NetworkErrorFragment());
+//                }
+//                ((ViewPagerAdapter) viewPager.getAdapter()).setFragmentList(errorFrags);
+//                viewPager.getAdapter().notifyDataSetChanged();
+//            }
+//            else {
+//                loadingLayout.setVisibility(View.GONE);
+//                fragmentContainer.setVisibility(View.GONE);
+//                networkErrorLayout.setVisibility(View.VISIBLE);
+//                tabLayout.setVisibility(View.GONE);
+//                if (viewPager != null && viewPager.getAdapter() != null) {
+//                    ((ViewPagerAdapter) viewPager.getAdapter()).clear();
+//                    viewPager.getAdapter().notifyDataSetChanged();
+//                }
+//
+//            }
+//        }
     }
 
     @Override
@@ -912,23 +967,23 @@ public class MainActivity extends BaseActivity
     }
 
     public void showLoading() {
-        Log.d(TAG, "Switching to loading view");
-        if (currentFragment instanceof NetworkTabAwareFragment) {
-            NetworkTabAwareFragment nFragment = (NetworkTabAwareFragment) currentFragment;
-            if (nFragment.hasTabs()) {
-                List<Fragment> loadingFrags = new ArrayList<>();
-                for (int i = 0; i < nFragment.getTabNames().size(); i++) {
-                    loadingFrags.add(new LoadingFragment());
-                }
-                ((ViewPagerAdapter) viewPager.getAdapter()).setFragmentList(loadingFrags);
-                viewPager.getAdapter().notifyDataSetChanged();
-            }
-            else {
-                fragmentContainer.setVisibility(View.GONE);
-                networkErrorLayout.setVisibility(View.GONE);
-                loadingLayout.setVisibility(View.VISIBLE);
-            }
-        }
+//        Log.d(TAG, "Switching to loading view");
+//        if (currentFragment instanceof NetworkTabAwareFragment) {
+//            NetworkTabAwareFragment nFragment = (NetworkTabAwareFragment) currentFragment;
+//            if (nFragment.hasTabs()) {
+//                List<Fragment> loadingFrags = new ArrayList<>();
+//                for (int i = 0; i < nFragment.getTabNames().size(); i++) {
+//                    loadingFrags.add(new LoadingFragment());
+//                }
+//                ((ViewPagerAdapter) viewPager.getAdapter()).setFragmentList(loadingFrags);
+//                viewPager.getAdapter().notifyDataSetChanged();
+//            }
+//            else {
+//                fragmentContainer.setVisibility(View.GONE);
+//                networkErrorLayout.setVisibility(View.GONE);
+//                loadingLayout.setVisibility(View.VISIBLE);
+//            }
+//        }
     }
 
     @Override
@@ -980,16 +1035,17 @@ public class MainActivity extends BaseActivity
 
     @Override
     public MainContract.NavigationItem getSelectedNavigationItem() {
-        return null;
+        return navIdToNavItem(selectedNavItemId);
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
 
     @Override
     public String getPassword() {
-        return null;
+        return password;
     }
 
     @Override

@@ -30,10 +30,6 @@ public class ScheduleCoursesTabFragment extends Fragment {
     private static final String TAG = "ScheduleCoursesTabFragment";
     private Schedule schedule;
 
-    public ScheduleCoursesTabFragment() {
-        // required empty constructor
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
