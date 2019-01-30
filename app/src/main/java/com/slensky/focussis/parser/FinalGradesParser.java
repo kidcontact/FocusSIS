@@ -16,6 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -212,79 +213,8 @@ public class FinalGradesParser extends FocusPageParser {
             throw new FocusParseException("JSONException getting grades element of final grades result " + jsonStr, e);
         }
 
+        Collections.sort(finalGrades, Collections.<FinalGrade>reverseOrder());
         return new FinalGrades(finalGrades);
-    }
-
-    private JSONObject getObjectFromDomainById(String domainName, String id) {
-        try {
-            if (json.getJSONObject("result").getJSONObject("defaults").has(domainName)
-                    && json.getJSONObject("result").getJSONObject("defaults").get(domainName) instanceof JSONObject) {
-                JSONObject defaultDomain = json.getJSONObject("result").getJSONObject("defaults").getJSONObject(domainName);
-                Iterator<?> domainKeys = defaultDomain.keys();
-                while (domainKeys.hasNext()) {
-                    String domainKey = (String) domainKeys.next();
-                    if (!(defaultDomain.get(domainKey) instanceof JSONObject)) {
-                        continue;
-                    }
-
-                    JSONObject subdomain = defaultDomain.getJSONObject(domainKey);
-                    Iterator<?> subdomainKeys = subdomain.keys();
-                    while(subdomainKeys.hasNext()) {
-                        String subdomainKey = (String) subdomainKeys.next();
-                        if (!(subdomain.get(subdomainKey) instanceof JSONObject)) {
-                            continue;
-                        }
-
-                        if (subdomainKey.equals(id)) {
-                            return subdomain.getJSONObject(subdomainKey);
-                        }
-                    }
-
-                }
-            }
-            else {
-                // Log.w(TAG, "defaults does not have domain " + domainName);
-            }
-        } catch (JSONException e) {
-            Log.w(TAG, "JSONException while parsing defaults");
-            e.printStackTrace();
-        }
-
-        try {
-            if (json.getJSONObject("result").getJSONObject("domains").has(domainName)
-                    && json.getJSONObject("result").getJSONObject("domains").get(domainName) instanceof JSONObject) {
-                JSONObject domain = json.getJSONObject("result").getJSONObject("domains").getJSONObject(domainName);
-                Iterator<?> domainKeys = domain.keys();
-                while(domainKeys.hasNext()) {
-                    String domainKey = (String) domainKeys.next();
-                    if (!(domain.get(domainKey) instanceof JSONObject)) {
-                        continue;
-                    }
-
-                    JSONObject subdomain = domain.getJSONObject(domainKey);
-                    Iterator<?> subdomainKeys = subdomain.keys();
-                    while(subdomainKeys.hasNext()) {
-                        String subdomainKey = (String) subdomainKeys.next();
-                        if (!(subdomain.get(subdomainKey) instanceof JSONObject)) {
-                            continue;
-                        }
-
-                        if (subdomainKey.equals(id)) {
-                            return subdomain.getJSONObject(subdomainKey);
-                        }
-                    }
-
-                }
-            }
-            else {
-                Log.w(TAG, "domains does not have domain " + domainName);
-            }
-        } catch (JSONException e) {
-            Log.w(TAG, "JSONException parsing domains");
-            e.printStackTrace();
-        }
-
-        return null;
     }
 
 }

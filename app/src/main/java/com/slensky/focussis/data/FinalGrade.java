@@ -2,6 +2,7 @@ package com.slensky.focussis.data;
 
 import android.support.annotation.NonNull;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.joda.time.DateTime;
 
 /**
@@ -171,10 +172,16 @@ public class FinalGrade implements Comparable<FinalGrade> {
     @Override
     public int compareTo(@NonNull FinalGrade o) {
         if (!syear.equals(o.syear)) {
+            if (NumberUtils.isDigits(syear) && NumberUtils.isDigits(o.syear)) {
+                return Integer.compare(Integer.parseInt(syear), Integer.parseInt(o.syear));
+            }
             return syear.compareTo(o.syear);
         }
         else if (!mpId.equals(o.mpId)) {
-            return mpId.compareTo(o.mpId);
+            if (NumberUtils.isDigits(mpId) && NumberUtils.isDigits(o.mpId)) {
+                return Integer.compare(Integer.parseInt(o.mpId), Integer.parseInt(mpId));
+            }
+            return o.mpId.compareTo(mpId);
         }
         return name.compareTo(o.name) * -1;
     }
