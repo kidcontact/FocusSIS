@@ -72,7 +72,7 @@ public class AboutFragment extends Fragment implements PageFragment {
         /*license.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uri = Uri.parse(getString(R.string.about_license_link));
+                Uri uri = Uri.parseRequirements(getString(R.string.about_license_link));
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
             }

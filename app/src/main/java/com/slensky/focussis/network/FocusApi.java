@@ -31,6 +31,10 @@ import com.slensky.focussis.data.Portal;
 import com.slensky.focussis.data.Referrals;
 import com.slensky.focussis.data.Schedule;
 import com.slensky.focussis.data.Student;
+import com.slensky.focussis.data.domains.GradSubjectDomain;
+import com.slensky.focussis.data.domains.GradeScaleDomain;
+import com.slensky.focussis.data.domains.MarkingPeriodDomain;
+import com.slensky.focussis.data.domains.SchoolDomain;
 import com.slensky.focussis.network.UrlBuilder.FocusUrl;
 import com.slensky.focussis.parser.AbsencesParser;
 import com.slensky.focussis.parser.AddressParser;
@@ -38,9 +42,9 @@ import com.slensky.focussis.parser.CalendarEventParser;
 import com.slensky.focussis.parser.CalendarParser;
 import com.slensky.focussis.parser.CourseParser;
 import com.slensky.focussis.parser.DemographicParser;
+import com.slensky.focussis.parser.FinalGradesDomainParser;
 import com.slensky.focussis.parser.FinalGradesPageParser;
 import com.slensky.focussis.parser.FinalGradesParser;
-import com.slensky.focussis.parser.FocusPageParser;
 import com.slensky.focussis.parser.PasswordResponseParser;
 import com.slensky.focussis.parser.PortalParser;
 import com.slensky.focussis.parser.PreferencesParser;
@@ -48,7 +52,6 @@ import com.slensky.focussis.parser.ReferralsParser;
 import com.slensky.focussis.parser.ScheduleParser;
 import com.slensky.focussis.parser.StudentParser;
 import com.slensky.focussis.util.GsonSingleton;
-import com.slensky.focussis.util.JSONUtil;
 
 import java.net.HttpCookie;
 import java.security.InvalidKeyException;
@@ -78,7 +81,12 @@ public class FocusApi {
     private boolean hasAccessedStudentPage; // api access requires first sending GET to student url
     protected Student student;
     private boolean hasAccessedFinalGradesPage; // api access requires first sending GET to final grades url
-    FinalGradesPage finalGradesPage;
+    private FinalGradesPage finalGradesPage;
+
+    private GradeScaleDomain gradeScaleDomain;
+    private GradSubjectDomain gradSubjectDomain;
+    private MarkingPeriodDomain markingPeriodDomain;
+    private SchoolDomain schoolDomain;
 
     protected final Context context;
 
@@ -96,9 +104,19 @@ public class FocusApi {
         this.sessionTimeout = System.currentTimeMillis() + this.sessionLengthMillis;
     }
 
-    public Request login(final Listener<Boolean> listener, final Response.ErrorListener errorListener) {
+    private void resetUserState() {
         hasAccessedStudentPage = false;
         hasAccessedFinalGradesPage = false;
+        student = null;
+        finalGradesPage = null;
+        gradeScaleDomain = new GradeScaleDomain();
+        gradSubjectDomain = new GradSubjectDomain();
+        markingPeriodDomain = new MarkingPeriodDomain();
+        schoolDomain = null;
+    }
+
+    public Request login(final Listener<Boolean> listener, final Response.ErrorListener errorListener) {
+        resetUserState();
         StringRequest loginRequest = new StringRequest(
                 Request.Method.POST, UrlBuilder.get(FocusUrl.LOGIN), new Response.Listener<String>() {
             @Override
@@ -135,6 +153,7 @@ public class FocusApi {
     }
 
     public Request logout(final Listener<Boolean> listener, final Response.ErrorListener errorListener) {
+        resetUserState();
         StringRequest logoutRequest = new StringRequest(
                 Request.Method.POST, UrlBuilder.get(FocusUrl.LOGOUT),new Response.Listener<String>() {
             @Override
@@ -385,6 +404,7 @@ public class FocusApi {
                     final FinalGradesPageParser finalGradesPageParser = new FinalGradesPageParser();
                     finalGradesPage = finalGradesPageParser.parse(response);
                     hasAccessedFinalGradesPage = true;
+                    schoolDomain = finalGradesPage.getSchoolDomain();
                     queueRequest(nextRequest);
                 }
             }, nextRequest.getErrorListener());
@@ -393,6 +413,72 @@ public class FocusApi {
         else {
             queueRequest(nextRequest);
         }
+    }
+
+    private void getDomainDependenciesForFinalGrades(final String response, final Listener<FinalGrades> listener, final Response.ErrorListener errorListener) {
+        final FinalGradesDomainParser domainParser = new FinalGradesDomainParser(gradeScaleDomain, gradSubjectDomain, markingPeriodDomain);
+        domainParser.parseRequirements(response);
+
+        if (domainParser.getRequiredMarkingPeriodDomains().size() > 0
+                || domainParser.getRequiredGradSubjectDomains().size() > 0
+                || domainParser.getRequiredGradeScaleDomains().size() > 0) {
+            Log.d(TAG, "Requesting additional domains to show final grades");
+            StringRequest domainRequest = new DeliverableStringRequest(
+                    Request.Method.POST, UrlBuilder.get(FocusUrl.API), new Response.Listener<String>() {
+                @Override
+                public void onResponse(String domainResponse) {
+                    domainParser.parseDomainRequest(domainResponse);
+
+                    FinalGradesParser finalGradesParser = new FinalGradesParser(gradeScaleDomain, gradSubjectDomain, markingPeriodDomain, schoolDomain);
+                    FinalGrades parsed = finalGradesParser.parse(response);
+                    parsed.setFinalGradesPage(finalGradesPage);
+                    listener.onResponse(parsed);
+                }
+            }, errorListener) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new LinkedHashMap<>();
+                    params.put("accessID", finalGradesPage.getStudentId());
+                    params.put("api", "finalGrades");
+                    params.put("method", "requestDomains");
+                    params.put("modname", "Grades/StudentRCGrades.php");
+
+                    for (int i = 0; i < domainParser.getRequiredGradeScaleDomains().size(); i++) {
+                        GradeScaleDomain.GradeScaleDomainKey k = domainParser.getRequiredGradeScaleDomains().get(i);
+                        params.put("arguments[0][grade_scale][by_param][" + i + "][school_id]", k.getSchoolId());
+                        params.put("arguments[0][grade_scale][by_param][" + i + "][year]", k.getsYear());
+                    }
+                    for (int i = 0; i < domainParser.getRequiredGradSubjectDomains().size(); i++) {
+                        GradSubjectDomain.GradSubjectDomainKey k = domainParser.getRequiredGradSubjectDomains().get(i);
+                        params.put("arguments[0][grad_subject][by_param][" + i + "][year]", k.getsYear());
+                    }
+                    for (int i = 0; i < domainParser.getRequiredMarkingPeriodDomains().size(); i++) {
+                        MarkingPeriodDomain.MarkingPeriodDomainKey k = domainParser.getRequiredMarkingPeriodDomains().get(i);
+                        params.put("arguments[0][marking_period][by_param][" + i + "][school_id]", k.getSchoolId());
+                        params.put("arguments[0][marking_period][by_param][" + i + "][year]", k.getsYear());
+                    }
+
+                    try {
+                        signRequest(params, finalGradesPage.getHmacSecret());
+                    } catch (NoSuchAlgorithmException e) {
+                        Log.e(TAG, "Could not find HmacSHA1 algorithm for signing final grades request");
+                    } catch (InvalidKeyException e) {
+                        Log.e(TAG, "Invalid key for HmacSHA1 algorithm while signing final grades request");
+                    }
+                    return  params;
+                }
+            };
+
+            queueRequest(domainRequest);
+
+        } else {
+            Log.d(TAG, "All needed domains for final grades are already present, parsing final grades as is");
+            FinalGradesParser finalGradesParser = new FinalGradesParser(gradeScaleDomain, gradSubjectDomain, markingPeriodDomain, schoolDomain);
+            FinalGrades parsed = finalGradesParser.parse(response);
+            parsed.setFinalGradesPage(finalGradesPage);
+            listener.onResponse(parsed);
+        }
+
     }
 
     private void signRequest(Map<String, String> request, String secret) throws NoSuchAlgorithmException, InvalidKeyException {
@@ -421,15 +507,7 @@ public class FocusApi {
                 Request.Method.POST, UrlBuilder.get(FocusUrl.API), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                FinalGradesParser finalGradesParser = new FinalGradesParser();
-                FinalGrades parsed = finalGradesParser.parse(response);
-                parsed.setFinalGradesPage(finalGradesPage);
-                String s = GsonSingleton.getInstance().toJson(parsed);
-                final int chunkSize = 2048;
-                for (int i = 0; i < s.length(); i += chunkSize) {
-                    Log.d(TAG, s.substring(i, Math.min(s.length(), i + chunkSize)));
-                }
-                listener.onResponse(parsed);
+                getDomainDependenciesForFinalGrades(response, listener, errorListener);
             }
         }, errorListener) {
             @Override

@@ -68,7 +68,7 @@ public class DemographicParser extends FocusPageParser {
                         }
                     }
                 } catch (JSONException e) {
-                    Log.w(TAG, "JSONException while attempting to parse options for custom field " + field.getString("title"));
+                    Log.w(TAG, "JSONException while attempting to parseRequirements options for custom field " + field.getString("title"));
                     Log.w(TAG, field.toString(2));
                     e.printStackTrace();
                 }

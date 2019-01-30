@@ -118,13 +118,13 @@ public class ReferralsParser extends FocusPageParser {
 
                             referrals.add(new Referral(creationDate, entryDate, lastUpdated, display, grade, id, name, notificationSent, processed, school, schoolYear, teacher, violation, otherViolation));
                         } catch (JSONException e) {
-                            throw new FocusParseException("JSONException attempting to parse referral " + record.toString(), e);
+                            throw new FocusParseException("JSONException attempting to parseRequirements referral " + record.toString(), e);
                         }
                     }
                 }
 
             } catch (JSONException e) {
-                throw new FocusParseException("JSONException attempting to parse referral records JSON " + html.substring(start, end), e);
+                throw new FocusParseException("JSONException attempting to parseRequirements referral records JSON " + html.substring(start, end), e);
             }
         }
 

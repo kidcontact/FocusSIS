@@ -4,6 +4,11 @@ import android.util.Log;
 
 import com.slensky.focussis.data.FinalGrade;
 import com.slensky.focussis.data.FinalGrades;
+import com.slensky.focussis.data.MarkingPeriod;
+import com.slensky.focussis.data.domains.GradSubjectDomain;
+import com.slensky.focussis.data.domains.GradeScaleDomain;
+import com.slensky.focussis.data.domains.MarkingPeriodDomain;
+import com.slensky.focussis.data.domains.SchoolDomain;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
@@ -14,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by slensky on 4/1/18.
@@ -22,6 +28,18 @@ import java.util.List;
 public class FinalGradesParser extends FocusPageParser {
     private static final String TAG = "FinalGradesParser";
     private JSONObject json;
+
+    private final GradeScaleDomain gradeScaleDomain;
+    private final GradSubjectDomain gradSubjectDomain;
+    private final MarkingPeriodDomain markingPeriodDomain;
+    private final SchoolDomain schoolDomain;
+
+    public FinalGradesParser(GradeScaleDomain gradeScaleDomain, GradSubjectDomain gradSubjectDomain, MarkingPeriodDomain markingPeriodDomain, SchoolDomain schoolDomain) {
+        this.gradeScaleDomain = gradeScaleDomain;
+        this.gradSubjectDomain = gradSubjectDomain;
+        this.markingPeriodDomain = markingPeriodDomain;
+        this.schoolDomain = schoolDomain;
+    }
 
     @Override
     public FinalGrades parse(String jsonStr) {
@@ -107,72 +125,72 @@ public class FinalGradesParser extends FocusPageParser {
                             DateTime lastUpdated = null;
                             Object lastUpdatedObj = grade.get("last_updated_date");
                             if (!JSONObject.NULL.equals(lastUpdatedObj)) {
-                                lastUpdated = new DateTime((String) lastUpdatedObj);
+                                lastUpdated = new DateTime(lastUpdatedObj);
                             }
 
                             String location = StringEscapeUtils.unescapeJavaScript(grade.getString("location_title"));
-                            String mpId = StringEscapeUtils.unescapeJavaScript(grade.getString("marking_period_id"));
+                            String mpId = grade.getString("marking_period_id");
+                            String schoolId = grade.getString("school_id");
 
-                            // initialize defaults for these values - it may not always be possible to find the actual values
                             String mpTitle = mpId;
-                            String mpSortOrder = "1000";
-                            String yearTitle;
-                            try {
-                                int mpSyear = Integer.parseInt(grade.getString("syear"));
-                                yearTitle = String.format("%d-%d", mpSyear, mpSyear + 1);
-                            } catch (NumberFormatException e) {
-                                Log.e(TAG, "syear is not an int!");
-                                e.printStackTrace();
-                                yearTitle = grade.getString("syear");
-                            }
+                            boolean foundTitle = false;
+                            for (MarkingPeriodDomain.MarkingPeriodDomainKey k : markingPeriodDomain.getMembers().keySet()) {
+                                if (k.getSchoolId().equals(schoolId) && k.getsYear().equals(syear)) {
+                                    Map<String, MarkingPeriodDomain.MarkingPeriod> domain = markingPeriodDomain.getMembers().get(k);
+                                    // mpId may sometimes only be present without the "E" (exam) prefix. Not sure. TODO
+                                    if (domain.containsKey(mpId) || domain.containsKey(mpId.replace("E", ""))) {
+                                        if (domain.containsKey(mpId)) {
+                                            mpTitle = domain.get(mpId).getTitle();
+                                        } else {
+                                            mpTitle = domain.get(mpId.replace("E", "")).getTitle();
+                                        }
 
-                            // attempt to find actual values using the same method in the original focus page
-                            JSONObject markingPeriod = getObjectFromDomainById("marking_period", mpId.replace("E", ""));
-                            if (markingPeriod != null) {
-                                mpTitle = markingPeriod.getString("title");
-                                if (markingPeriod.has("sort_order")) {
-                                    mpSortOrder = markingPeriod.getString("sort_order");
-                                }
-                                String yearId = mpId;
-                                JSONObject parentMarkingPeriod = markingPeriod;
-                                while (parentMarkingPeriod != null && !JSONObject.NULL.equals(markingPeriod.get("parent_id"))) {
-                                    yearId = parentMarkingPeriod.getString("parent_id");
-                                    parentMarkingPeriod = getObjectFromDomainById("marking_period", yearId);
-                                }
-
-                                JSONObject year = getObjectFromDomainById("year", yearId);
-                                if (year != null) {
-                                    yearTitle = year.getString("title");
+                                        foundTitle = true;
+                                        break;
+                                    }
                                 }
                             }
-                            else {
-                                Log.e(TAG, String.format("Marking period id %s not found", mpId));
+                            if (!foundTitle) {
+                                Log.w(TAG, "Title for marking period " + mpId + " could not be found");
                             }
-
                             mpTitle = StringEscapeUtils.unescapeJavaScript(mpTitle);
-                            mpSortOrder = StringEscapeUtils.unescapeJavaScript(mpSortOrder);
-                            yearTitle = StringEscapeUtils.unescapeJavaScript(yearTitle);
 
-                            String gradeScaleTitle;
-                            JSONObject gradeScale = getObjectFromDomainById("grade_scale", grade.getString("grade_scale_id"));
-                            if (gradeScale != null) {
-                                gradeScaleTitle = gradeScale.getString("title");
-                                gradeScaleTitle = StringEscapeUtils.unescapeJavaScript(gradeScaleTitle);
-                            }
-                            else {
-                                Log.e(TAG, String.format("Grade scale id %s not found", grade.getString("grade_scale_id")));
-                                gradeScaleTitle = "Default";
-                            }
-
-                            String gradSubject = null;
-                            if (!JSONObject.NULL.equals(grade.get("grad_subject_id"))) {
-                                JSONObject gradSubjectObj = getObjectFromDomainById("grad_subject", grade.getString("grad_subject_id"));
-                                if (gradSubjectObj != null) {
-                                    gradSubject = gradSubjectObj.getString("title");
-                                    gradSubject = StringEscapeUtils.unescapeJavaScript(gradSubject);
+                            String gradeScaleId = grade.getString("grade_scale_id");
+                            String gradeScaleTitle = "Default";
+                            boolean foundGradeScale = false;
+                            for (GradeScaleDomain.GradeScaleDomainKey k : gradeScaleDomain.getMembers().keySet()) {
+                                if (k.getSchoolId().equals(schoolId) && k.getsYear().equals(syear)) {
+                                    Map<String, GradeScaleDomain.GradeScale> domain = gradeScaleDomain.getMembers().get(k);
+                                    if (domain.containsKey(gradeScaleId)) {
+                                        gradeScaleTitle = domain.get(gradeScaleId).getTitle();
+                                        foundGradeScale = true;
+                                        break;
+                                    }
                                 }
-                                else {
-                                    Log.e(TAG, String.format("Grad subject id %s not found", grade.getString("grad_subject_id")));
+                            }
+                            if (!foundGradeScale) {
+                                Log.w(TAG, "Title for grade scale " + gradeScaleId + " could not be found");
+                            }
+                            gradeScaleTitle = StringEscapeUtils.unescapeJavaScript(gradeScaleTitle);
+
+
+                            String gradSubjectId = !JSONObject.NULL.equals(grade.get("grad_subject_id"))
+                                    ? grade.getString("grad_subject_id") : null;
+                            String gradSubject = null;
+                            if (gradSubjectId != null) {
+                                boolean foundGradSubject = false;
+                                for (GradSubjectDomain.GradSubjectDomainKey k : gradSubjectDomain.getMembers().keySet()) {
+                                    if (k.getsYear().equals(syear)) {
+                                        Map<String, GradSubjectDomain.GradSubject> domain = gradSubjectDomain.getMembers().get(k);
+                                        if (domain.containsKey(gradSubject)) {
+                                            gradeScaleTitle = domain.get(gradSubjectId).getTitle();
+                                            foundGradeScale = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (!foundGradSubject) {
+                                    Log.w(TAG, "Title for grade scale " + gradSubjectId + " could not be found");
                                 }
                             }
 
@@ -182,7 +200,7 @@ public class FinalGradesParser extends FocusPageParser {
                                 comment = StringEscapeUtils.unescapeJavaScript(comment);
                             }
 
-                            finalGrades.add(new FinalGrade(id, syear, name, affectsGpa, gpaPoints, weightedGpaPoints, teacher, courseId, courseNum, percentGrade, letterGrade, credits, creditsEarned, gradeLevel, lastUpdated, location, mpId, mpTitle, yearTitle, gradeScaleTitle, gradSubject, comment));
+                            finalGrades.add(new FinalGrade(id, syear, name, affectsGpa, gpaPoints, weightedGpaPoints, teacher, courseId, courseNum, percentGrade, letterGrade, credits, creditsEarned, gradeLevel, lastUpdated, location, mpId, mpTitle, gradeScaleTitle, gradSubject, comment));
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Log.e(TAG, "JSONException parsing individual final grade");
@@ -191,7 +209,7 @@ public class FinalGradesParser extends FocusPageParser {
                 }
             }
         } catch (JSONException e) {
-            throw new FocusParseException("JSONException getting grades element of final grades result", e);
+            throw new FocusParseException("JSONException getting grades element of final grades result " + jsonStr, e);
         }
 
         return new FinalGrades(finalGrades);

@@ -258,7 +258,7 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
                 final TableRow gradeRow = (TableRow) inflater.inflate(com.slensky.focussis.R.layout.view_finalgrades_row, table, false);
 
                 TextView year = gradeRow.findViewById(com.slensky.focussis.R.id.text_finalgrade_year);
-                year.setText(fg.getYearTitle());
+                year.setText(getYearTitle(fg.getSyear()));
 
                 TextView mp = gradeRow.findViewById(com.slensky.focussis.R.id.text_finalgrade_mp);
                 mp.setText(mpTitleToAcronym(fg.getMpTitle()));
@@ -351,7 +351,7 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
 
     private void showDialogForGrade(FinalGrade fg) {
         gradeDialog.setTitle(fg.getName());
-        String html = "<b>Year: </b>" + fg.getYearTitle() + "<br>" +
+        String html = "<b>Year: </b>" + getYearTitle(fg.getSyear()) + "<br>" +
                 "<b>Marking Period: </b>" + fg.getMpTitle() + "<br>" +
                 "<b>Type: </b>" + finalGradesTypeToStringForDialog(selectedType) + "<br>" +
                 "<b>Course Number: </b>" + fg.getCourseNum() + "<br>" +
@@ -382,6 +382,17 @@ public class FinalGradesFragment extends NetworkTabAwareFragment implements Adap
 
         messageView.setText(Html.fromHtml(html));
         gradeDialog.show();
+    }
+
+    private String getYearTitle(String syearStr) {
+        String yearTitle = syearStr;
+        try {
+            int syear = Integer.parseInt(syearStr);
+            yearTitle = String.format("%d-%d", syear, syear + 1);
+        } catch (NumberFormatException e) {
+            Log.w(TAG, "syear" + syearStr + " is not int");
+        }
+        return yearTitle;
     }
 
     private String finalGradesTypeToStringForDialog(FocusApi.FinalGradesType type) {

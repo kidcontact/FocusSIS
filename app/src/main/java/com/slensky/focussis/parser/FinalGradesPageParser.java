@@ -12,9 +12,13 @@ import org.jsoup.select.Elements;
 
 import com.slensky.focussis.data.FinalGradesPage;
 import com.slensky.focussis.data.MarkingPeriod;
-import com.slensky.focussis.util.JSONUtil;
+import com.slensky.focussis.data.domains.SchoolDomain;
+import com.slensky.focussis.util.GsonSingleton;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +41,29 @@ public class FinalGradesPageParser extends FocusPageParser {
 
         String studentId = m.group(2);
         String hmacSecret = m.group(3);
+
+        // pattern does not compile without "redundant" escape
+        //noinspection RegExpRedundantEscape
+        r = Pattern.compile("school_list\\s*=\\s*null\\s*\\|\\|\\s*(\\{.+?\\})\\s*,");
+        m = r.matcher(html);
+        if (!m.find()) {
+            throw new FocusParseException("Could not match school_list in html");
+        }
+
+        String schoolListStr = m.group(1);
+        Map<String, SchoolDomain.School> schoolDomainMembers = new HashMap<>();
+        try {
+            JSONObject schoolListJson = new JSONObject(schoolListStr);
+            Iterator<String> keys = schoolListJson.keys();
+
+            while(keys.hasNext()) {
+                String key = keys.next();
+                schoolDomainMembers.put(key, new SchoolDomain.School(key, schoolListJson.getString(key)));
+            }
+        } catch (JSONException e) {
+            throw new FocusParseException("JSONException while parsing school list from html " + schoolListStr, e);
+        }
+        SchoolDomain schoolDomain = new SchoolDomain(schoolDomainMembers);
 
         Element ul = finalGrades.getElementById("fg_tabs_ul");
         String currentSemesterName = null;
@@ -81,7 +108,7 @@ public class FinalGradesPageParser extends FocusPageParser {
         String creditsEarned = statsHeaderFields.get(2).text();
 
         Pair<List<MarkingPeriod>, List<Integer>> mp = getMarkingPeriods(html);
-        return new FinalGradesPage(mp.first, mp.second, studentId, hmacSecret, currentSemesterName, currentSemesterTargetMarkingPeriod, currentSemesterExamsName, currentSemesterExamsTargetMarkingPeriod, commentCodes, gpa, weightedGpa, creditsEarned);
+        return new FinalGradesPage(mp.first, mp.second, studentId, hmacSecret, schoolDomain, currentSemesterName, currentSemesterTargetMarkingPeriod, currentSemesterExamsName, currentSemesterExamsTargetMarkingPeriod, commentCodes, gpa, weightedGpa, creditsEarned);
     }
 
 }

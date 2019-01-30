@@ -1,7 +1,6 @@
 package com.slensky.focussis.data;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.slensky.focussis.data.domains.SchoolDomain;
 
 import java.util.List;
 
@@ -13,6 +12,7 @@ public class FinalGradesPage extends MarkingPeriodPage {
 
     private final String studentId;
     private final String hmacSecret;
+    private final SchoolDomain schoolDomain;
     private final String currentSemesterName;
     private final String currentSemesterTargetMarkingPeriod;
 
@@ -25,10 +25,11 @@ public class FinalGradesPage extends MarkingPeriodPage {
     private final String weightedGpa;
     private final String creditsEarned;
 
-    public FinalGradesPage(List<MarkingPeriod> markingPeriods, List<Integer> markingPeriodYears, String studentId, String hmacSecret, String currentSemesterName, String currentSemesterTargetMarkingPeriod, String currentSemesterExamsName, String currentSemesterExamsTargetMarkingPeriod, String commentCodes, String gpa, String weightedGpa, String creditsEarned) {
+    public FinalGradesPage(List<MarkingPeriod> markingPeriods, List<Integer> markingPeriodYears, String studentId, String hmacSecret, SchoolDomain schoolDomain, String currentSemesterName, String currentSemesterTargetMarkingPeriod, String currentSemesterExamsName, String currentSemesterExamsTargetMarkingPeriod, String commentCodes, String gpa, String weightedGpa, String creditsEarned) {
         super(markingPeriods, markingPeriodYears);
         this.studentId = studentId;
         this.hmacSecret = hmacSecret;
+        this.schoolDomain = schoolDomain;
         this.currentSemesterName = currentSemesterName;
         this.currentSemesterTargetMarkingPeriod = currentSemesterTargetMarkingPeriod;
         this.currentSemesterExamsName = currentSemesterExamsName;
@@ -82,4 +83,9 @@ public class FinalGradesPage extends MarkingPeriodPage {
     public String getCreditsEarned() {
         return creditsEarned;
     }
+
+    public SchoolDomain getSchoolDomain() {
+        return schoolDomain;
+    }
+
 }

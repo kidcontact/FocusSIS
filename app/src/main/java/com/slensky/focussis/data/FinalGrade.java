@@ -28,12 +28,11 @@ public class FinalGrade implements Comparable<FinalGrade> {
     private final String location;
     private final String mpId;
     private final String mpTitle;
-    private final String yearTitle;
     private final String gradeScaleTitle;
     private final String gradSubject;
     private final String comment;
 
-    public FinalGrade(String id, String syear, String name, boolean affectsGpa, double gpaPoints, double weightedGpaPoints, String teacher, String courseId, String courseNum, String percentGrade, String letterGrade, double credits, double creditsEarned, int gradeLevel, DateTime lastUpdated, String location, String mpId, String mpTitle, String yearTitle, String gradeScaleTitle, String gradSubject, String comment) {
+    public FinalGrade(String id, String syear, String name, boolean affectsGpa, double gpaPoints, double weightedGpaPoints, String teacher, String courseId, String courseNum, String percentGrade, String letterGrade, double credits, double creditsEarned, int gradeLevel, DateTime lastUpdated, String location, String mpId, String mpTitle, String gradeScaleTitle, String gradSubject, String comment) {
         this.id = id;
         this.syear = syear;
         this.name = name;
@@ -52,7 +51,6 @@ public class FinalGrade implements Comparable<FinalGrade> {
         this.location = location;
         this.mpId = mpId;
         this.mpTitle = mpTitle;
-        this.yearTitle = yearTitle;
         this.gradeScaleTitle = gradeScaleTitle;
         this.gradSubject = gradSubject;
         this.comment = comment;
@@ -148,10 +146,6 @@ public class FinalGrade implements Comparable<FinalGrade> {
 
     public String getMpTitle() {
         return mpTitle;
-    }
-
-    public String getYearTitle() {
-        return yearTitle;
     }
 
     public String getGradeScaleTitle() {
