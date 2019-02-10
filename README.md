@@ -1,3 +1,5 @@
+*Please note, MVP/dependency injection rework is currently a WIP. Check the [com.slensky.focussis.ui.login](https://github.com/stephanlensky/FocusSIS/tree/refactor/app/src/main/java/com/slensky/focussis/ui/login) package for a vertical slice demonstration of how I plan to implement these principles.*
+
 # FocusSIS
 
 Third-party Android app to retrieve and display student grade information from the Focus student information system. This app was originally created by as the senior project of a student at the Academy for Science and Design aiming to make the website more easily accessible on mobile devices with small screens. The Google Play listing for the application can be found [here](https://play.google.com/store/apps/details?id=com.slensky.focussis), and can be tested offline without an account by using the username and password "debug".
