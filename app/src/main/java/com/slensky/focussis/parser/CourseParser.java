@@ -50,6 +50,7 @@ public class CourseParser extends FocusPageParser {
         List<CourseCategory> categories = null;
         Element categoryTable = course.selectFirst("td.DarkGradientBG");
         boolean hasCategories = categoryTable != null;
+        Log.d(TAG, "Course has categories: " + hasCategories);
 
         /* try method 1 of retrieving the student's grade in the course. If this doesn't work,
          * the grade will likely be found in the category table */
@@ -144,6 +145,20 @@ public class CourseParser extends FocusPageParser {
             }
         }
 
+        /*
+            extract data about each assignment from each row of the assignment table
+            columns:
+              - 0: name
+              - 1: grade ratio
+              - 2: grade name (percent grade, "Not Graded", etc.)
+              - 3: comments
+              - 4: assigned date
+              - 5: due date
+              - 6: category (or assignment files)
+              - 7: assignment files (or last modified)
+              - 8: last modified (only present if the course has categories)
+         */
+
         List<CourseAssignment> assignments = new ArrayList<>();
         int count = 1;
         Element tr = course.getElementById("LOy_row" + Integer.toString(count));
@@ -227,7 +242,7 @@ public class CourseParser extends FocusPageParser {
                     } else {
                         status = CourseAssignment.Status.OTHER;
                         overallGradeString = td.get(2).text();
-                    }
+                }
                 }
             }
 
@@ -246,7 +261,7 @@ public class CourseParser extends FocusPageParser {
             groups = DateUtil.nattyDateParser.parse(td.get(5).text());
             DateTime due = new DateTime(groups.get(0).getDates().get(0));
 
-            int lastModifiedIdx = hasCategories ? 9 : 8;
+            int lastModifiedIdx = hasCategories ? 8 : 7;
             DateTime lastModified = assigned;
             if (!td.get(lastModifiedIdx).text().trim().isEmpty()) {
                 groups = DateUtil.nattyDateParser.parse(td.get(lastModifiedIdx).text());
