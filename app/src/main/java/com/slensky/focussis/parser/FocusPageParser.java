@@ -215,6 +215,7 @@ public abstract class FocusPageParser {
 
         // focus doesn't account for middle names properly in this page, so teachers without
         // middle names have two spaces in between their first and last!
+        Log.d("HyphenatedCourseInfoP", c);
         teacher = info[info.length - 1].replace("  ", " ").replace('\u00A0', ' ');
 
         section = info[info.length - 2];

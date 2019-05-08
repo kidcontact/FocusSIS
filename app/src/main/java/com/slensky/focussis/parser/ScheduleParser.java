@@ -32,13 +32,15 @@ public class ScheduleParser extends FocusPageParser {
 
         List<ScheduleCourse> courses = new ArrayList<>();
         int count = 1;
+        Element trLeft = schedule.getElementById("LOy_fixed_left_row" + Integer.toString(count));
         Element tr = schedule.getElementById("LOy_row" + Integer.toString(count));
         while (tr != null) {
+            Elements tdLeft = trLeft.select("td.LO_field");
             Elements td = tr.select("td.LO_field");
             JSONObject course = new JSONObject();
 
-            String name = td.get(0).text().trim();
-            HyphenatedCourseInformation courseInformation = parseHyphenatedCourseInformation(td.get(1).text(), false, false);
+            String name = tdLeft.get(0).text().trim();
+            HyphenatedCourseInformation courseInformation = parseHyphenatedCourseInformation(tdLeft.get(1).text(), false, false);
             String days = td.get(2).text();
             String room = td.get(3).text();
 
@@ -62,6 +64,7 @@ public class ScheduleParser extends FocusPageParser {
 
             courses.add(new ScheduleCourse(days, name, courseInformation.getPeriod(), room, courseInformation.getTeacher(), term));
             count += 1;
+            trLeft = schedule.getElementById("LOy_fixed_left_row" + Integer.toString(count));
             tr = schedule.getElementById("LOy_row" + Integer.toString(count));
         }
 
